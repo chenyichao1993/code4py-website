@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Free AI Python Code Generator — Convert Ideas into Code Instantly</title>
+    <meta name="description" content="Generate production-ready Python code from natural language descriptions. No setup, no signup required. Convert ideas into code instantly with our free AI tool.">
+    <meta name="keywords" content="AI Python code generator, natural language to code, Python code converter, free code generator">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'primary': '#3B82F6',
+                        'primary-dark': '#2563EB',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        .code-block {
+            background: #1e293b;
+            color: #e2e8f0;
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- Hero Section -->
+    <section class="bg-gray-100 py-20">
+        <div class="max-w-4xl mx-auto px-4 text-center">
+            <h1 class="text-5xl font-bold text-gray-900 mb-6">
+                Free AI Python Code Generator
+                <span class="block text-blue-600">Convert Ideas into Code Instantly</span>
+            </h1>
+            <p class="text-xl text-gray-600 mb-8 max-w-3xl mx-auto">
+                Type your task in plain English. Get production-ready Python code in seconds. 
+                No setup, no signup required.
+            </p>
+            
+            <!-- Code Generator Input -->
+            <div class="bg-white rounded-lg shadow-lg p-6 mb-8 max-w-2xl mx-auto">
+                <div class="flex gap-3 mb-4">
+                    <input 
+                        type="text" 
+                        id="codeInput" 
+                        placeholder="e.g., Create a function to calculate fibonacci numbers"
+                        class="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    >
+                    <button 
+                        onclick="generateCode()" 
+                        class="px-8 py-3 bg-gradient-to-r from-blue-500 to-blue-600 text-white font-semibold rounded-lg hover:from-blue-600 hover:to-blue-700 transition-all duration-200 shadow-lg hover:shadow-xl"
+                    >
+                        Generate Code
+                    </button>
+                </div>
+                
+                <!-- Code Output -->
+                <div id="codeOutput" class="hidden">
+                    <div class="flex justify-between items-center mb-2">
+                        <span class="text-sm text-gray-600">Generated Python Code:</span>
+                        <button 
+                            onclick="copyCode()" 
+                            class="px-3 py-1 bg-gray-200 text-gray-700 text-sm rounded hover:bg-gray-300 transition-colors"
+                        >
+                            Copy
+                        </button>
+                    </div>
+                    <pre class="code-block rounded-lg p-4 text-left overflow-x-auto"><code id="generatedCode"></code></pre>
+                </div>
+            </div>
+            
+            <button class="gradient-bg text-white px-8 py-4 text-lg font-semibold rounded-lg hover:shadow-lg transition-all duration-200">
+                Generate Python Code Now
+            </button>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="py-20 bg-white">
+        <div class="max-w-4xl mx-auto px-4">
+            <h2 class="text-3xl font-bold text-center text-gray-900 mb-12">
+                Powerful Features for Every Developer
+            </h2>
+            <div class="grid md:grid-cols-3 gap-8">
+                <!-- Feature 1 -->
+                <div class="bg-white rounded-lg shadow-lg p-6 text-center hover:shadow-xl transition-shadow">
+                    <div class="text-4xl mb-4">📝</div>
+                    <h3 class="text-xl font-semibold text-gray-900 mb-3">Natural Language to Code</h3>
+                    <p class="text-gray-600">
+                        Simply describe what you want in plain English. Our AI understands context and generates clean, efficient Python code.
+                    </p>
+                </div>
+                
+                <!-- Feature 2 -->
+                <div class="bg-white rounded-lg shadow-lg p-6 text-center hover:shadow-xl transition-shadow">
+                    <div class="text-4xl mb-4">🔄</div>
+                    <h3 class="text-xl font-semibold text-gray-900 mb-3">Code Conversion</h3>
+                    <p class="text-gray-600">
+                        Convert code from other languages to Python automatically. Perfect for migrating projects or learning Python syntax.
+                    </p>
+                </div>
+                
+                <!-- Feature 3 -->
+                <div class="bg-white rounded-lg shadow-lg p-6 text-center hover:shadow-xl transition-shadow">
+                    <div class="text-4xl mb-4">🧐</div>
+                    <h3 class="text-xl font-semibold text-gray-900 mb-3">Explain & Debug</h3>
+                    <p class="text-gray-600">
+                        Get detailed explanations of your code and receive suggestions for debugging and optimization.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- How It Works Section -->
+    <section class="py-20 bg-gray-50">
+        <div class="max-w-4xl mx-auto px-4">
+            <h2 class="text-3xl font-bold text-center text-gray-900 mb-12">
+                How It Works
+            </h2>
+            <div class="grid md:grid-cols-3 gap-8">
+                <div class="text-center">
+                    <div class="bg-blue-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <span class="text-2xl font-bold text-blue-600">1</span>
+                    </div>
+                    <h3 class="text-xl font-semibold text-gray-900 mb-3">Enter your task</h3>
+                    <p class="text-gray-600">Describe what you want to build in natural language or paste existing code.</p>
+                </div>
+                
+                <div class="text-center">
+                    <div class="bg-blue-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <span class="text-2xl font-bold text-blue-600">2</span>
+                    </div>
+                    <h3 class="text-xl font-semibold text-gray-900 mb-3">Click Generate</h3>
+                    <p class="text-gray-600">Our AI analyzes your request and generates optimized Python code instantly.</p>
+                </div>
+                
+                <div class="text-center">
+                    <div class="bg-blue-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <span class="text-2xl font-bold text-blue-600">3</span>
+                    </div>
+                    <h3 class="text-xl font-semibold text-gray-900 mb-3">Copy & Run anywhere</h3>
+                    <p class="text-gray-600">Copy the generated code and run it in your Python environment immediately.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pain Points Section -->
+    <section class="py-20 bg-white">
+        <div class="max-w-4xl mx-auto px-4 text-center">
+            <h2 class="text-3xl font-bold text-gray-900 mb-6">
+                Stop Wasting Time Writing Boilerplate Code
+            </h2>
+            <p class="text-xl text-gray-600 mb-12">
+                Focus on solving real problems instead of spending hours on repetitive coding tasks.
+            </p>
+            
+            <div class="grid md:grid-cols-3 gap-8">
+                <div class="text-center">
+                    <div class="text-4xl mb-4">🔍</div>
+                    <h3 class="text-lg font-semibold text-gray-900 mb-2">Tired of Googling?</h3>
+                    <p class="text-gray-600">Stop searching through Stack Overflow for hours. Get instant, working code solutions.</p>
+                </div>
+                
+                <div class="text-center">
+                    <div class="text-4xl mb-4">⚡</div>
+                    <h3 class="text-lg font-semibold text-gray-900 mb-2">Need Quick Prototypes?</h3>
+                    <p class="text-gray-600">Rapidly prototype ideas and validate concepts with production-ready code.</p>
+                </div>
+                
+                <div class="text-center">
+                    <div class="text-4xl mb-4">🎯</div>
+                    <h3 class="text-lg font-semibold text-gray-900 mb-2">Focus on Logic</h3>
+                    <p class="text-gray-600">Spend time on algorithms and business logic, not syntax and boilerplate.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ Section -->
+    <section class="py-20 bg-gray-50">
+        <div class="max-w-4xl mx-auto px-4">
+            <h2 class="text-3xl font-bold text-center text-gray-900 mb-12">
+                Frequently Asked Questions
+            </h2>
+            
+            <div class="space-y-6">
+                <div class="bg-white rounded-lg shadow-lg p-6">
+                    <h3 class="text-lg font-semibold text-gray-900 mb-2">
+                        What is the best free AI Python code generator?
+                    </h3>
+                    <p class="text-gray-600">
+                        Our AI Python Code Generator is completely free and generates production-ready Python code from natural language descriptions. It's designed specifically for Python development and understands context better than generic AI tools.
+                    </p>
+                </div>
+                
+                <div class="bg-white rounded-lg shadow-lg p-6">
+                    <h3 class="text-lg font-semibold text-gray-900 mb-2">
+                        Can I convert JavaScript to Python automatically?
+                    </h3>
+                    <p class="text-gray-600">
+                        Yes! Simply paste your JavaScript code and our AI will convert it to equivalent Python code, maintaining the same functionality while following Python best practices.
+                    </p>
+                </div>
+                
+                <div class="bg-white rounded-lg shadow-lg p-6">
+                    <h3 class="text-lg font-semibold text-gray-900 mb-2">
+                        Is this tool free to use?
+                    </h3>
+                    <p class="text-gray-600">
+                        Absolutely! Our AI Python Code Generator is completely free to use with no hidden costs, no signup required, and no usage limits. Generate as much code as you need.
+                    </p>
+                </div>
+                
+                <div class="bg-white rounded-lg shadow-lg p-6">
+                    <h3 class="text-lg font-semibold text-gray-900 mb-2">
+                        How accurate is the generated code?
+                    </h3>
+                    <p class="text-gray-600">
+                        Our AI generates production-ready Python code that follows best practices and includes proper error handling. The code is tested and optimized for performance and readability.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Final CTA Section -->
+    <section class="py-20 bg-gradient-to-r from-blue-600 to-purple-600 text-white">
+        <div class="max-w-4xl mx-auto px-4 text-center">
+            <h2 class="text-4xl font-bold mb-6">
+                Ready to Code Smarter?
+            </h2>
+            <p class="text-xl mb-8 opacity-90">
+                Join thousands of developers who are already saving hours every day with our AI-powered code generation.
+            </p>
+            
+            <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                <button class="bg-white text-blue-600 px-8 py-4 text-lg font-semibold rounded-lg hover:bg-gray-100 transition-colors shadow-lg">
+                    Start Generating Python Code →
+                </button>
+                <button class="border-2 border-white text-white px-8 py-4 text-lg font-semibold rounded-lg hover:bg-white hover:text-blue-600 transition-colors">
+                    See Example Projects →
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-white py-8">
+        <div class="max-w-4xl mx-auto px-4 text-center">
+            <p class="text-gray-400">
+                © 2024 AI Python Code Generator. Free tool for developers worldwide.
+            </p>
+        </div>
+    </footer>
+
+    <script>
+        function generateCode() {
+            const input = document.getElementById('codeInput').value.trim();
+            const outputDiv = document.getElementById('codeOutput');
+            const codeElement = document.getElementById('generatedCode');
+            
+            if (!input) {
+                alert('Please enter a task description');
+                return;
+            }
+            
+            // Simulate API call with loading
+            const button = event.target;
+            const originalText = button.textContent;
+            button.textContent = 'Generating...';
+            button.disabled = true;
+            
+            setTimeout(() => {
+                // Generate sample code based on input
+                let sampleCode = '';
+                
+                if (input.toLowerCase().includes('fibonacci')) {
+                    sampleCode = `def fibonacci(n):
+    """
+    Generate Fibonacci sequence up to n terms.
+    
+    Args:
+        n (int): Number of terms to generate
+        
+    Returns:
+        list: List of Fibonacci numbers
+    """
+    if n <= 0:
+        return []
+    elif n == 1:
+        return [0]
+    elif n == 2:
+        return [0, 1]
+    
+    fib_sequence = [0, 1]
+    for i in range(2, n):
+        fib_sequence.append(fib_sequence[i-1] + fib_sequence[i-2])
+    
+    return fib_sequence
+
+# Example usage
+if __name__ == "__main__":
+    result = fibonacci(10)
+    print(f"First 10 Fibonacci numbers: {result}")`;
+                } else if (input.toLowerCase().includes('sort') || input.toLowerCase().includes('array')) {
+                    sampleCode = `def quick_sort(arr):
+    """
+    Sort an array using Quick Sort algorithm.
+    
+    Args:
+        arr (list): List of numbers to sort
+        
+    Returns:
+        list: Sorted list
+    """
+    if len(arr) <= 1:
+        return arr
+    
+    pivot = arr[len(arr) // 2]
+    left = [x for x in arr if x < pivot]
+    middle = [x for x in arr if x == pivot]
+    right = [x for x in arr if x > pivot]
+    
+    return quick_sort(left) + middle + quick_sort(right)
+
+# Example usage
+if __name__ == "__main__":
+    numbers = [64, 34, 25, 12, 22, 11, 90]
+    sorted_numbers = quick_sort(numbers)
+    print(f"Original: {numbers}")
+    print(f"Sorted: {sorted_numbers}")`;
+                } else if (input.toLowerCase().includes('calculator') || input.toLowerCase().includes('math')) {
+                    sampleCode = `class Calculator:
+    """
+    A simple calculator class with basic operations.
+    """
+    
+    def __init__(self):
+        self.history = []
+    
+    def add(self, a, b):
+        """Add two numbers."""
+        result = a + b
+        self.history.append(f"{a} + {b} = {result}")
+        return result
+    
+    def subtract(self, a, b):
+        """Subtract b from a."""
+        result = a - b
+        self.history.append(f"{a} - {b} = {result}")
+        return result
+    
+    def multiply(self, a, b):
+        """Multiply two numbers."""
+        result = a * b
+        self.history.append(f"{a} * {b} = {result}")
+        return result
+    
+    def divide(self, a, b):
+        """Divide a by b."""
+        if b == 0:
+            raise ValueError("Cannot divide by zero")
+        result = a / b
+        self.history.append(f"{a} / {b} = {result}")
+        return result
+    
+    def get_history(self):
+        """Get calculation history."""
+        return self.history
+
+# Example usage
+if __name__ == "__main__":
+    calc = Calculator()
+    print(f"5 + 3 = {calc.add(5, 3)}")
+    print(f"10 - 4 = {calc.subtract(10, 4)}")
+    print(f"6 * 7 = {calc.multiply(6, 7)}")
+    print(f"15 / 3 = {calc.divide(15, 3)}")
+    print("History:", calc.get_history())`;
+                } else {
+                    sampleCode = `def process_data(data):
+    """
+    Process input data based on your requirements.
+    
+    Args:
+        data: Input data to process
+        
+    Returns:
+        Processed data
+    """
+    # Add your processing logic here
+    if isinstance(data, str):
+        return data.upper()
+    elif isinstance(data, list):
+        return [item for item in data if item is not None]
+    elif isinstance(data, dict):
+        return {k: v for k, v in data.items() if v is not None}
+    else:
+        return data
+
+# Example usage
+if __name__ == "__main__":
+    # Test with different data types
+    test_string = "hello world"
+    test_list = [1, None, 3, None, 5]
+    test_dict = {"a": 1, "b": None, "c": 3}
+    
+    print(f"String: {process_data(test_string)}")
+    print(f"List: {process_data(test_list)}")
+    print(f"Dict: {process_data(test_dict)}")`;
+                }
+                
+                codeElement.textContent = sampleCode;
+                outputDiv.classList.remove('hidden');
+                
+                // Reset button
+                button.textContent = originalText;
+                button.disabled = false;
+                
+                // Scroll to output
+                outputDiv.scrollIntoView({ behavior: 'smooth' });
+            }, 1500);
+        }
+        
+        function copyCode() {
+            const codeElement = document.getElementById('generatedCode');
+            const text = codeElement.textContent;
+            
+            navigator.clipboard.writeText(text).then(() => {
+                const button = event.target;
+                const originalText = button.textContent;
+                button.textContent = 'Copied!';
+                button.classList.add('bg-green-200', 'text-green-800');
+                
+                setTimeout(() => {
+                    button.textContent = originalText;
+                    button.classList.remove('bg-green-200', 'text-green-800');
+                }, 2000);
+            }).catch(err => {
+                console.error('Failed to copy code: ', err);
+                alert('Failed to copy code. Please select and copy manually.');
+            });
+        }
+        
+        // Add Enter key support for input
+        document.getElementById('codeInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                generateCode();
+            }
+        });
+        
+        // Smooth scrolling for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+    </script>
+</body>
+</html>
