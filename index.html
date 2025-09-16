@@ -67,6 +67,21 @@
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
+        
+        /* Back to Top Button */
+        #backToTopBtn {
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+        
+        #backToTopBtn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(59, 130, 246, 0.3);
+        }
+        
+        #backToTopBtn:active {
+            transform: translateY(0);
+        }
     </style>
 </head>
 <body class="bg-gray-50">
@@ -411,6 +426,18 @@ e.g., Create a function to calculate fibonacci numbers"
             </p>
         </div>
     </footer>
+
+    <!-- Back to Top Button -->
+    <button 
+        id="backToTopBtn" 
+        onclick="scrollToTop()" 
+        class="fixed bottom-6 right-6 bg-blue-600 hover:bg-blue-700 text-white p-3 rounded-full shadow-lg transition-all duration-200 opacity-0 pointer-events-none"
+        title="回到顶部"
+    >
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18"></path>
+        </svg>
+    </button>
 
     <script>
         function generateCode() {
@@ -868,6 +895,26 @@ if __name__ == "__main__":
         document.getElementById('codeInput').addEventListener('keydown', function(e) {
             if (e.key === 'Enter' && e.ctrlKey) {
                 generateCode();
+            }
+        });
+        
+        // Back to top functionality
+        function scrollToTop() {
+            window.scrollTo({
+                top: 0,
+                behavior: 'instant'
+            });
+        }
+        
+        // Show/hide back to top button based on scroll position
+        window.addEventListener('scroll', function() {
+            const backToTopBtn = document.getElementById('backToTopBtn');
+            if (window.pageYOffset > 300) {
+                backToTopBtn.classList.remove('opacity-0', 'pointer-events-none');
+                backToTopBtn.classList.add('opacity-100', 'pointer-events-auto');
+            } else {
+                backToTopBtn.classList.add('opacity-0', 'pointer-events-none');
+                backToTopBtn.classList.remove('opacity-100', 'pointer-events-auto');
             }
         });
         
