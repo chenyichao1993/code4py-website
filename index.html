@@ -30,37 +30,21 @@
             overflow-y: auto;
             line-height: 1.5;
             font-family: 'Courier New', monospace;
-        }
-        .line-numbers {
-            background: #f8f9fa;
-            color: #6c757d;
-            font-family: 'Courier New', monospace;
-            line-height: 1.5;
-            text-align: right;
-            padding: 16px 8px;
-            user-select: none;
-            border-right: 1px solid #e5e7eb;
             font-size: 14px;
-        }
-        .line-number {
-            display: block;
-            padding: 0 8px;
-            cursor: pointer;
-            transition: background-color 0.2s;
-            height: 21px;
-            line-height: 21px;
-        }
-        .line-number:hover {
-            background-color: #f3f4f6;
-        }
-        .line-number.active {
-            background-color: #dbeafe;
-            color: #1d4ed8;
+            height: 100%;
+            max-height: 100%;
         }
         .code-content {
             padding: 16px;
             font-size: 14px;
-            line-height: 21px;
+            line-height: 1.5;
+            font-family: 'Courier New', monospace;
+            margin: 0;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            display: block;
+            width: 100%;
+            box-sizing: border-box;
         }
         .logo-text {
             background: linear-gradient(135deg, #3B82F6, #8B5CF6);
@@ -201,15 +185,9 @@ e.g., Create a function to calculate fibonacci numbers"
                                     </div>
                                 </div>
                             </div>
-                            <div id="codeContent" class="hidden h-full">
-                                <div class="flex h-full">
-                                    <!-- Line Numbers -->
-                                    <div id="lineNumbers" class="line-numbers w-12 overflow-hidden">
-                                        <!-- Line numbers will be generated dynamically -->
-                                    </div>
-                                    <!-- Code Content -->
-                                    <pre class="code-block flex-1 text-left overflow-auto whitespace-pre-wrap"><code id="generatedCode" class="code-content"></code></pre>
-                                </div>
+                            <div id="codeContent" class="hidden h-full overflow-hidden">
+                                <!-- Code Content -->
+                                <pre class="code-block w-full h-full text-left overflow-auto whitespace-pre-wrap"><code id="generatedCode" class="code-content"></code></pre>
                             </div>
                         </div>
                     </div>
@@ -577,8 +555,6 @@ if __name__ == "__main__":
                 codeContentDiv.classList.remove('hidden');
                 mainCodeButtons.classList.remove('hidden');
                 
-                // Generate line numbers
-                generateLineNumbers(sampleCode);
                 
                 // Reset button
                 button.textContent = originalText;
@@ -586,70 +562,6 @@ if __name__ == "__main__":
             }, 1500);
         }
         
-        function generateLineNumbers(code) {
-            const lineNumbersDiv = document.getElementById('lineNumbers');
-            const codePre = document.querySelector('#generatedCode').parentElement;
-            const codeElement = document.getElementById('generatedCode');
-            const lines = code.split('\n');
-            let lineNumbersHTML = '';
-            
-            for (let i = 1; i <= lines.length; i++) {
-                lineNumbersHTML += `<span class="line-number" data-line="${i}">${i}</span>`;
-            }
-            
-            lineNumbersDiv.innerHTML = lineNumbersHTML;
-            
-            // Perfect scroll synchronization
-            let isScrolling = false;
-            
-            codePre.addEventListener('scroll', function() {
-                if (!isScrolling) {
-                    isScrolling = true;
-                    lineNumbersDiv.scrollTop = codePre.scrollTop;
-                    setTimeout(() => { isScrolling = false; }, 10);
-                }
-            });
-            
-            lineNumbersDiv.addEventListener('scroll', function() {
-                if (!isScrolling) {
-                    isScrolling = true;
-                    codePre.scrollTop = lineNumbersDiv.scrollTop;
-                    setTimeout(() => { isScrolling = false; }, 10);
-                }
-            });
-            
-            // Add click handlers for line numbers
-            lineNumbersDiv.addEventListener('click', function(e) {
-                if (e.target.classList.contains('line-number')) {
-                    const lineNum = parseInt(e.target.dataset.line);
-                    highlightLine(lineNum);
-                }
-            });
-            
-            // Add click handlers for code lines
-            codeElement.addEventListener('click', function(e) {
-                const rect = codeElement.getBoundingClientRect();
-                const y = e.clientY - rect.top;
-                const lineHeight = 21; // Fixed line height
-                const lineNum = Math.floor(y / lineHeight) + 1;
-                if (lineNum >= 1 && lineNum <= lines.length) {
-                    highlightLine(lineNum);
-                }
-            });
-        }
-        
-        function highlightLine(lineNum) {
-            // Remove previous active class
-            document.querySelectorAll('.line-number.active').forEach(el => {
-                el.classList.remove('active');
-            });
-            
-            // Add active class to clicked line
-            const lineElement = document.querySelector(`.line-number[data-line="${lineNum}"]`);
-            if (lineElement) {
-                lineElement.classList.add('active');
-            }
-        }
         
         function toggleMaximize(panel) {
             // Create modal overlay
@@ -730,14 +642,8 @@ if __name__ == "__main__":
                         </div>
                         <div class="p-6 h-full">
                             <div class="bg-gray-50 rounded-lg h-[calc(90vh-200px)] overflow-hidden">
-                                <div class="flex h-full">
-                                    <!-- Line Numbers -->
-                                    <div id="modalLineNumbers" class="line-numbers w-12 overflow-hidden">
-                                        <!-- Line numbers will be generated dynamically -->
-                                    </div>
-                                    <!-- Code Content -->
-                                    <pre class="code-block flex-1 text-left overflow-auto whitespace-pre-wrap"><code id="modalGeneratedCode" class="code-content">${currentCode}</code></pre>
-                                </div>
+                                <!-- Code Content -->
+                                <pre class="code-block w-full h-full text-left overflow-auto whitespace-pre-wrap"><code id="modalGeneratedCode" class="code-content">${currentCode}</code></pre>
                             </div>
                         </div>
                     </div>
@@ -747,10 +653,6 @@ if __name__ == "__main__":
             modal.innerHTML = modalContent;
             document.body.appendChild(modal);
             
-            // Generate line numbers for output modal
-            if (panel === 'output') {
-                generateModalLineNumbers(currentCode);
-            }
             
             // Close on background click
             modal.addEventListener('click', function(e) {
@@ -767,72 +669,6 @@ if __name__ == "__main__":
             });
         }
         
-        function generateModalLineNumbers(code) {
-            const lineNumbersDiv = document.getElementById('modalLineNumbers');
-            const codePre = document.querySelector('#modalGeneratedCode').parentElement;
-            const codeElement = document.getElementById('modalGeneratedCode');
-            if (lineNumbersDiv && codePre && codeElement) {
-                const lines = code.split('\n');
-                let lineNumbersHTML = '';
-                
-                for (let i = 1; i <= lines.length; i++) {
-                    lineNumbersHTML += `<span class="line-number" data-line="${i}">${i}</span>`;
-                }
-                
-                lineNumbersDiv.innerHTML = lineNumbersHTML;
-                
-                // Perfect scroll synchronization for modal
-                let isScrolling = false;
-                
-                codePre.addEventListener('scroll', function() {
-                    if (!isScrolling) {
-                        isScrolling = true;
-                        lineNumbersDiv.scrollTop = codePre.scrollTop;
-                        setTimeout(() => { isScrolling = false; }, 10);
-                    }
-                });
-                
-                lineNumbersDiv.addEventListener('scroll', function() {
-                    if (!isScrolling) {
-                        isScrolling = true;
-                        codePre.scrollTop = lineNumbersDiv.scrollTop;
-                        setTimeout(() => { isScrolling = false; }, 10);
-                    }
-                });
-                
-                // Add click handlers for line numbers in modal
-                lineNumbersDiv.addEventListener('click', function(e) {
-                    if (e.target.classList.contains('line-number')) {
-                        const lineNum = parseInt(e.target.dataset.line);
-                        highlightModalLine(lineNum);
-                    }
-                });
-                
-                // Add click handlers for code lines in modal
-                codeElement.addEventListener('click', function(e) {
-                    const rect = codeElement.getBoundingClientRect();
-                    const y = e.clientY - rect.top;
-                    const lineHeight = 21; // Fixed line height
-                    const lineNum = Math.floor(y / lineHeight) + 1;
-                    if (lineNum >= 1 && lineNum <= lines.length) {
-                        highlightModalLine(lineNum);
-                    }
-                });
-            }
-        }
-        
-        function highlightModalLine(lineNum) {
-            // Remove previous active class in modal
-            document.querySelectorAll('#modalLineNumbers .line-number.active').forEach(el => {
-                el.classList.remove('active');
-            });
-            
-            // Add active class to clicked line in modal
-            const lineElement = document.querySelector(`#modalLineNumbers .line-number[data-line="${lineNum}"]`);
-            if (lineElement) {
-                lineElement.classList.add('active');
-            }
-        }
         
         function generateCodeFromModal() {
             const modalInput = document.getElementById('modalCodeInput').value.trim();
