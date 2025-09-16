@@ -92,8 +92,8 @@
         </div>
     </nav>
     <!-- Hero Section -->
-    <section class="bg-gray-100 pt-24 pb-20">
-        <div class="max-w-4xl mx-auto px-4 text-center">
+    <section class="bg-gray-100 pt-24 pb-12">
+        <div class="max-w-7xl mx-auto px-4 text-center">
             <h1 class="text-5xl font-bold text-gray-900 mb-8">
                 Free AI Python Code Generator
                 <span class="block text-blue-600 mt-4">Convert Ideas into Code Instantly</span>
@@ -104,61 +104,48 @@
             </p>
             
             <!-- Code Generator - Two Panel Layout -->
-            <div class="bg-white rounded-xl shadow-xl overflow-hidden mb-8">
+            <div class="bg-white rounded-xl shadow-xl overflow-hidden mb-6">
                 <div class="grid lg:grid-cols-2 gap-0">
                     <!-- Input Panel -->
-                    <div class="p-6 border-r border-gray-200">
+                    <div class="p-6 border-r border-gray-200 relative">
                         <div class="flex items-center mb-4">
                             <h3 class="text-lg font-semibold text-gray-900">Input</h3>
-                            <div class="ml-auto w-3 h-3 bg-gray-300 rounded-full"></div>
+                            <button onclick="toggleMaximize('input')" class="ml-auto p-1 hover:bg-gray-100 rounded transition-colors">
+                                <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"></path>
+                                </svg>
+                            </button>
                         </div>
                         <div class="mb-4">
-                            <p class="text-sm text-gray-600 mb-3">
-                                To use this tool, take the following steps —<br>
-                                1. Describe the code you want to generate here in this box<br>
-                                2. Click Generate
-                            </p>
+                            <h4 class="font-semibold text-gray-900 mb-2">To use this tool, take the following steps —</h4>
+                            <ol class="text-sm text-gray-600 space-y-1">
+                                <li>1. Describe the code you want to generate here in this box</li>
+                                <li>2. Click Generate</li>
+                            </ol>
                         </div>
                         <textarea 
                             id="codeInput" 
                             placeholder="e.g., Create a function to calculate fibonacci numbers"
-                            class="w-full h-48 px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
+                            class="w-full h-32 px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
                         ></textarea>
-                        <div class="flex justify-between items-center mt-4">
-                            <div class="flex items-center">
-                                <div class="w-6 h-6 bg-green-500 rounded-full flex items-center justify-center">
-                                    <span class="text-white text-xs font-bold">G</span>
-                                </div>
-                            </div>
-                            <div class="flex gap-2">
-                                <button 
-                                    onclick="generateCode()" 
-                                    class="px-6 py-2 bg-black text-white font-semibold rounded-lg hover:bg-gray-800 transition-colors"
-                                >
-                                    Generate
-                                </button>
-                                <button 
-                                    onclick="clearInput()" 
-                                    class="px-6 py-2 bg-white text-gray-700 border border-gray-300 font-semibold rounded-lg hover:bg-gray-50 transition-colors flex items-center gap-2"
-                                >
-                                    <span>×</span> Clear
-                                </button>
-                            </div>
-                        </div>
                     </div>
                     
                     <!-- Output Panel -->
-                    <div class="p-6">
+                    <div class="p-6 relative">
                         <div class="flex items-center mb-4">
                             <h3 class="text-lg font-semibold text-gray-900">Code Display</h3>
-                            <div class="ml-auto w-3 h-3 bg-gray-300 rounded-full"></div>
+                            <button onclick="toggleMaximize('output')" class="ml-auto p-1 hover:bg-gray-100 rounded transition-colors">
+                                <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"></path>
+                                </svg>
+                            </button>
                         </div>
                         <div class="mb-4">
                             <p class="text-sm text-gray-600">
                                 The generated code will be displayed here
                             </p>
                         </div>
-                        <div class="bg-gray-50 rounded-lg h-48 overflow-hidden">
+                        <div class="bg-gray-50 rounded-lg h-32 overflow-hidden relative">
                             <div id="codeOutput" class="h-full">
                                 <div class="h-full flex items-center justify-center text-gray-400">
                                     <div class="text-center">
@@ -185,16 +172,35 @@
                                         </button>
                                     </div>
                                 </div>
-                                <pre class="code-block h-full p-4 text-left overflow-auto"><code id="generatedCode"></code></pre>
+                                <div class="flex h-full">
+                                    <!-- Line Numbers -->
+                                    <div id="lineNumbers" class="w-8 bg-gray-100 text-gray-500 text-xs p-2 font-mono border-r border-gray-200 overflow-hidden">
+                                        <!-- Line numbers will be generated dynamically -->
+                                    </div>
+                                    <!-- Code Content -->
+                                    <pre class="code-block flex-1 p-4 text-left overflow-auto"><code id="generatedCode"></code></pre>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
             
-            <button class="gradient-bg text-white px-8 py-4 text-lg font-semibold rounded-lg hover:shadow-lg transition-all duration-200">
-                Generate Python Code Now
-            </button>
+            <!-- Action Buttons -->
+            <div class="flex justify-center gap-4 mt-6">
+                <button 
+                    onclick="generateCode()" 
+                    class="px-8 py-3 bg-black text-white font-semibold rounded-lg hover:bg-gray-800 transition-colors"
+                >
+                    Generate
+                </button>
+                <button 
+                    onclick="clearInput()" 
+                    class="px-8 py-3 bg-white text-gray-700 border border-gray-300 font-semibold rounded-lg hover:bg-gray-50 transition-colors flex items-center gap-2"
+                >
+                    <span>×</span> Clear
+                </button>
+            </div>
         </div>
     </section>
 
@@ -539,10 +545,168 @@ if __name__ == "__main__":
                 outputDiv.classList.add('hidden');
                 codeContentDiv.classList.remove('hidden');
                 
+                // Generate line numbers
+                generateLineNumbers(sampleCode);
+                
                 // Reset button
                 button.textContent = originalText;
                 button.disabled = false;
             }, 1500);
+        }
+        
+        function generateLineNumbers(code) {
+            const lineNumbersDiv = document.getElementById('lineNumbers');
+            const lines = code.split('\n');
+            let lineNumbersHTML = '';
+            
+            for (let i = 1; i <= lines.length; i++) {
+                lineNumbersHTML += i + '<br>';
+            }
+            
+            lineNumbersDiv.innerHTML = lineNumbersHTML;
+        }
+        
+        function toggleMaximize(panel) {
+            // Create modal overlay
+            const modal = document.createElement('div');
+            modal.className = 'fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4';
+            
+            let modalContent = '';
+            
+            if (panel === 'input') {
+                // Input modal content
+                modalContent = `
+                    <div class="bg-white rounded-lg shadow-xl max-w-6xl w-full max-h-[90vh] overflow-hidden">
+                        <div class="flex items-center justify-between p-6 border-b">
+                            <h3 class="text-xl font-semibold text-gray-900">Code Generation Instructions</h3>
+                            <button onclick="closeModal()" class="text-gray-500 hover:text-gray-700">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                                </svg>
+                            </button>
+                        </div>
+                        <div class="p-8">
+                            <h4 class="font-semibold text-gray-900 mb-6 text-lg">To use this tool, take the following steps —</h4>
+                            <ol class="text-gray-600 space-y-3 mb-8 text-base">
+                                <li>1. Describe the code you want to generate here in this box</li>
+                                <li>2. Click Generate</li>
+                            </ol>
+                            <div class="bg-gray-50 rounded-lg p-6">
+                                <textarea 
+                                    id="modalCodeInput" 
+                                    placeholder="e.g., Create a function to calculate fibonacci numbers"
+                                    class="w-full h-64 px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none text-base"
+                                ></textarea>
+                                <div class="flex justify-end gap-3 mt-6">
+                                    <button 
+                                        onclick="generateCodeFromModal()" 
+                                        class="px-8 py-3 bg-black text-white font-semibold rounded-lg hover:bg-gray-800 transition-colors"
+                                    >
+                                        Generate
+                                    </button>
+                                    <button 
+                                        onclick="closeModal()" 
+                                        class="px-8 py-3 bg-white text-gray-700 border border-gray-300 font-semibold rounded-lg hover:bg-gray-50 transition-colors"
+                                    >
+                                        Close
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            } else if (panel === 'output') {
+                // Output modal content
+                const currentCode = document.getElementById('generatedCode').textContent;
+                modalContent = `
+                    <div class="bg-white rounded-lg shadow-xl max-w-6xl w-full max-h-[90vh] overflow-hidden">
+                        <div class="flex items-center justify-between p-6 border-b">
+                            <h3 class="text-xl font-semibold text-gray-900">Generated Python Code</h3>
+                            <button onclick="closeModal()" class="text-gray-500 hover:text-gray-700">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                                </svg>
+                            </button>
+                        </div>
+                        <div class="p-6 h-full">
+                            <div class="flex justify-between items-center mb-4">
+                                <span class="text-sm text-gray-600">Generated Python Code:</span>
+                                <div class="flex gap-3">
+                                    <button 
+                                        onclick="copyCode()" 
+                                        class="px-4 py-2 bg-gray-200 text-gray-700 text-sm rounded hover:bg-gray-300 transition-colors"
+                                    >
+                                        Copy
+                                    </button>
+                                    <button 
+                                        onclick="downloadCode()" 
+                                        class="px-4 py-2 bg-gray-200 text-gray-700 text-sm rounded hover:bg-gray-300 transition-colors"
+                                    >
+                                        Download
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="bg-gray-50 rounded-lg h-[calc(90vh-200px)] overflow-hidden">
+                                <div class="flex h-full">
+                                    <!-- Line Numbers -->
+                                    <div id="modalLineNumbers" class="w-12 bg-gray-100 text-gray-500 text-sm p-3 font-mono border-r border-gray-200 overflow-hidden">
+                                        <!-- Line numbers will be generated dynamically -->
+                                    </div>
+                                    <!-- Code Content -->
+                                    <pre class="code-block flex-1 p-4 text-left overflow-auto text-sm"><code id="modalGeneratedCode">${currentCode}</code></pre>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+            
+            modal.innerHTML = modalContent;
+            document.body.appendChild(modal);
+            
+            // Generate line numbers for output modal
+            if (panel === 'output') {
+                generateModalLineNumbers(currentCode);
+            }
+            
+            // Close modal function
+            window.closeModal = function() {
+                document.body.removeChild(modal);
+                delete window.closeModal;
+            };
+            
+            // Close on background click
+            modal.addEventListener('click', function(e) {
+                if (e.target === modal) {
+                    closeModal();
+                }
+            });
+        }
+        
+        function generateModalLineNumbers(code) {
+            const lineNumbersDiv = document.getElementById('modalLineNumbers');
+            if (lineNumbersDiv) {
+                const lines = code.split('\n');
+                let lineNumbersHTML = '';
+                
+                for (let i = 1; i <= lines.length; i++) {
+                    lineNumbersHTML += i + '<br>';
+                }
+                
+                lineNumbersDiv.innerHTML = lineNumbersHTML;
+            }
+        }
+        
+        function generateCodeFromModal() {
+            const modalInput = document.getElementById('modalCodeInput').value.trim();
+            if (modalInput) {
+                // Copy to main input
+                document.getElementById('codeInput').value = modalInput;
+                // Generate code
+                generateCode();
+                // Close modal
+                closeModal();
+            }
         }
         
         function clearInput() {
