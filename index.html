@@ -408,7 +408,7 @@ e.g., Create a function to calculate fibonacci numbers"
             </p>
             
             <div class="flex flex-col sm:flex-row gap-4 justify-center">
-                <button class="bg-white text-blue-600 px-8 py-4 text-lg font-semibold rounded-lg hover:bg-gray-100 transition-colors shadow-lg">
+                <button onclick="scrollToCodeGenerator()" class="bg-white text-blue-600 px-8 py-4 text-lg font-semibold rounded-lg hover:bg-gray-100 transition-colors shadow-lg">
                     Start Generating Python Code →
                 </button>
                 <button class="border-2 border-white text-white px-8 py-4 text-lg font-semibold rounded-lg hover:bg-white hover:text-blue-600 transition-colors">
@@ -904,6 +904,23 @@ if __name__ == "__main__":
                 top: 0,
                 behavior: 'instant'
             });
+        }
+        
+        // Scroll to code generator section
+        function scrollToCodeGenerator() {
+            // Scroll to the hero section where the code generator is located
+            window.scrollTo({
+                top: 0,
+                behavior: 'instant'
+            });
+            
+            // Optional: Focus on the input field after scrolling
+            setTimeout(() => {
+                const inputField = document.getElementById('codeInput');
+                if (inputField) {
+                    inputField.focus();
+                }
+            }, 100);
         }
         
         // Show/hide back to top button based on scroll position
