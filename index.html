@@ -26,6 +26,41 @@
         .code-block {
             background: #1e293b;
             color: #e2e8f0;
+            overflow-x: auto;
+            overflow-y: auto;
+            line-height: 1.5;
+            font-family: 'Courier New', monospace;
+        }
+        .line-numbers {
+            background: #f8f9fa;
+            color: #6c757d;
+            font-family: 'Courier New', monospace;
+            line-height: 1.5;
+            text-align: right;
+            padding: 16px 8px;
+            user-select: none;
+            border-right: 1px solid #e5e7eb;
+            font-size: 14px;
+        }
+        .line-number {
+            display: block;
+            padding: 0 8px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            height: 21px;
+            line-height: 21px;
+        }
+        .line-number:hover {
+            background-color: #f3f4f6;
+        }
+        .line-number.active {
+            background-color: #dbeafe;
+            color: #1d4ed8;
+        }
+        .code-content {
+            padding: 16px;
+            font-size: 14px;
+            line-height: 21px;
         }
         .logo-text {
             background: linear-gradient(135deg, #3B82F6, #8B5CF6);
@@ -116,69 +151,64 @@
                                 </svg>
                             </button>
                         </div>
-                        <div class="mb-4">
-                            <h4 class="font-semibold text-gray-900 mb-2">To use this tool, take the following steps —</h4>
-                            <ol class="text-sm text-gray-600 space-y-1">
-                                <li>1. Describe the code you want to generate here in this box</li>
-                                <li>2. Click Generate</li>
-                            </ol>
-                        </div>
                         <textarea 
                             id="codeInput" 
-                            placeholder="e.g., Create a function to calculate fibonacci numbers"
-                            class="w-full h-32 px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
+                            placeholder="To use this tool, take the following steps —
+
+1. Describe the code you want to generate here in this box
+2. Click Generate
+
+e.g., Create a function to calculate fibonacci numbers"
+                            class="w-full h-64 px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
                         ></textarea>
                     </div>
                     
                     <!-- Output Panel -->
                     <div class="p-6 relative">
-                        <div class="flex items-center mb-4">
+                        <div class="flex items-center justify-between mb-4">
                             <h3 class="text-lg font-semibold text-gray-900">Code Display</h3>
-                            <button onclick="toggleMaximize('output')" class="ml-auto p-1 hover:bg-gray-100 rounded transition-colors">
-                                <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"></path>
-                                </svg>
-                            </button>
+                            <div class="flex items-center gap-2">
+                                <!-- Copy/Download buttons for main area -->
+                                <div id="mainCodeButtons" class="hidden flex gap-2">
+                                    <button 
+                                        onclick="copyCode()" 
+                                        class="px-3 py-1 bg-white border border-gray-300 text-gray-700 text-sm rounded hover:bg-gray-50 transition-colors shadow-sm"
+                                        title="Copy Code"
+                                    >
+                                        Copy
+                                    </button>
+                                    <button 
+                                        onclick="downloadCode()" 
+                                        class="px-3 py-1 bg-white border border-gray-300 text-gray-700 text-sm rounded hover:bg-gray-50 transition-colors shadow-sm"
+                                        title="Download Code"
+                                    >
+                                        Download
+                                    </button>
+                                </div>
+                                <button onclick="toggleMaximize('output')" class="p-1 hover:bg-gray-100 rounded transition-colors">
+                                    <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"></path>
+                                    </svg>
+                                </button>
+                            </div>
                         </div>
-                        <div class="mb-4">
-                            <p class="text-sm text-gray-600">
-                                The generated code will be displayed here
-                            </p>
-                        </div>
-                        <div class="bg-gray-50 rounded-lg h-32 overflow-hidden relative">
+                        <div class="bg-gray-50 rounded-lg h-64 overflow-hidden relative">
                             <div id="codeOutput" class="h-full">
                                 <div class="h-full flex items-center justify-center text-gray-400">
                                     <div class="text-center">
                                         <div class="text-4xl mb-2">💻</div>
-                                        <p>Generated code will appear here</p>
+                                        <p>The generated code will be displayed here</p>
                                     </div>
                                 </div>
                             </div>
                             <div id="codeContent" class="hidden h-full">
-                                <div class="flex justify-between items-center p-3 bg-gray-100 border-b">
-                                    <span class="text-sm text-gray-600">Generated Python Code:</span>
-                                    <div class="flex gap-2">
-                                        <button 
-                                            onclick="copyCode()" 
-                                            class="px-3 py-1 bg-gray-200 text-gray-700 text-sm rounded hover:bg-gray-300 transition-colors"
-                                        >
-                                            Copy
-                                        </button>
-                                        <button 
-                                            onclick="downloadCode()" 
-                                            class="px-3 py-1 bg-gray-200 text-gray-700 text-sm rounded hover:bg-gray-300 transition-colors"
-                                        >
-                                            Download
-                                        </button>
-                                    </div>
-                                </div>
                                 <div class="flex h-full">
                                     <!-- Line Numbers -->
-                                    <div id="lineNumbers" class="w-8 bg-gray-100 text-gray-500 text-xs p-2 font-mono border-r border-gray-200 overflow-hidden">
+                                    <div id="lineNumbers" class="line-numbers w-12 overflow-hidden">
                                         <!-- Line numbers will be generated dynamically -->
                                     </div>
                                     <!-- Code Content -->
-                                    <pre class="code-block flex-1 p-4 text-left overflow-auto"><code id="generatedCode"></code></pre>
+                                    <pre class="code-block flex-1 text-left overflow-auto whitespace-pre-wrap"><code id="generatedCode" class="code-content"></code></pre>
                                 </div>
                             </div>
                         </div>
@@ -390,6 +420,7 @@
             const outputDiv = document.getElementById('codeOutput');
             const codeContentDiv = document.getElementById('codeContent');
             const codeElement = document.getElementById('generatedCode');
+            const mainCodeButtons = document.getElementById('mainCodeButtons');
             
             if (!input) {
                 alert('Please enter a task description');
@@ -544,6 +575,7 @@ if __name__ == "__main__":
                 codeElement.textContent = sampleCode;
                 outputDiv.classList.add('hidden');
                 codeContentDiv.classList.remove('hidden');
+                mainCodeButtons.classList.remove('hidden');
                 
                 // Generate line numbers
                 generateLineNumbers(sampleCode);
@@ -556,20 +588,74 @@ if __name__ == "__main__":
         
         function generateLineNumbers(code) {
             const lineNumbersDiv = document.getElementById('lineNumbers');
+            const codePre = document.querySelector('#generatedCode').parentElement;
+            const codeElement = document.getElementById('generatedCode');
             const lines = code.split('\n');
             let lineNumbersHTML = '';
             
             for (let i = 1; i <= lines.length; i++) {
-                lineNumbersHTML += i + '<br>';
+                lineNumbersHTML += `<span class="line-number" data-line="${i}">${i}</span>`;
             }
             
             lineNumbersDiv.innerHTML = lineNumbersHTML;
+            
+            // Perfect scroll synchronization
+            let isScrolling = false;
+            
+            codePre.addEventListener('scroll', function() {
+                if (!isScrolling) {
+                    isScrolling = true;
+                    lineNumbersDiv.scrollTop = codePre.scrollTop;
+                    setTimeout(() => { isScrolling = false; }, 10);
+                }
+            });
+            
+            lineNumbersDiv.addEventListener('scroll', function() {
+                if (!isScrolling) {
+                    isScrolling = true;
+                    codePre.scrollTop = lineNumbersDiv.scrollTop;
+                    setTimeout(() => { isScrolling = false; }, 10);
+                }
+            });
+            
+            // Add click handlers for line numbers
+            lineNumbersDiv.addEventListener('click', function(e) {
+                if (e.target.classList.contains('line-number')) {
+                    const lineNum = parseInt(e.target.dataset.line);
+                    highlightLine(lineNum);
+                }
+            });
+            
+            // Add click handlers for code lines
+            codeElement.addEventListener('click', function(e) {
+                const rect = codeElement.getBoundingClientRect();
+                const y = e.clientY - rect.top;
+                const lineHeight = 21; // Fixed line height
+                const lineNum = Math.floor(y / lineHeight) + 1;
+                if (lineNum >= 1 && lineNum <= lines.length) {
+                    highlightLine(lineNum);
+                }
+            });
+        }
+        
+        function highlightLine(lineNum) {
+            // Remove previous active class
+            document.querySelectorAll('.line-number.active').forEach(el => {
+                el.classList.remove('active');
+            });
+            
+            // Add active class to clicked line
+            const lineElement = document.querySelector(`.line-number[data-line="${lineNum}"]`);
+            if (lineElement) {
+                lineElement.classList.add('active');
+            }
         }
         
         function toggleMaximize(panel) {
             // Create modal overlay
             const modal = document.createElement('div');
             modal.className = 'fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4';
+            modal.id = 'modal-overlay';
             
             let modalContent = '';
             
@@ -579,7 +665,7 @@ if __name__ == "__main__":
                     <div class="bg-white rounded-lg shadow-xl max-w-6xl w-full max-h-[90vh] overflow-hidden">
                         <div class="flex items-center justify-between p-6 border-b">
                             <h3 class="text-xl font-semibold text-gray-900">Code Generation Instructions</h3>
-                            <button onclick="closeModal()" class="text-gray-500 hover:text-gray-700">
+                            <button onclick="closeModalWindow()" class="text-gray-500 hover:text-gray-700">
                                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
                                 </svg>
@@ -605,7 +691,7 @@ if __name__ == "__main__":
                                         Generate
                                     </button>
                                     <button 
-                                        onclick="closeModal()" 
+                                        onclick="closeModalWindow()" 
                                         class="px-8 py-3 bg-white text-gray-700 border border-gray-300 font-semibold rounded-lg hover:bg-gray-50 transition-colors"
                                     >
                                         Close
@@ -622,38 +708,35 @@ if __name__ == "__main__":
                     <div class="bg-white rounded-lg shadow-xl max-w-6xl w-full max-h-[90vh] overflow-hidden">
                         <div class="flex items-center justify-between p-6 border-b">
                             <h3 class="text-xl font-semibold text-gray-900">Generated Python Code</h3>
-                            <button onclick="closeModal()" class="text-gray-500 hover:text-gray-700">
-                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-                                </svg>
-                            </button>
+                            <div class="flex items-center gap-3">
+                                <button 
+                                    onclick="copyCode()" 
+                                    class="px-4 py-2 bg-gray-200 text-gray-700 text-sm rounded hover:bg-gray-300 transition-colors"
+                                >
+                                    Copy
+                                </button>
+                                <button 
+                                    onclick="downloadCode()" 
+                                    class="px-4 py-2 bg-gray-200 text-gray-700 text-sm rounded hover:bg-gray-300 transition-colors"
+                                >
+                                    Download
+                                </button>
+                                <button onclick="closeModalWindow()" class="text-gray-500 hover:text-gray-700 ml-2">
+                                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                                    </svg>
+                                </button>
+                            </div>
                         </div>
                         <div class="p-6 h-full">
-                            <div class="flex justify-between items-center mb-4">
-                                <span class="text-sm text-gray-600">Generated Python Code:</span>
-                                <div class="flex gap-3">
-                                    <button 
-                                        onclick="copyCode()" 
-                                        class="px-4 py-2 bg-gray-200 text-gray-700 text-sm rounded hover:bg-gray-300 transition-colors"
-                                    >
-                                        Copy
-                                    </button>
-                                    <button 
-                                        onclick="downloadCode()" 
-                                        class="px-4 py-2 bg-gray-200 text-gray-700 text-sm rounded hover:bg-gray-300 transition-colors"
-                                    >
-                                        Download
-                                    </button>
-                                </div>
-                            </div>
                             <div class="bg-gray-50 rounded-lg h-[calc(90vh-200px)] overflow-hidden">
                                 <div class="flex h-full">
                                     <!-- Line Numbers -->
-                                    <div id="modalLineNumbers" class="w-12 bg-gray-100 text-gray-500 text-sm p-3 font-mono border-r border-gray-200 overflow-hidden">
+                                    <div id="modalLineNumbers" class="line-numbers w-12 overflow-hidden">
                                         <!-- Line numbers will be generated dynamically -->
                                     </div>
                                     <!-- Code Content -->
-                                    <pre class="code-block flex-1 p-4 text-left overflow-auto text-sm"><code id="modalGeneratedCode">${currentCode}</code></pre>
+                                    <pre class="code-block flex-1 text-left overflow-auto whitespace-pre-wrap"><code id="modalGeneratedCode" class="code-content">${currentCode}</code></pre>
                                 </div>
                             </div>
                         </div>
@@ -669,31 +752,85 @@ if __name__ == "__main__":
                 generateModalLineNumbers(currentCode);
             }
             
-            // Close modal function
-            window.closeModal = function() {
-                document.body.removeChild(modal);
-                delete window.closeModal;
-            };
-            
             // Close on background click
             modal.addEventListener('click', function(e) {
                 if (e.target === modal) {
-                    closeModal();
+                    closeModalWindow();
+                }
+            });
+            
+            // Close on Escape key
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape') {
+                    closeModalWindow();
                 }
             });
         }
         
         function generateModalLineNumbers(code) {
             const lineNumbersDiv = document.getElementById('modalLineNumbers');
-            if (lineNumbersDiv) {
+            const codePre = document.querySelector('#modalGeneratedCode').parentElement;
+            const codeElement = document.getElementById('modalGeneratedCode');
+            if (lineNumbersDiv && codePre && codeElement) {
                 const lines = code.split('\n');
                 let lineNumbersHTML = '';
                 
                 for (let i = 1; i <= lines.length; i++) {
-                    lineNumbersHTML += i + '<br>';
+                    lineNumbersHTML += `<span class="line-number" data-line="${i}">${i}</span>`;
                 }
                 
                 lineNumbersDiv.innerHTML = lineNumbersHTML;
+                
+                // Perfect scroll synchronization for modal
+                let isScrolling = false;
+                
+                codePre.addEventListener('scroll', function() {
+                    if (!isScrolling) {
+                        isScrolling = true;
+                        lineNumbersDiv.scrollTop = codePre.scrollTop;
+                        setTimeout(() => { isScrolling = false; }, 10);
+                    }
+                });
+                
+                lineNumbersDiv.addEventListener('scroll', function() {
+                    if (!isScrolling) {
+                        isScrolling = true;
+                        codePre.scrollTop = lineNumbersDiv.scrollTop;
+                        setTimeout(() => { isScrolling = false; }, 10);
+                    }
+                });
+                
+                // Add click handlers for line numbers in modal
+                lineNumbersDiv.addEventListener('click', function(e) {
+                    if (e.target.classList.contains('line-number')) {
+                        const lineNum = parseInt(e.target.dataset.line);
+                        highlightModalLine(lineNum);
+                    }
+                });
+                
+                // Add click handlers for code lines in modal
+                codeElement.addEventListener('click', function(e) {
+                    const rect = codeElement.getBoundingClientRect();
+                    const y = e.clientY - rect.top;
+                    const lineHeight = 21; // Fixed line height
+                    const lineNum = Math.floor(y / lineHeight) + 1;
+                    if (lineNum >= 1 && lineNum <= lines.length) {
+                        highlightModalLine(lineNum);
+                    }
+                });
+            }
+        }
+        
+        function highlightModalLine(lineNum) {
+            // Remove previous active class in modal
+            document.querySelectorAll('#modalLineNumbers .line-number.active').forEach(el => {
+                el.classList.remove('active');
+            });
+            
+            // Add active class to clicked line in modal
+            const lineElement = document.querySelector(`#modalLineNumbers .line-number[data-line="${lineNum}"]`);
+            if (lineElement) {
+                lineElement.classList.add('active');
             }
         }
         
@@ -705,7 +842,14 @@ if __name__ == "__main__":
                 // Generate code
                 generateCode();
                 // Close modal
-                closeModal();
+                closeModalWindow();
+            }
+        }
+        
+        function closeModalWindow() {
+            const modalElement = document.getElementById('modal-overlay');
+            if (modalElement) {
+                document.body.removeChild(modalElement);
             }
         }
         
@@ -713,10 +857,16 @@ if __name__ == "__main__":
             document.getElementById('codeInput').value = '';
             document.getElementById('codeOutput').classList.remove('hidden');
             document.getElementById('codeContent').classList.add('hidden');
+            document.getElementById('mainCodeButtons').classList.add('hidden');
         }
         
         function downloadCode() {
             const code = document.getElementById('generatedCode').textContent;
+            
+            if (!code.trim()) {
+                return; // Don't download if no code
+            }
+            
             const blob = new Blob([code], { type: 'text/plain' });
             const url = window.URL.createObjectURL(blob);
             const a = document.createElement('a');
@@ -737,20 +887,117 @@ if __name__ == "__main__":
             const codeElement = document.getElementById('generatedCode');
             const text = codeElement.textContent;
             
-            navigator.clipboard.writeText(text).then(() => {
-                const button = event.target;
-                const originalText = button.textContent;
-                button.textContent = 'Copied!';
-                button.classList.add('bg-green-200', 'text-green-800');
+            if (!text.trim()) {
+                return; // Don't copy if no code
+            }
+            
+            // Use the most reliable method
+            try {
+                // Create a temporary textarea element
+                const textArea = document.createElement('textarea');
+                textArea.value = text;
+                textArea.style.position = 'fixed';
+                textArea.style.left = '-999999px';
+                textArea.style.top = '-999999px';
+                textArea.style.opacity = '0';
+                document.body.appendChild(textArea);
                 
-                setTimeout(() => {
-                    button.textContent = originalText;
-                    button.classList.remove('bg-green-200', 'text-green-800');
-                }, 2000);
-            }).catch(err => {
-                console.error('Failed to copy code: ', err);
-                alert('Failed to copy code. Please select and copy manually.');
-            });
+                // Select and copy
+                textArea.select();
+                textArea.setSelectionRange(0, text.length);
+                
+                const successful = document.execCommand('copy');
+                document.body.removeChild(textArea);
+                
+                if (successful) {
+                    const button = event.target;
+                    const originalText = button.textContent;
+                    button.textContent = 'Copied!';
+                    button.classList.add('bg-green-200', 'text-green-800');
+                    
+                    setTimeout(() => {
+                        button.textContent = originalText;
+                        button.classList.remove('bg-green-200', 'text-green-800');
+                    }, 2000);
+                } else {
+                    throw new Error('Copy command failed');
+                }
+            } catch (err) {
+                console.error('Copy failed: ', err);
+                // Try modern API as fallback
+                if (navigator.clipboard && window.isSecureContext) {
+                    navigator.clipboard.writeText(text).then(() => {
+                        const button = event.target;
+                        const originalText = button.textContent;
+                        button.textContent = 'Copied!';
+                        button.classList.add('bg-green-200', 'text-green-800');
+                        
+                        setTimeout(() => {
+                            button.textContent = originalText;
+                            button.classList.remove('bg-green-200', 'text-green-800');
+                        }, 2000);
+                    }).catch(err2 => {
+                        console.error('Clipboard API also failed: ', err2);
+                        alert('Failed to copy code. Please select and copy manually.');
+                    });
+                } else {
+                    alert('Failed to copy code. Please select and copy manually.');
+                }
+            }
+        }
+        
+        function fallbackCopyTextToClipboard(text) {
+            const textArea = document.createElement("textarea");
+            textArea.value = text;
+            textArea.style.position = "fixed";
+            textArea.style.left = "-999999px";
+            textArea.style.top = "-999999px";
+            textArea.style.opacity = "0";
+            document.body.appendChild(textArea);
+            textArea.focus();
+            textArea.select();
+            
+            try {
+                const successful = document.execCommand('copy');
+                if (successful) {
+                    const button = event.target;
+                    const originalText = button.textContent;
+                    button.textContent = 'Copied!';
+                    button.classList.add('bg-green-200', 'text-green-800');
+                    
+                    setTimeout(() => {
+                        button.textContent = originalText;
+                        button.classList.remove('bg-green-200', 'text-green-800');
+                    }, 2000);
+                } else {
+                    throw new Error('Copy command failed');
+                }
+            } catch (err) {
+                console.error('Fallback copy failed: ', err);
+                // Try alternative method
+                try {
+                    textArea.setSelectionRange(0, text.length);
+                    const successful = document.execCommand('copy');
+                    if (successful) {
+                        const button = event.target;
+                        const originalText = button.textContent;
+                        button.textContent = 'Copied!';
+                        button.classList.add('bg-green-200', 'text-green-800');
+                        
+                        setTimeout(() => {
+                            button.textContent = originalText;
+                            button.classList.remove('bg-green-200', 'text-green-800');
+                        }, 2000);
+                    } else {
+                        throw new Error('Alternative copy failed');
+                    }
+                } catch (err2) {
+                    console.error('Alternative copy failed: ', err2);
+                    alert('Failed to copy code. Please select and copy manually.');
+                }
+            } finally {
+                document.body.removeChild(textArea);
+            }
         }
         
         // Add Enter key support for input (Ctrl+Enter for textarea)
