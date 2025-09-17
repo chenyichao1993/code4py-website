@@ -91,7 +91,7 @@
             <div class="flex justify-between items-center h-16">
                 <!-- Logo -->
                 <div class="flex items-center">
-                    <div class="flex-shrink-0 flex items-center">
+                    <div class="flex-shrink-0 flex items-center cursor-pointer" onclick="scrollToTop()">
                         <div class="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg flex items-center justify-center mr-3">
                             <span class="text-white font-bold text-lg">C</span>
                         </div>
@@ -106,6 +106,7 @@
                         <a href="#how-it-works" class="text-gray-700 hover:text-blue-600 px-3 py-2 text-sm font-medium transition-colors">How It Works</a>
                         <a href="#pricing" class="text-gray-700 hover:text-blue-600 px-3 py-2 text-sm font-medium transition-colors">Pricing</a>
                         <a href="#faq" class="text-gray-700 hover:text-blue-600 px-3 py-2 text-sm font-medium transition-colors">FAQ</a>
+                        <a href="mailto:motionjoy93@gmail.com" class="text-gray-700 hover:text-blue-600 px-3 py-2 text-sm font-medium transition-colors">Contact</a>
                     </div>
                 </div>
                 
@@ -133,6 +134,7 @@
                     <a href="#how-it-works" class="text-gray-700 hover:text-blue-600 block px-3 py-2 text-base font-medium">How It Works</a>
                     <a href="#pricing" class="text-gray-700 hover:text-blue-600 block px-3 py-2 text-base font-medium">Pricing</a>
                     <a href="#faq" class="text-gray-700 hover:text-blue-600 block px-3 py-2 text-base font-medium">FAQ</a>
+                    <a href="mailto:motionjoy93@gmail.com" class="text-gray-700 hover:text-blue-600 block px-3 py-2 text-base font-medium">Contact</a>
                     <button class="w-full bg-gradient-to-r from-blue-500 to-blue-600 text-white px-6 py-2 rounded-lg font-medium mt-4">
                         Try Free
                     </button>
@@ -422,7 +424,7 @@ e.g., Create a function to calculate fibonacci numbers"
     <footer class="bg-gray-900 text-white py-8">
         <div class="max-w-4xl mx-auto px-4 text-center">
             <p class="text-gray-400">
-                © 2024 AI Python Code Generator. Free tool for developers worldwide.
+                © <span id="currentYear">2024</span> AI Python Code Generator. Free tool for developers worldwide.
             </p>
         </div>
     </footer>
@@ -449,7 +451,7 @@ e.g., Create a function to calculate fibonacci numbers"
             const mainCodeButtons = document.getElementById('mainCodeButtons');
             
             if (!input) {
-                alert('Please enter a task description');
+                showCustomAlert('Please enter a task description');
                 return;
             }
             
@@ -726,14 +728,17 @@ if __name__ == "__main__":
         
         function generateCodeFromModal() {
             const modalInput = document.getElementById('modalCodeInput').value.trim();
-            if (modalInput) {
-                // Copy to main input
-                document.getElementById('codeInput').value = modalInput;
-                // Generate code
-                generateCode();
-                // Close modal
-                closeModalWindow();
+            if (!modalInput) {
+                showCustomAlert('Please enter a task description');
+                return;
             }
+            
+            // Copy to main input
+            document.getElementById('codeInput').value = modalInput;
+            // Generate code
+            generateCode();
+            // Close modal
+            closeModalWindow();
         }
         
         function closeModalWindow() {
@@ -898,6 +903,15 @@ if __name__ == "__main__":
             }
         });
         
+        // Update current year dynamically
+        document.addEventListener('DOMContentLoaded', function() {
+            const currentYear = new Date().getFullYear();
+            const yearElement = document.getElementById('currentYear');
+            if (yearElement) {
+                yearElement.textContent = currentYear;
+            }
+        });
+        
         // Back to top functionality
         function scrollToTop() {
             window.scrollTo({
@@ -921,6 +935,56 @@ if __name__ == "__main__":
                     inputField.focus();
                 }
             }, 100);
+        }
+        
+        // Custom alert modal
+        function showCustomAlert(message) {
+            // Create modal overlay
+            const modal = document.createElement('div');
+            modal.className = 'fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4';
+            modal.id = 'alert-modal';
+            
+            modal.innerHTML = `
+                <div class="bg-white rounded-lg shadow-xl max-w-md w-full p-6">
+                    <div class="flex items-center mb-4">
+                        <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center mr-3">
+                            <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
+                            </svg>
+                        </div>
+                        <h3 class="text-lg font-semibold text-gray-900">Notice</h3>
+                    </div>
+                    <p class="text-gray-600 mb-6">${message}</p>
+                    <div class="flex justify-end">
+                        <button onclick="closeCustomAlert()" class="bg-blue-600 text-white px-6 py-2 rounded-lg font-medium hover:bg-blue-700 transition-colors">
+                            OK
+                        </button>
+                    </div>
+                </div>
+            `;
+            
+            document.body.appendChild(modal);
+            
+            // Close on background click
+            modal.addEventListener('click', function(e) {
+                if (e.target === modal) {
+                    closeCustomAlert();
+                }
+            });
+            
+            // Close on Escape key
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape') {
+                    closeCustomAlert();
+                }
+            });
+        }
+        
+        function closeCustomAlert() {
+            const modalElement = document.getElementById('alert-modal');
+            if (modalElement) {
+                document.body.removeChild(modalElement);
+            }
         }
         
         // Show/hide back to top button based on scroll position
