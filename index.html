@@ -898,6 +898,19 @@ if __name__ == "__main__":
             mobileMenu.classList.toggle('hidden');
         }
         
+        // Close mobile menu when clicking outside
+        document.addEventListener('click', function(event) {
+            const mobileMenu = document.getElementById('mobile-menu');
+            const mobileMenuButton = event.target.closest('[onclick="toggleMobileMenu()"]');
+            
+            // If mobile menu is open and click is not on menu button or inside menu
+            if (!mobileMenu.classList.contains('hidden') && 
+                !mobileMenuButton && 
+                !mobileMenu.contains(event.target)) {
+                mobileMenu.classList.add('hidden');
+            }
+        });
+        
         function copyCode() {
             const codeElement = document.getElementById('generatedCode');
             const text = codeElement.textContent;
