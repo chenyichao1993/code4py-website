@@ -951,3 +951,772 @@ Lines added: 1, lines removed: 1
 
 ---
 
+_**User (2025-09-18 13:08Z)**_
+
+你有什么办法让右边只有上下拖动，没有左右拖动，要保证代码完整展示 ，不会被挡住，你先给方案，暂时不要修改代码
+
+---
+
+_**Assistant**_
+
+```thinking
+用户想要让右边的代码区域只有上下滚动（垂直滚动），没有左右滚动（水平滚动），同时要保证代码完整展示，不会被挡住。
+
+这是一个常见的代码显示问题。当代码行很长时，如果容器宽度不够，就会出现水平滚动条，或者代码被截断。
+
+有几种解决方案：
+
+1. **自动换行**：让长代码行自动换行，这样就不需要水平滚动
+2. **增加容器宽度**：让代码容器更宽，能容纳更长的代码行
+3. **字体大小调整**：使用更小的字体，让更多内容能在一行显示
+4. **代码格式化**：确保代码格式良好，避免过长的行
+5. **响应式设计**：在不同屏幕尺寸下调整显示方式
+
+让我分析一下当前的设置：
+- 当前使用的是 `overflow-auto`，这意味着当内容超出时会显示滚动条
+- 代码使用了 `white-space: pre-wrap` 和 `word-wrap: break-word`
+- 字体是 `Courier New` monospace，14px
+
+最好的方案应该是：
+1. 保持 `overflow-y: auto` 和 `overflow-x: hidden`，只允许垂直滚动
+2. 确保代码能够自动换行
+3. 可能需要调整字体大小或行高
+4. 确保容器宽度足够
+</thinking>
+
+我理解您的需求！您希望右边的代码区域只有垂直滚动，没有水平滚动，同时保证代码完整显示。我有几个方案：
+
+## 方案1：纯垂直滚动 + 自动换行（推荐）
+- 设置 `overflow-y: auto` 和 `overflow-x: hidden`
+- 确保代码能够自动换行（当前已有 `white-space: pre-wrap`）
+- 调整字体大小，让更多内容能在一行显示
+
+## 方案2：增加容器宽度
+- 保持当前滚动设置
+- 增加代码容器的宽度，让长代码行能完整显示
+- 可能需要调整整体布局的响应式设计
+
+## 方案3：智能字体调整
+- 根据代码内容动态调整字体大小
+- 长代码行较多时使用较小字体
+- 短代码行较多时使用正常字体
+
+## 方案4：代码格式化优化
+- 确保所有示例代码都格式良好
+- 避免过长的代码行
+- 在适当位置换行
+
+## 我的推荐：
+**方案1** 是最佳选择，因为：
+- 用户体验最好（只有垂直滚动）
+- 代码始终完整可见
+- 响应式友好
+- 实现简单
+
+具体实现：
+1. 修改CSS为 `overflow-y: auto; overflow-x: hidden`
+2. 保持 `white-space: pre-wrap` 确保自动换行
+3. 可能需要微调字体大小（比如从14px改为13px）
+
+您觉得哪个方案比较合适？我可以根据您的选择来实现。
+
+---
+
+_**User (2025-09-18 13:08Z)**_
+
+我觉得方案2吧，你先回复方案2具体怎么修改，暂时不修改代码
+
+---
+
+_**Assistant**_
+
+```thinking
+用户选择了方案2：增加容器宽度。我需要详细说明这个方案的具体实现方法，但不修改代码。
+
+方案2的核心是增加代码容器的宽度，让长代码行能完整显示，避免水平滚动。
+
+让我分析当前的布局：
+- 当前使用的是 `grid lg:grid-cols-2 gap-8`，这意味着在大屏幕上，左右两列各占50%的宽度
+- 代码容器在右边列内，受到右边列宽度的限制
+- 需要增加右边列的宽度，或者调整整体布局
+
+具体的方法有几种：
+1. 调整Grid布局的比例，比如让右边列更宽
+2. 增加整体容器的最大宽度
+3. 调整左右两列的比例分配
+4. 在特定屏幕尺寸下使用不同的布局
+
+我需要详细说明这些方法。
+```
+
+好的！方案2的具体实现方法如下：
+
+## 方案2：增加容器宽度 - 具体修改方案
+
+### 方法1：调整Grid布局比例（推荐）
+**当前设置：** `grid lg:grid-cols-2`（左右各占50%）
+**修改为：** `grid lg:grid-cols-5` + 调整列宽分配
+- 左边列：`lg:col-span-2`（占40%宽度）
+- 右边列：`lg:col-span-3`（占60%宽度）
+
+### 方法2：增加整体容器最大宽度
+**当前设置：** `max-w-7xl`（约1280px）
+**修改为：** `max-w-8xl`（约1408px）或 `max-w-full`（无限制）
+
+### 方法3：调整响应式断点
+**当前设置：** `lg:grid-cols-2`（大屏幕时2列）
+**修改为：** 
+- 小屏幕：`grid-cols-1`（单列）
+- 中屏幕：`md:grid-cols-3`（左边1列，右边2列）
+- 大屏幕：`lg:grid-cols-5`（左边2列，右边3列）
+
+### 方法4：使用Flexbox替代Grid
+**当前设置：** `grid lg:grid-cols-2`
+**修改为：** `flex flex-col lg:flex-row`
+- 左边列：`lg:w-2/5`（40%宽度）
+- 右边列：`lg:w-3/5`（60%宽度）
+
+## 我的推荐组合：
+**方法1 + 方法2**：
+1. 使用 `grid lg:grid-cols-5`
+2. 左边列：`lg:col-span-2`
+3. 右边列：`lg:col-span-3`
+4. 整体容器：`max-w-8xl`
+
+这样既增加了右边列的宽度，又保持了整体布局的平衡。
+
+您觉得这个方案如何？需要我详细说明某个方法的实现细节吗？
+
+---
+
+_**User (2025-09-18 13:08Z)**_
+
+可以
+
+---
+
+_**Assistant**_
+
+```thinking
+用户说"可以"，表示同意我推荐的方案（方法1 + 方法2）。现在我需要实现这个方案：
+
+1. 使用 `grid lg:grid-cols-5`
+2. 左边列：`lg:col-span-2`
+3. 右边列：`lg:col-span-3`
+4. 整体容器：`max-w-8xl`
+
+我需要修改HTML中的相关部分：
+1. 修改Grid布局从 `grid lg:grid-cols-2` 改为 `grid lg:grid-cols-5`
+2. 给左边列添加 `lg:col-span-2`
+3. 给右边列添加 `lg:col-span-3`
+4. 修改容器最大宽度从 `max-w-7xl` 改为 `max-w-8xl`
+
+让我开始实现这些修改。
+```
+
+好的！我现在来实现方案2的具体修改：
+
+
+---
+
+<details><summary>Edit file: index.html</summary>
+
+undefined
+
+**Chunk 1**
+Lines added: 1, lines removed: 1
+
+```diff
+@@ -350,5 +350,5 @@
+      <!-- Code Examples Section -->
+      <section class="py-20 bg-gradient-to-br from-blue-50 to-indigo-100">
+-         <div class="max-w-7xl mx-auto px-4">
++         <div class="max-w-8xl mx-auto px-4">
+              <h2 class="text-3xl font-bold text-center text-gray-900 mb-12">
+                  See Example Projects
+```
+
+</details>
+
+---
+
+<details><summary>Edit file: index.html</summary>
+
+undefined
+
+**Chunk 1**
+Lines added: 1, lines removed: 1
+
+```diff
+@@ -355,5 +355,5 @@
+              </h2>
+              
+-             <div class="grid lg:grid-cols-2 gap-8 items-stretch">
++             <div class="grid lg:grid-cols-5 gap-8 items-stretch">
+                  <!-- Left Panel - Example List -->
+                  <div class="bg-white rounded-lg shadow-lg p-6 flex flex-col h-[32rem]">
+```
+
+</details>
+
+---
+
+<details><summary>Edit file: index.html</summary>
+
+undefined
+
+**Chunk 1**
+Lines added: 1, lines removed: 1
+
+```diff
+@@ -357,5 +357,5 @@
+              <div class="grid lg:grid-cols-5 gap-8 items-stretch">
+                  <!-- Left Panel - Example List -->
+-                 <div class="bg-white rounded-lg shadow-lg p-6 flex flex-col h-[32rem]">
++                 <div class="bg-white rounded-lg shadow-lg p-6 flex flex-col h-[32rem] lg:col-span-2">
+                      <div class="flex-1 flex flex-col justify-between space-y-6">
+                          <div class="example-item p-4 border border-gray-200 rounded-lg cursor-pointer hover:bg-blue-50 hover:border-blue-300 transition-all active" onclick="showExample('natural-language')">
+```
+
+</details>
+
+---
+
+<details><summary>Edit file: index.html</summary>
+
+undefined
+
+**Chunk 1**
+Lines added: 1, lines removed: 1
+
+```diff
+@@ -382,5 +382,5 @@
+                  
+                  <!-- Right Panel - Code Display -->
+-                 <div class="bg-white rounded-lg shadow-lg p-6 flex flex-col h-[32rem]">
++                 <div class="bg-white rounded-lg shadow-lg p-6 flex flex-col h-[32rem] lg:col-span-3">
+                      <div id="exampleCodeDisplay" class="bg-gray-900 rounded-lg p-4 overflow-auto flex-1">
+                          <pre class="code-display">import requests
+```
+
+</details>
+
+---
+
+完成！我已经实现了方案2的所有修改：
+
+## 修改内容：
+
+1. **增加整体容器宽度**：
+   - 从 `max-w-7xl` 改为 `max-w-8xl`（约1408px）
+
+2. **调整Grid布局**：
+   - 从 `grid lg:grid-cols-2` 改为 `grid lg:grid-cols-5`
+
+3. **重新分配列宽**：
+   - 左边列：添加 `lg:col-span-2`（占40%宽度）
+   - 右边列：添加 `lg:col-span-3`（占60%宽度）
+
+## 效果：
+
+- **右边列更宽**：现在占60%的宽度，比之前的50%多了20%
+- **代码显示更完整**：长代码行有更多空间显示，减少水平滚动
+- **整体布局平衡**：左边列仍然有足够空间显示4个示例项目
+- **响应式友好**：在小屏幕上仍然保持单列布局
+
+现在右边的代码区域应该有足够的宽度来完整显示代码，大大减少水平滚动的需要！
+
+---
+
+_**User (2025-09-18 13:08Z)**_
+
+现在又太宽了，而且移动端显示有问题，没有响应式设计
+
+---
+
+_**Assistant**_
+
+```thinking
+用户说现在又太宽了，而且移动端显示有问题，没有响应式设计。从图片描述来看，确实现在右边列（代码显示区域）变得很宽，这在移动端会有问题。
+
+我需要：
+1. 调整宽度，让它不要那么宽
+2. 添加响应式设计，确保在移动端能正常显示
+3. 可能需要调整Grid布局的响应式断点
+
+当前的设置是：
+- 大屏幕：`grid lg:grid-cols-5`，左边占2列，右边占3列
+- 整体容器：`max-w-8xl`
+
+问题：
+1. 在大屏幕上太宽了
+2. 没有针对中等屏幕和小屏幕的响应式设计
+3. 移动端可能显示不正常
+
+我需要：
+1. 调整大屏幕的宽度比例
+2. 添加中等屏幕的响应式设计
+3. 确保移动端是单列布局
+4. 可能需要调整整体容器的最大宽度
+</thinking>
+
+您说得对！现在确实太宽了，而且缺少响应式设计。让我重新调整布局，让它既不会太宽，又有良好的响应式设计。
+
+## 问题分析：
+1. **太宽**：右边列占60%在大屏幕上确实过宽
+2. **缺少响应式**：没有针对不同屏幕尺寸的适配
+3. **移动端问题**：小屏幕上可能显示异常
+
+## 解决方案：
+1. **调整宽度比例**：改为更合理的比例（比如左边35%，右边65%）
+2. **添加响应式断点**：
+   - 小屏幕（手机）：单列布局
+   - 中等屏幕（平板）：调整比例
+   - 大屏幕（桌面）：优化比例
+3. **调整容器宽度**：使用更合适的最大宽度
+
+让我实现这些修改：
+
+
+---
+
+<details><summary>Edit file: index.html</summary>
+
+undefined
+
+**Chunk 1**
+Lines added: 1, lines removed: 1
+
+```diff
+@@ -350,5 +350,5 @@
+      <!-- Code Examples Section -->
+      <section class="py-20 bg-gradient-to-br from-blue-50 to-indigo-100">
+-         <div class="max-w-8xl mx-auto px-4">
++         <div class="max-w-7xl mx-auto px-4">
+              <h2 class="text-3xl font-bold text-center text-gray-900 mb-12">
+                  See Example Projects
+```
+
+</details>
+
+---
+
+<details><summary>Edit file: index.html</summary>
+
+undefined
+
+**Chunk 1**
+Lines added: 1, lines removed: 1
+
+```diff
+@@ -355,5 +355,5 @@
+              </h2>
+              
+-             <div class="grid lg:grid-cols-5 gap-8 items-stretch">
++             <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4 md:gap-6 lg:gap-8 items-stretch">
+                  <!-- Left Panel - Example List -->
+                  <div class="bg-white rounded-lg shadow-lg p-6 flex flex-col h-[32rem] lg:col-span-2">
+```
+
+</details>
+
+---
+
+<details><summary>Edit file: index.html</summary>
+
+undefined
+
+**Chunk 1**
+Lines added: 1, lines removed: 1
+
+```diff
+@@ -357,5 +357,5 @@
+              <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4 md:gap-6 lg:gap-8 items-stretch">
+                  <!-- Left Panel - Example List -->
+-                 <div class="bg-white rounded-lg shadow-lg p-6 flex flex-col h-[32rem] lg:col-span-2">
++                 <div class="bg-white rounded-lg shadow-lg p-4 md:p-6 flex flex-col h-[28rem] md:h-[32rem] md:col-span-1 lg:col-span-2">
+                      <div class="flex-1 flex flex-col justify-between space-y-6">
+                          <div class="example-item p-4 border border-gray-200 rounded-lg cursor-pointer hover:bg-blue-50 hover:border-blue-300 transition-all active" onclick="showExample('natural-language')">
+```
+
+</details>
+
+---
+
+<details><summary>Edit file: index.html</summary>
+
+undefined
+
+**Chunk 1**
+Lines added: 1, lines removed: 1
+
+```diff
+@@ -382,5 +382,5 @@
+                  
+                  <!-- Right Panel - Code Display -->
+-                 <div class="bg-white rounded-lg shadow-lg p-6 flex flex-col h-[32rem] lg:col-span-3">
++                 <div class="bg-white rounded-lg shadow-lg p-4 md:p-6 flex flex-col h-[28rem] md:h-[32rem] md:col-span-2 lg:col-span-3">
+                      <div id="exampleCodeDisplay" class="bg-gray-900 rounded-lg p-4 overflow-auto flex-1">
+                          <pre class="code-display">import requests
+```
+
+</details>
+
+---
+
+完成！我已经实现了完整的响应式设计：
+
+## 修改内容：
+
+### 1. **响应式Grid布局**：
+- **小屏幕（手机）**：`grid-cols-1` - 单列布局
+- **中等屏幕（平板）**：`md:grid-cols-3` - 3列布局
+- **大屏幕（桌面）**：`lg:grid-cols-5` - 5列布局
+
+### 2. **响应式列宽分配**：
+- **小屏幕**：单列，全宽显示
+- **中等屏幕**：左边1列，右边2列（33% : 67%）
+- **大屏幕**：左边2列，右边3列（40% : 60%）
+
+### 3. **响应式间距**：
+- **小屏幕**：`gap-4`（16px）
+- **中等屏幕**：`md:gap-6`（24px）
+- **大屏幕**：`lg:gap-8`（32px）
+
+### 4. **响应式内边距**：
+- **小屏幕**：`p-4`（16px）
+- **中等屏幕及以上**：`md:p-6`（24px）
+
+### 5. **响应式高度**：
+- **小屏幕**：`h-[28rem]`（448px）
+- **中等屏幕及以上**：`md:h-[32rem]`（512px）
+
+### 6. **恢复容器宽度**：
+- 从 `max-w-8xl` 改回 `max-w-7xl`，避免过宽
+
+## 效果：
+- **移动端**：单列布局，内容垂直堆叠
+- **平板端**：适中的两列布局
+- **桌面端**：优化的两列布局，不会过宽
+- **代码显示**：在所有尺寸下都能完整显示，减少水平滚动
+
+现在应该既不会太宽，又有良好的响应式设计了！
+
+---
+
+_**User (2025-09-18 13:08Z)**_
+
+第四个在电脑端显示有问题，超出区域了
+
+---
+
+_**Assistant**_
+
+```thinking
+用户说第四个示例项目（Code Debugging）在电脑端显示有问题，超出区域了。这意味着左边列的高度可能不够，导致第4个项目被截断或者显示不完整。
+
+我需要检查当前的设置：
+- 左边列高度：`h-[28rem] md:h-[32rem]`
+- 布局：`flex flex-col justify-between space-y-6`
+
+问题可能是：
+1. 高度不够
+2. 间距太大
+3. 内容太多
+
+我需要调整左边列的高度或者间距，确保4个示例项目都能完整显示。
+</thinking>
+
+我明白了！第4个示例项目（Code Debugging）在电脑端被截断了。让我调整左边列的高度，确保4个示例项目都能完整显示。
+
+
+---
+
+<details><summary>Edit file: index.html</summary>
+
+undefined
+
+**Chunk 1**
+Lines added: 1, lines removed: 1
+
+```diff
+@@ -357,5 +357,5 @@
+              <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4 md:gap-6 lg:gap-8 items-stretch">
+                  <!-- Left Panel - Example List -->
+-                 <div class="bg-white rounded-lg shadow-lg p-4 md:p-6 flex flex-col h-[28rem] md:h-[32rem] md:col-span-1 lg:col-span-2">
++                 <div class="bg-white rounded-lg shadow-lg p-4 md:p-6 flex flex-col h-[32rem] md:h-[36rem] md:col-span-1 lg:col-span-2">
+                      <div class="flex-1 flex flex-col justify-between space-y-6">
+                          <div class="example-item p-4 border border-gray-200 rounded-lg cursor-pointer hover:bg-blue-50 hover:border-blue-300 transition-all active" onclick="showExample('natural-language')">
+```
+
+</details>
+
+---
+
+现在让我也调整右边列的高度，保持与左边列一致：
+
+
+---
+
+<details><summary>Edit file: index.html</summary>
+
+undefined
+
+**Chunk 1**
+Lines added: 1, lines removed: 1
+
+```diff
+@@ -382,5 +382,5 @@
+                  
+                  <!-- Right Panel - Code Display -->
+-                 <div class="bg-white rounded-lg shadow-lg p-4 md:p-6 flex flex-col h-[28rem] md:h-[32rem] md:col-span-2 lg:col-span-3">
++                 <div class="bg-white rounded-lg shadow-lg p-4 md:p-6 flex flex-col h-[32rem] md:h-[36rem] md:col-span-2 lg:col-span-3">
+                      <div id="exampleCodeDisplay" class="bg-gray-900 rounded-lg p-4 overflow-auto flex-1">
+                          <pre class="code-display">import requests
+```
+
+</details>
+
+---
+
+完成！我已经调整了高度设置：
+
+## 修改内容：
+
+### **增加高度**：
+- **小屏幕**：从 `h-[28rem]` 改为 `h-[32rem]`（从448px增加到512px）
+- **中等屏幕及以上**：从 `md:h-[32rem]` 改为 `md:h-[36rem]`（从512px增加到576px）
+
+### **效果**：
+- **左边列**：现在有足够的高度让4个示例项目完整显示
+- **右边列**：保持与左边列相同的高度
+- **响应式**：在不同屏幕尺寸下都有合适的高度
+
+现在第4个示例项目（Code Debugging）应该能在电脑端完整显示，不会被截断了！
+
+---
+
+_**User (2025-09-18 13:08Z)**_
+
+但是手机端也超出了
+
+---
+
+_**Assistant**_
+
+```thinking
+用户说手机端也超出了，从图片描述来看，在iPhone XR模拟器下，第4个示例项目（Code Debugging）仍然被截断了。
+
+问题是我之前设置的高度：
+- 小屏幕：`h-[32rem]`（512px）
+- 中等屏幕及以上：`md:h-[36rem]`（576px）
+
+但是在手机端，512px可能还是不够。我需要进一步增加小屏幕的高度，或者调整布局方式。
+
+让我增加小屏幕的高度，确保在手机端也能完整显示4个示例项目。
+</thinking>
+
+我看到问题了！在手机端（iPhone XR模拟器）下，第4个示例项目仍然被截断。让我进一步增加小屏幕的高度：
+
+
+---
+
+<details><summary>Edit file: index.html</summary>
+
+undefined
+
+**Chunk 1**
+Lines added: 1, lines removed: 1
+
+```diff
+@@ -357,5 +357,5 @@
+              <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4 md:gap-6 lg:gap-8 items-stretch">
+                  <!-- Left Panel - Example List -->
+-                 <div class="bg-white rounded-lg shadow-lg p-4 md:p-6 flex flex-col h-[32rem] md:h-[36rem] md:col-span-1 lg:col-span-2">
++                 <div class="bg-white rounded-lg shadow-lg p-4 md:p-6 flex flex-col h-[36rem] md:h-[40rem] md:col-span-1 lg:col-span-2">
+                      <div class="flex-1 flex flex-col justify-between space-y-6">
+                          <div class="example-item p-4 border border-gray-200 rounded-lg cursor-pointer hover:bg-blue-50 hover:border-blue-300 transition-all active" onclick="showExample('natural-language')">
+```
+
+</details>
+
+---
+
+现在也调整右边列的高度：
+
+
+---
+
+<details><summary>Edit file: index.html</summary>
+
+undefined
+
+**Chunk 1**
+Lines added: 1, lines removed: 1
+
+```diff
+@@ -382,5 +382,5 @@
+                  
+                  <!-- Right Panel - Code Display -->
+-                 <div class="bg-white rounded-lg shadow-lg p-4 md:p-6 flex flex-col h-[32rem] md:h-[36rem] md:col-span-2 lg:col-span-3">
++                 <div class="bg-white rounded-lg shadow-lg p-4 md:p-6 flex flex-col h-[36rem] md:h-[40rem] md:col-span-2 lg:col-span-3">
+                      <div id="exampleCodeDisplay" class="bg-gray-900 rounded-lg p-4 overflow-auto flex-1">
+                          <pre class="code-display">import requests
+```
+
+</details>
+
+---
+
+完成！我已经进一步增加了高度：
+
+## 修改内容：
+
+### **增加高度**：
+- **小屏幕（手机）**：从 `h-[32rem]` 改为 `h-[36rem]`（从512px增加到576px）
+- **中等屏幕及以上**：从 `md:h-[36rem]` 改为 `md:h-[40rem]`（从576px增加到640px）
+
+### **效果**：
+- **手机端**：现在有576px的高度，应该足够显示4个示例项目
+- **平板端**：640px的高度，更加宽松
+- **桌面端**：同样640px的高度，保持一致性
+
+现在在iPhone XR等手机设备上，第4个示例项目（Code Debugging）应该能完整显示，不会再被截断了！
+
+---
+
+_**User (2025-09-18 13:08Z)**_
+
+电脑端左边4个标签之间的间距又太大了，显示不美观也不合理；右边的宽度可以稍微大一些
+
+---
+
+_**Assistant**_
+
+```thinking
+用户反馈了两个问题：
+1. 电脑端左边4个标签之间的间距太大了，显示不美观也不合理
+2. 右边的宽度可以稍微大一些
+
+我需要：
+1. 减少左边列4个示例项目之间的间距
+2. 调整左右两列的宽度比例，让右边列更宽一些
+
+当前的设置：
+- 左边列：`lg:col-span-2`（40%）
+- 右边列：`lg:col-span-3`（60%）
+- 间距：`space-y-6`
+
+我可以：
+1. 减少间距，比如从 `space-y-6` 改为 `space-y-4` 或 `space-y-3`
+2. 调整列宽比例，比如改为 `lg:col-span-1` 和 `lg:col-span-4`，或者使用其他比例
+</thinking>
+
+您说得对！让我调整这两个问题：
+
+1. **减少左边4个标签之间的间距**
+2. **增加右边列的宽度**
+
+
+---
+
+<details><summary>Edit file: index.html</summary>
+
+undefined
+
+**Chunk 1**
+Lines added: 1, lines removed: 1
+
+```diff
+@@ -358,5 +358,5 @@
+                  <!-- Left Panel - Example List -->
+                  <div class="bg-white rounded-lg shadow-lg p-4 md:p-6 flex flex-col h-[36rem] md:h-[40rem] md:col-span-1 lg:col-span-2">
+-                     <div class="flex-1 flex flex-col justify-between space-y-6">
++                     <div class="flex-1 flex flex-col justify-between space-y-4">
+                          <div class="example-item p-4 border border-gray-200 rounded-lg cursor-pointer hover:bg-blue-50 hover:border-blue-300 transition-all active" onclick="showExample('natural-language')">
+                              <h4 class="font-semibold text-gray-900 mb-2">Natural Language to Code</h4>
+```
+
+</details>
+
+---
+
+现在调整左右两列的宽度比例，让右边列更宽：
+
+
+---
+
+<details><summary>Edit file: index.html</summary>
+
+undefined
+
+**Chunk 1**
+Lines added: 1, lines removed: 1
+
+```diff
+@@ -355,5 +355,5 @@
+              </h2>
+              
+-             <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4 md:gap-6 lg:gap-8 items-stretch">
++             <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-4 md:gap-6 lg:gap-8 items-stretch">
+                  <!-- Left Panel - Example List -->
+                  <div class="bg-white rounded-lg shadow-lg p-4 md:p-6 flex flex-col h-[36rem] md:h-[40rem] md:col-span-1 lg:col-span-2">
+```
+
+</details>
+
+---
+
+<details><summary>Edit file: index.html</summary>
+
+undefined
+
+**Chunk 1**
+Lines added: 1, lines removed: 1
+
+```diff
+@@ -382,5 +382,5 @@
+                  
+                  <!-- Right Panel - Code Display -->
+-                 <div class="bg-white rounded-lg shadow-lg p-4 md:p-6 flex flex-col h-[36rem] md:h-[40rem] md:col-span-2 lg:col-span-3">
++                 <div class="bg-white rounded-lg shadow-lg p-4 md:p-6 flex flex-col h-[36rem] md:h-[40rem] md:col-span-2 lg:col-span-4">
+                      <div id="exampleCodeDisplay" class="bg-gray-900 rounded-lg p-4 overflow-auto flex-1">
+                          <pre class="code-display">import requests
+```
+
+</details>
+
+---
+
+完成！我已经做了以下调整：
+
+## 修改内容：
+
+### 1. **减少左边标签间距**：
+- 从 `space-y-6` 改为 `space-y-4`
+- 减少了4个示例项目之间的垂直间距，让布局更紧凑美观
+
+### 2. **调整列宽比例**：
+- **Grid布局**：从 `lg:grid-cols-5` 改为 `lg:grid-cols-6`
+- **左边列**：保持 `lg:col-span-2`（占33%宽度）
+- **右边列**：从 `lg:col-span-3` 改为 `lg:col-span-4`（占67%宽度）
+
+## 效果：
+
+### **左边列**：
+- 4个示例项目之间的间距更合理，不会显得过于稀疏
+- 布局更紧凑美观
+
+### **右边列**：
+- 宽度从60%增加到67%，有更多空间显示代码
+- 长代码行有更好的显示效果
+- 减少水平滚动的需要
+
+### **整体布局**：
+- 左边33% : 右边67%的比例更加合理
+- 既保证了左边有足够空间显示4个标签，又让右边有更多空间显示代码
+
+现在布局应该更加美观和实用了！
+
+---
+
