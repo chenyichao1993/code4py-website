@@ -82,6 +82,30 @@
         #backToTopBtn:active {
             transform: translateY(0);
         }
+        
+        /* Example Items Styling */
+        .example-item.active {
+            background-color: #dbeafe;
+            border-color: #3b82f6;
+        }
+        
+        .example-item.active h4 {
+            color: #1d4ed8;
+        }
+        
+        /* Code Display Styling */
+        .code-display {
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            line-height: 1.5;
+            color: #e2e8f0;
+        }
+        
+        .code-display pre {
+            margin: 0;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
     </style>
 </head>
 <body class="bg-gray-50">
@@ -320,6 +344,54 @@ e.g., Create a function to calculate fibonacci numbers"
         </div>
     </section>
 
+    <!-- Code Examples Section -->
+    <section class="py-20 bg-gray-50">
+        <div class="max-w-7xl mx-auto px-4">
+            <h2 class="text-3xl font-bold text-center text-gray-900 mb-12">
+                See Example Projects
+            </h2>
+            
+            <div class="grid lg:grid-cols-2 gap-8">
+                <!-- Left Panel - Example List -->
+                <div class="bg-white rounded-lg shadow-lg p-6">
+                    <h3 class="text-xl font-semibold text-gray-900 mb-6">Try These Examples</h3>
+                    <div class="space-y-4">
+                        <div class="example-item p-4 border border-gray-200 rounded-lg cursor-pointer hover:bg-blue-50 hover:border-blue-300 transition-all" onclick="showExample('natural-language')">
+                            <h4 class="font-semibold text-gray-900 mb-2">Natural Language to Code</h4>
+                            <p class="text-sm text-gray-600">Scrape product prices from e-commerce websites and save to CSV file</p>
+                        </div>
+                        
+                        <div class="example-item p-4 border border-gray-200 rounded-lg cursor-pointer hover:bg-blue-50 hover:border-blue-300 transition-all" onclick="showExample('code-conversion')">
+                            <h4 class="font-semibold text-gray-900 mb-2">Code Conversion</h4>
+                            <p class="text-sm text-gray-600">Convert this Java class to Python: public class User { private String name; public User(String name) { this.name = name; } }</p>
+                        </div>
+                        
+                        <div class="example-item p-4 border border-gray-200 rounded-lg cursor-pointer hover:bg-blue-50 hover:border-blue-300 transition-all" onclick="showExample('code-explanation')">
+                            <h4 class="font-semibold text-gray-900 mb-2">Code Explanation</h4>
+                            <p class="text-sm text-gray-600">Explain what this Python code does: def fibonacci(n): return n if n <= 1 else fibonacci(n-1) + fibonacci(n-2)</p>
+                        </div>
+                        
+                        <div class="example-item p-4 border border-gray-200 rounded-lg cursor-pointer hover:bg-blue-50 hover:border-blue-300 transition-all" onclick="showExample('code-debugging')">
+                            <h4 class="font-semibold text-gray-900 mb-2">Code Debugging</h4>
+                            <p class="text-sm text-gray-600">Debug this Python code: def divide(a, b): return a / b # Why does this sometimes fail?</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Right Panel - Code Display -->
+                <div class="bg-white rounded-lg shadow-lg p-6">
+                    <h3 class="text-xl font-semibold text-gray-900 mb-6">Generated Code</h3>
+                    <div id="exampleCodeDisplay" class="bg-gray-900 rounded-lg p-4 overflow-auto max-h-96">
+                        <div class="text-gray-400 text-center py-8">
+                            <div class="text-4xl mb-2">💻</div>
+                            <p>Click an example on the left to see the generated Python code</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
     <!-- Pain Points Section -->
     <section class="py-20 bg-white">
         <div class="max-w-4xl mx-auto px-4 text-center">
@@ -418,12 +490,9 @@ e.g., Create a function to calculate fibonacci numbers"
                 Join thousands of developers who are already saving hours every day with our AI-powered code generation.
             </p>
             
-            <div class="flex flex-col sm:flex-row gap-4 justify-center">
+            <div class="flex justify-center">
                 <button onclick="scrollToCodeGenerator()" class="bg-white text-blue-600 px-8 py-4 text-lg font-semibold rounded-lg hover:bg-gray-100 transition-colors shadow-lg">
-                    Start Generating Python Code →
-                </button>
-                <button class="border-2 border-white text-white px-8 py-4 text-lg font-semibold rounded-lg hover:bg-white hover:text-blue-600 transition-colors">
-                    See Example Projects →
+                    Start Generating Python Code
                 </button>
             </div>
         </div>
@@ -994,6 +1063,258 @@ if __name__ == "__main__":
             if (modalElement) {
                 document.body.removeChild(modalElement);
             }
+        }
+        
+        // Example code data
+        const exampleCodes = {
+            'natural-language': `import requests
+from bs4 import BeautifulSoup
+import csv
+import time
+
+def scrape_product_prices(url, output_file='products.csv'):
+    """
+    Scrape product prices from e-commerce websites and save to CSV file.
+    """
+    headers = {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
+    }
+    
+    try:
+        response = requests.get(url, headers=headers)
+        response.raise_for_status()
+        
+        soup = BeautifulSoup(response.content, 'html.parser')
+        
+        # Find product elements (adjust selectors based on website)
+        products = soup.find_all(['div', 'article'], class_=['product', 'item'])
+        
+        with open(output_file, 'w', newline='', encoding='utf-8') as csvfile:
+            writer = csv.writer(csvfile)
+            writer.writerow(['Product Name', 'Price', 'Availability'])
+            
+            for product in products:
+                name_elem = product.find(['h2', 'h3', 'span'], class_=['name', 'title'])
+                price_elem = product.find(['span', 'div'], class_=['price', 'cost'])
+                
+                if name_elem and price_elem:
+                    name = name_elem.get_text(strip=True)
+                    price = price_elem.get_text(strip=True)
+                    writer.writerow([name, price, 'Available'])
+        
+        print(f"Scraped data saved to {output_file}")
+        
+    except Exception as e:
+        print(f"Error scraping website: {e}")
+
+# Example usage
+if __name__ == "__main__":
+    website_url = "https://example-ecommerce-site.com/products"
+    scrape_product_prices(website_url)`,
+            
+            'code-conversion': `class User:
+    """
+    Python equivalent of the Java User class.
+    """
+    def __init__(self, name):
+        self.name = name
+    
+    def get_name(self):
+        """Get the user's name."""
+        return self.name
+    
+    def set_name(self, name):
+        """Set the user's name."""
+        self.name = name
+    
+    def __str__(self):
+        """String representation of the User object."""
+        return f"User(name='{self.name}')"
+    
+    def __repr__(self):
+        """Developer representation of the User object."""
+        return f"User('{self.name}')"
+
+# Example usage
+if __name__ == "__main__":
+    # Create a new user
+    user = User("John Doe")
+    
+    # Access and modify the name
+    print(f"User name: {user.get_name()}")
+    user.set_name("Jane Smith")
+    print(f"Updated name: {user.get_name()}")
+    
+    # Python's property system (more Pythonic way)
+    print(f"String representation: {user}")`,
+            
+            'code-explanation': `def fibonacci(n):
+    """
+    Calculate the nth Fibonacci number using recursion.
+    
+    The Fibonacci sequence is: 0, 1, 1, 2, 3, 5, 8, 13, 21, 34, ...
+    Each number is the sum of the two preceding numbers.
+    
+    Args:
+        n (int): The position in the Fibonacci sequence (0-indexed)
+        
+    Returns:
+        int: The nth Fibonacci number
+        
+    Time Complexity: O(2^n) - Exponential time due to repeated calculations
+    Space Complexity: O(n) - Due to recursion stack
+    """
+    return n if n <= 1 else fibonacci(n-1) + fibonacci(n-2)
+
+def fibonacci_optimized(n):
+    """
+    Optimized version using memoization to avoid repeated calculations.
+    
+    Args:
+        n (int): The position in the Fibonacci sequence
+        
+    Returns:
+        int: The nth Fibonacci number
+        
+    Time Complexity: O(n) - Linear time
+    Space Complexity: O(n) - For memoization dictionary
+    """
+    memo = {}
+    
+    def fib_helper(n):
+        if n in memo:
+            return memo[n]
+        if n <= 1:
+            return n
+        memo[n] = fib_helper(n-1) + fib_helper(n-2)
+        return memo[n]
+    
+    return fib_helper(n)
+
+# Example usage and explanation
+if __name__ == "__main__":
+    print("=== Fibonacci Function Explanation ===")
+    print("The original function uses recursion but is inefficient.")
+    print("For n=10, it calculates the same values multiple times.")
+    
+    # Test both versions
+    n = 10
+    print(f"\\nFibonacci({n}) = {fibonacci(n)}")
+    print(f"Optimized Fibonacci({n}) = {fibonacci_optimized(n)}")
+    
+    print("\\n=== How it works ===")
+    print("fibonacci(5) = fibonacci(4) + fibonacci(3)")
+    print("fibonacci(4) = fibonacci(3) + fibonacci(2)")
+    print("fibonacci(3) = fibonacci(2) + fibonacci(1)")
+    print("fibonacci(2) = fibonacci(1) + fibonacci(0)")
+    print("fibonacci(1) = 1, fibonacci(0) = 0")`,
+            
+            'code-debugging': `def divide(a, b):
+    """
+    Divide two numbers with proper error handling.
+    
+    The original function fails when b=0, causing a ZeroDivisionError.
+    This version handles the error gracefully.
+    
+    Args:
+        a (float): Dividend
+        b (float): Divisor
+        
+    Returns:
+        float: Result of division, or None if division by zero
+        
+    Raises:
+        ValueError: If inputs are not numbers
+    """
+    try:
+        # Check if inputs are numbers
+        if not isinstance(a, (int, float)) or not isinstance(b, (int, float)):
+            raise ValueError("Both arguments must be numbers")
+        
+        # Check for division by zero
+        if b == 0:
+            print("Error: Division by zero is not allowed")
+            return None
+        
+        return a / b
+        
+    except ValueError as e:
+        print(f"ValueError: {e}")
+        return None
+    except Exception as e:
+        print(f"Unexpected error: {e}")
+        return None
+
+def divide_advanced(a, b):
+    """
+    Advanced version with more robust error handling.
+    
+    Args:
+        a: Dividend (any numeric type)
+        b: Divisor (any numeric type)
+        
+    Returns:
+        float: Result of division
+        
+    Raises:
+        ZeroDivisionError: If b is zero
+        TypeError: If inputs cannot be converted to numbers
+    """
+    try:
+        # Convert to float, handles string numbers too
+        a_float = float(a)
+        b_float = float(b)
+        
+        if b_float == 0:
+            raise ZeroDivisionError("Cannot divide by zero")
+        
+        return a_float / b_float
+        
+    except (ValueError, TypeError) as e:
+        raise TypeError(f"Cannot convert inputs to numbers: {e}")
+
+# Example usage and debugging demonstration
+if __name__ == "__main__":
+    print("=== Original Problem ===")
+    print("def divide(a, b): return a / b")
+    print("This fails when b=0 with ZeroDivisionError")
+    
+    print("\\n=== Fixed Version ===")
+    
+    # Test cases
+    test_cases = [
+        (10, 2),    # Normal case
+        (10, 0),    # Division by zero
+        (10, "5"),  # String number
+        ("10", 2),  # String number
+        (10, "abc"), # Invalid input
+    ]
+    
+    for a, b in test_cases:
+        result = divide(a, b)
+        print(f"divide({a}, {b}) = {result}")
+    
+    print("\\n=== Advanced Version ===")
+    try:
+        result = divide_advanced(10, 0)
+        print(f"divide_advanced(10, 0) = {result}")
+    except ZeroDivisionError as e:
+        print(f"Caught exception: {e}")`
+        };
+        
+        // Show example function
+        function showExample(exampleType) {
+            // Remove active class from all items
+            document.querySelectorAll('.example-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            
+            // Add active class to clicked item
+            event.target.closest('.example-item').classList.add('active');
+            
+            // Display the code
+            const codeDisplay = document.getElementById('exampleCodeDisplay');
+            codeDisplay.innerHTML = `<pre class="code-display">${exampleCodes[exampleType]}</pre>`;
         }
         
         // Show/hide back to top button based on scroll position
