@@ -354,9 +354,8 @@ e.g., Create a function to calculate fibonacci numbers"
             <div class="grid lg:grid-cols-2 gap-8">
                 <!-- Left Panel - Example List -->
                 <div class="bg-white rounded-lg shadow-lg p-6">
-                    <h3 class="text-xl font-semibold text-gray-900 mb-6">Try These Examples</h3>
                     <div class="space-y-4">
-                        <div class="example-item p-4 border border-gray-200 rounded-lg cursor-pointer hover:bg-blue-50 hover:border-blue-300 transition-all" onclick="showExample('natural-language')">
+                        <div class="example-item p-4 border border-gray-200 rounded-lg cursor-pointer hover:bg-blue-50 hover:border-blue-300 transition-all active" onclick="showExample('natural-language')">
                             <h4 class="font-semibold text-gray-900 mb-2">Natural Language to Code</h4>
                             <p class="text-sm text-gray-600">Scrape product prices from e-commerce websites and save to CSV file</p>
                         </div>
@@ -380,12 +379,51 @@ e.g., Create a function to calculate fibonacci numbers"
                 
                 <!-- Right Panel - Code Display -->
                 <div class="bg-white rounded-lg shadow-lg p-6">
-                    <h3 class="text-xl font-semibold text-gray-900 mb-6">Generated Code</h3>
                     <div id="exampleCodeDisplay" class="bg-gray-900 rounded-lg p-4 overflow-auto max-h-96">
-                        <div class="text-gray-400 text-center py-8">
-                            <div class="text-4xl mb-2">💻</div>
-                            <p>Click an example on the left to see the generated Python code</p>
-                        </div>
+                        <pre class="code-display">import requests
+from bs4 import BeautifulSoup
+import csv
+import time
+
+def scrape_product_prices(url, output_file='products.csv'):
+    """
+    Scrape product prices from e-commerce websites and save to CSV file.
+    """
+    headers = {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
+    }
+    
+    try:
+        response = requests.get(url, headers=headers)
+        response.raise_for_status()
+        
+        soup = BeautifulSoup(response.content, 'html.parser')
+        
+        # Find product elements (adjust selectors based on website)
+        products = soup.find_all(['div', 'article'], class_=['product', 'item'])
+        
+        with open(output_file, 'w', newline='', encoding='utf-8') as csvfile:
+            writer = csv.writer(csvfile)
+            writer.writerow(['Product Name', 'Price', 'Availability'])
+            
+            for product in products:
+                name_elem = product.find(['h2', 'h3', 'span'], class_=['name', 'title'])
+                price_elem = product.find(['span', 'div'], class_=['price', 'cost'])
+                
+                if name_elem and price_elem:
+                    name = name_elem.get_text(strip=True)
+                    price = price_elem.get_text(strip=True)
+                    writer.writerow([name, price, 'Available'])
+        
+        print(f"Scraped data saved to {output_file}")
+        
+    except Exception as e:
+        print(f"Error scraping website: {e}")
+
+# Example usage
+if __name__ == "__main__":
+    website_url = "https://example-ecommerce-site.com/products"
+    scrape_product_prices(website_url)</pre>
                     </div>
                 </div>
             </div>
