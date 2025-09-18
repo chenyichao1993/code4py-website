@@ -99,10 +99,13 @@
             font-size: 14px;
             line-height: 1.5;
             color: #e2e8f0;
+            margin: 0;
+            padding: 0;
         }
         
         .code-display pre {
             margin: 0;
+            padding: 0;
             white-space: pre-wrap;
             word-wrap: break-word;
         }
@@ -351,10 +354,10 @@ e.g., Create a function to calculate fibonacci numbers"
                 See Example Projects
             </h2>
             
-            <div class="grid lg:grid-cols-2 gap-8">
+            <div class="grid lg:grid-cols-2 gap-8 items-stretch">
                 <!-- Left Panel - Example List -->
-                <div class="bg-white rounded-lg shadow-lg p-6">
-                    <div class="space-y-4">
+                <div class="bg-white rounded-lg shadow-lg p-6 flex flex-col h-[32rem]">
+                    <div class="flex-1 flex flex-col justify-between space-y-6">
                         <div class="example-item p-4 border border-gray-200 rounded-lg cursor-pointer hover:bg-blue-50 hover:border-blue-300 transition-all active" onclick="showExample('natural-language')">
                             <h4 class="font-semibold text-gray-900 mb-2">Natural Language to Code</h4>
                             <p class="text-sm text-gray-600">Scrape product prices from e-commerce websites and save to CSV file</p>
@@ -378,8 +381,8 @@ e.g., Create a function to calculate fibonacci numbers"
                 </div>
                 
                 <!-- Right Panel - Code Display -->
-                <div class="bg-white rounded-lg shadow-lg p-6">
-                    <div id="exampleCodeDisplay" class="bg-gray-900 rounded-lg p-4 overflow-auto max-h-96">
+                <div class="bg-white rounded-lg shadow-lg p-6 flex flex-col h-[32rem]">
+                    <div id="exampleCodeDisplay" class="bg-gray-900 rounded-lg p-4 overflow-auto flex-1">
                         <pre class="code-display">import requests
 from bs4 import BeautifulSoup
 import csv
@@ -1249,95 +1252,39 @@ if __name__ == "__main__":
             
             'code-debugging': `def divide(a, b):
     """
-    Divide two numbers with proper error handling.
-    
-    The original function fails when b=0, causing a ZeroDivisionError.
-    This version handles the error gracefully.
+    Divide two numbers safely.
     
     Args:
-        a (float): Dividend
-        b (float): Divisor
-        
-    Returns:
-        float: Result of division, or None if division by zero
-        
-    Raises:
-        ValueError: If inputs are not numbers
-    """
-    try:
-        # Check if inputs are numbers
-        if not isinstance(a, (int, float)) or not isinstance(b, (int, float)):
-            raise ValueError("Both arguments must be numbers")
-        
-        # Check for division by zero
-        if b == 0:
-            print("Error: Division by zero is not allowed")
-            return None
-        
-        return a / b
-        
-    except ValueError as e:
-        print(f"ValueError: {e}")
-        return None
-    except Exception as e:
-        print(f"Unexpected error: {e}")
-        return None
-
-def divide_advanced(a, b):
-    """
-    Advanced version with more robust error handling.
+        a: Dividend (any numeric type or numeric string)
+        b: Divisor (any numeric type or numeric string)
     
-    Args:
-        a: Dividend (any numeric type)
-        b: Divisor (any numeric type)
-        
     Returns:
         float: Result of division
-        
+    
     Raises:
         ZeroDivisionError: If b is zero
         TypeError: If inputs cannot be converted to numbers
     """
     try:
-        # Convert to float, handles string numbers too
         a_float = float(a)
         b_float = float(b)
-        
-        if b_float == 0:
-            raise ZeroDivisionError("Cannot divide by zero")
-        
-        return a_float / b_float
-        
     except (ValueError, TypeError) as e:
-        raise TypeError(f"Cannot convert inputs to numbers: {e}")
+        raise TypeError(f"Invalid input: {e}")
 
-# Example usage and debugging demonstration
+    if b_float == 0:
+        raise ZeroDivisionError("Division by zero is not allowed")
+
+    return a_float / b_float
+
+
+# Example usage
 if __name__ == "__main__":
-    print("=== Original Problem ===")
-    print("def divide(a, b): return a / b")
-    print("This fails when b=0 with ZeroDivisionError")
-    
-    print("\\n=== Fixed Version ===")
-    
-    # Test cases
-    test_cases = [
-        (10, 2),    # Normal case
-        (10, 0),    # Division by zero
-        (10, "5"),  # String number
-        ("10", 2),  # String number
-        (10, "abc"), # Invalid input
-    ]
-    
-    for a, b in test_cases:
-        result = divide(a, b)
-        print(f"divide({a}, {b}) = {result}")
-    
-    print("\\n=== Advanced Version ===")
+    print(divide(10, 2))     # 5.0
+    print(divide("10", "5")) # 2.0
     try:
-        result = divide_advanced(10, 0)
-        print(f"divide_advanced(10, 0) = {result}")
-    except ZeroDivisionError as e:
-        print(f"Caught exception: {e}")`
+        print(divide(10, 0))
+    except Exception as e:
+        print(f"Error: {e}")`
         };
         
         // Show example function
