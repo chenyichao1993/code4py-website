@@ -356,7 +356,7 @@ e.g., Create a function to calculate fibonacci numbers"
             
             <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-4 md:gap-6 lg:gap-8 items-stretch">
                 <!-- Left Panel - Example List -->
-                <div class="bg-white rounded-lg shadow-lg p-4 md:p-6 flex flex-col h-[44rem] md:h-[42rem] lg:h-[36rem] md:col-span-1 lg:col-span-2">
+                <div class="bg-white rounded-lg shadow-lg p-4 md:p-6 flex flex-col h-[48rem] md:h-[42rem] lg:h-[36rem] md:col-span-1 lg:col-span-2">
                     <div class="flex-1 flex flex-col justify-between space-y-5 md:space-y-4 lg:space-y-3">
                         <div class="example-item p-4 border border-gray-200 rounded-lg cursor-pointer hover:bg-blue-50 hover:border-blue-300 transition-all active" onclick="showExample('natural-language')">
                             <h4 class="font-semibold text-gray-900 mb-2">Natural Language to Code</h4>
@@ -381,7 +381,7 @@ e.g., Create a function to calculate fibonacci numbers"
                 </div>
                 
                 <!-- Right Panel - Code Display -->
-                <div class="bg-white rounded-lg shadow-lg p-4 md:p-6 flex flex-col h-[44rem] md:h-[42rem] lg:h-[36rem] md:col-span-2 lg:col-span-4">
+                <div class="bg-white rounded-lg shadow-lg p-4 md:p-6 flex flex-col h-[48rem] md:h-[42rem] lg:h-[36rem] md:col-span-2 lg:col-span-4">
                     <div id="exampleCodeDisplay" class="bg-gray-900 rounded-lg p-4 overflow-auto flex-1">
                         <pre class="code-display">import requests
 from bs4 import BeautifulSoup
@@ -741,7 +741,7 @@ if __name__ == "__main__":
         function toggleMaximize(panel) {
             // Create modal overlay
             const modal = document.createElement('div');
-            modal.className = 'fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4';
+            modal.className = 'fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-2 sm:p-4';
             modal.id = 'modal-overlay';
             
             let modalContent = '';
@@ -749,7 +749,7 @@ if __name__ == "__main__":
             if (panel === 'input') {
                 // Input modal content
                 modalContent = `
-                    <div class="bg-white rounded-lg shadow-xl max-w-6xl w-full max-h-[90vh] overflow-hidden">
+                    <div class="bg-white rounded-lg shadow-xl max-w-6xl w-full max-h-[80vh] sm:max-h-[90vh] overflow-hidden">
                         <div class="flex items-center justify-between p-6 border-b">
                             <h3 class="text-xl font-semibold text-gray-900">Code Generation Instructions</h3>
                             <button onclick="closeModalWindow()" class="text-gray-500 hover:text-gray-700">
@@ -758,28 +758,31 @@ if __name__ == "__main__":
                                 </svg>
                             </button>
                         </div>
-                        <div class="p-8">
-                            <h4 class="font-semibold text-gray-900 mb-6 text-lg">To use this tool, take the following steps —</h4>
-                            <ol class="text-gray-600 space-y-3 mb-8 text-base">
-                                <li>1. Describe the code you want to generate here in this box</li>
-                                <li>2. Click Generate</li>
-                            </ol>
-                            <div class="bg-gray-50 rounded-lg p-6">
-                                <textarea 
-                                    id="modalCodeInput" 
-                                    placeholder="e.g., Create a function to calculate fibonacci numbers"
-                                    class="w-full h-64 px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none text-base"
-                                ></textarea>
-                                <div class="flex justify-end gap-3 mt-6">
+                        <div class="p-3 sm:p-8 flex flex-col h-full">
+                            <div class="flex-1 overflow-y-auto">
+                                <h4 class="font-semibold text-gray-900 mb-3 sm:mb-6 text-base sm:text-lg">To use this tool, take the following steps —</h4>
+                                <ol class="text-gray-600 space-y-2 sm:space-y-3 mb-4 sm:mb-8 text-sm sm:text-base">
+                                    <li>1. Describe the code you want to generate here in this box</li>
+                                    <li>2. Click Generate</li>
+                                </ol>
+                                <div class="bg-gray-50 rounded-lg p-3 sm:p-6">
+                                    <textarea 
+                                        id="modalCodeInput" 
+                                        placeholder="e.g., Create a function to calculate fibonacci numbers"
+                                        class="w-full h-32 sm:h-64 px-3 sm:px-4 py-2 sm:py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none text-sm sm:text-base"
+                                    ></textarea>
+                                </div>
+                            </div>
+                            <div class="flex justify-end gap-2 sm:gap-3 mt-3 sm:mt-6 pt-3 sm:pt-4 border-t border-gray-200">
                                     <button 
                                         onclick="generateCodeFromModal()" 
-                                        class="px-8 py-3 bg-black text-white font-semibold rounded-lg hover:bg-gray-800 transition-colors"
+                                        class="px-4 sm:px-8 py-2 sm:py-3 bg-black text-white font-semibold rounded-lg hover:bg-gray-800 transition-colors text-sm sm:text-base"
                                     >
                                         Generate
                                     </button>
                                     <button 
                                         onclick="closeModalWindow()" 
-                                        class="px-8 py-3 bg-white text-gray-700 border border-gray-300 font-semibold rounded-lg hover:bg-gray-50 transition-colors"
+                                        class="px-4 sm:px-8 py-2 sm:py-3 bg-white text-gray-700 border border-gray-300 font-semibold rounded-lg hover:bg-gray-50 transition-colors text-sm sm:text-base"
                                     >
                                         Close
                                     </button>
