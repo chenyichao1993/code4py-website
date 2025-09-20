@@ -199,7 +199,7 @@
                             placeholder="To use this tool, take the following steps
 
 1. Select what you want to do from the dropdown
-2. Describe your task here in this box
+2. Enter your content here (task description, code, etc.)
 3. Click Generate
 
 e.g., Create a function to calculate fibonacci numbers"
@@ -583,6 +583,95 @@ if __name__ == "__main__":
         // API Configuration
         const API_BASE_URL = 'http://127.0.0.1:8000'; // 本地后端服务地址
         
+        // 动态更新输入框提示文字
+        function updateInputPlaceholder() {
+            const functionSelect = document.getElementById('functionSelect');
+            const codeInput = document.getElementById('codeInput');
+            
+            if (!functionSelect || !codeInput) return;
+            
+            const selectedFunction = functionSelect.value;
+            let placeholder = '';
+            
+            switch(selectedFunction) {
+                case 'generate':
+                    placeholder = `To use this tool, take the following steps
+
+1. Select what you want to do from the dropdown
+2. Describe your task here in this box
+3. Click Generate
+
+e.g., Create a function to calculate fibonacci numbers`;
+                    break;
+                case 'convert':
+                    placeholder = `To use this tool, take the following steps
+
+1. Select what you want to do from the dropdown
+2. Paste your code here (any programming language)
+3. Click Generate
+
+e.g., public class Calculator { public int add(int a, int b) { return a + b; } }`;
+                    break;
+                case 'explain':
+                    placeholder = `To use this tool, take the following steps
+
+1. Select what you want to do from the dropdown
+2. Paste your Python code here
+3. Click Generate
+
+e.g., def fibonacci(n): return n if n <= 1 else fibonacci(n-1) + fibonacci(n-2)`;
+                    break;
+                case 'debug':
+                    placeholder = `To use this tool, take the following steps
+
+1. Select what you want to do from the dropdown
+2. Paste your problematic code here
+3. Click Generate
+
+e.g., def divide(a, b): return a / b  # This might cause errors`;
+                    break;
+            }
+            
+            codeInput.placeholder = placeholder;
+        }
+        
+        // 动态更新放大窗口输入框提示文字
+        function updateModalInputPlaceholder() {
+            const modalFunctionSelect = document.getElementById('modalFunctionSelect');
+            const modalCodeInput = document.getElementById('modalCodeInput');
+            
+            if (!modalFunctionSelect || !modalCodeInput) return;
+            
+            const selectedFunction = modalFunctionSelect.value;
+            let placeholder = '';
+            
+            switch(selectedFunction) {
+                case 'generate':
+                    placeholder = 'e.g., Create a function to calculate fibonacci numbers';
+                    break;
+                case 'convert':
+                    placeholder = 'e.g., public class Calculator { public int add(int a, int b) { return a + b; } }';
+                    break;
+                case 'explain':
+                    placeholder = 'e.g., def fibonacci(n): return n if n <= 1 else fibonacci(n-1) + fibonacci(n-2)';
+                    break;
+                case 'debug':
+                    placeholder = 'e.g., def divide(a, b): return a / b  # This might cause errors';
+                    break;
+            }
+            
+            modalCodeInput.placeholder = placeholder;
+        }
+        
+        // 监听功能选择变化
+        document.addEventListener('DOMContentLoaded', function() {
+            const functionSelect = document.getElementById('functionSelect');
+            if (functionSelect) {
+                functionSelect.addEventListener('change', updateInputPlaceholder);
+                updateInputPlaceholder(); // 初始化
+            }
+        });
+        
         async function generateCode() {
             const input = document.getElementById('codeInput').value.trim();
             const outputDiv = document.getElementById('codeOutput');
@@ -591,14 +680,31 @@ if __name__ == "__main__":
             const codeElement = document.getElementById('generatedCode');
             const mainCodeButtons = document.getElementById('mainCodeButtons');
             
-            if (!input) {
-                showCustomAlert('Please enter a task description');
-                return;
-            }
-            
-            // Get selected function
+            // Get selected function FIRST
             const functionSelect = document.getElementById('functionSelect');
             const selectedFunction = functionSelect ? functionSelect.value : 'generate';
+            
+            if (!input) {
+                let errorMessage = '';
+                switch(selectedFunction) {
+                    case 'generate':
+                        errorMessage = 'Please enter a task description';
+                        break;
+                    case 'convert':
+                        errorMessage = 'Please enter code to convert';
+                        break;
+                    case 'explain':
+                        errorMessage = 'Please enter code to explain';
+                        break;
+                    case 'debug':
+                        errorMessage = 'Please enter code to debug';
+                        break;
+                    default:
+                        errorMessage = 'Please enter content';
+                }
+                showCustomAlert(errorMessage);
+                return;
+            }
             
             // Show loading animation
             outputDiv.classList.add('hidden');
@@ -616,15 +722,37 @@ if __name__ == "__main__":
                 const controller = new AbortController();
                 const timeoutId = setTimeout(() => controller.abort(), 10000); // 10秒超时
                 
+                // 根据功能选择不同的API参数
+                let requestBody;
+                if (selectedFunction === 'generate') {
+                    requestBody = {
+                        prompt: input,
+                        language: 'python'
+                    };
+                } else if (selectedFunction === 'convert') {
+                    requestBody = {
+                        code: input,
+                        from_language: 'auto',
+                        to_language: 'python'
+                    };
+                } else if (selectedFunction === 'explain') {
+                    requestBody = {
+                        code: input,
+                        language: 'python'
+                    };
+                } else if (selectedFunction === 'debug') {
+                    requestBody = {
+                        code: input,
+                        language: 'python'
+                    };
+                }
+                
                 const response = await fetch(`${API_BASE_URL}/api/${selectedFunction}`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                     },
-                    body: JSON.stringify({
-                        prompt: input,
-                        language: 'python'
-                    }),
+                    body: JSON.stringify(requestBody),
                     signal: controller.signal
                 });
                 
@@ -828,7 +956,7 @@ if __name__ == "__main__":
                                 <h4 class="font-semibold text-gray-900 mb-3 sm:mb-6 text-base sm:text-lg">To use this tool, take the following steps</h4>
                                 <ol class="text-gray-600 space-y-2 sm:space-y-3 mb-4 sm:mb-8 text-sm sm:text-base">
                                     <li>1. Select what you want to do from the dropdown</li>
-                                    <li>2. Describe your task here in this box</li>
+                                    <li>2. Enter your content here (task description, code, etc.)</li>
                                     <li>3. Click Generate</li>
                                 </ol>
                                 <div class="bg-gray-50 rounded-lg p-3 sm:p-6">
@@ -921,6 +1049,11 @@ if __name__ == "__main__":
                 const mainFunctionSelect = document.getElementById('functionSelect');
                 if (modalFunctionSelect && mainFunctionSelect) {
                     modalFunctionSelect.value = mainFunctionSelect.value;
+                    // 更新放大窗口的提示文字
+                    updateModalInputPlaceholder();
+                    
+                    // 添加监听器
+                    modalFunctionSelect.addEventListener('change', updateModalInputPlaceholder);
                 }
             }
             
@@ -943,7 +1076,27 @@ if __name__ == "__main__":
         function generateCodeFromModal() {
             const modalInput = document.getElementById('modalCodeInput').value.trim();
             if (!modalInput) {
-                showCustomAlert('Please enter a task description');
+                const modalFunctionSelect = document.getElementById('modalFunctionSelect');
+                const selectedFunction = modalFunctionSelect ? modalFunctionSelect.value : 'generate';
+                
+                let errorMessage = '';
+                switch(selectedFunction) {
+                    case 'generate':
+                        errorMessage = 'Please enter a task description';
+                        break;
+                    case 'convert':
+                        errorMessage = 'Please enter code to convert';
+                        break;
+                    case 'explain':
+                        errorMessage = 'Please enter code to explain';
+                        break;
+                    case 'debug':
+                        errorMessage = 'Please enter code to debug';
+                        break;
+                    default:
+                        errorMessage = 'Please enter content';
+                }
+                showCustomAlert(errorMessage);
                 return;
             }
             
