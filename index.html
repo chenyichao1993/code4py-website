@@ -170,22 +170,22 @@
         </div>
     </nav>
     <!-- Hero Section -->
-    <section class="bg-gray-100 pt-24 pb-12">
-        <div class="max-w-7xl mx-auto px-4 text-center">
-            <h1 class="text-5xl font-bold text-gray-900 mb-8">
+    <section class="bg-gray-100 pt-24 sm:pt-24 pb-8 sm:pb-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 text-center">
+            <h1 class="text-3xl sm:text-5xl font-bold text-gray-900 mb-6 sm:mb-8">
                 Free AI Python Code Generator
-                <span class="block text-blue-600 mt-4">Convert Ideas into Code Instantly</span>
+                <span class="block text-blue-600 mt-2 sm:mt-4">Convert Ideas into Code Instantly</span>
             </h1>
-            <p class="text-xl text-gray-600 mb-12 max-w-3xl mx-auto">
+            <p class="text-lg sm:text-xl text-gray-600 mb-8 sm:mb-12 max-w-3xl mx-auto">
                 Type your task in plain English. Get production-ready Python code in seconds. 
                 No setup, no signup required.
             </p>
             
             <!-- Code Generator - Two Panel Layout -->
-            <div class="bg-white rounded-xl shadow-xl overflow-hidden mb-6">
-                <div class="grid lg:grid-cols-2 gap-0">
+            <div class="bg-white rounded-xl shadow-xl overflow-hidden mb-4 sm:mb-6">
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-0">
                     <!-- Input Panel -->
-                    <div class="p-6 border-r border-gray-200 relative">
+                    <div class="p-4 sm:p-6 border-r-0 lg:border-r border-gray-200 relative">
                         <div class="flex items-center mb-4">
                             <h3 class="text-lg font-semibold text-gray-900">Input</h3>
                             <button onclick="toggleMaximize('input')" class="ml-auto p-1 hover:bg-gray-100 rounded transition-colors">
@@ -203,12 +203,12 @@
 3. Click Generate
 
 e.g., Create a function to calculate fibonacci numbers"
-                            class="w-full h-64 px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
+                            class="w-full h-48 sm:h-64 px-3 sm:px-4 py-2 sm:py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none text-sm sm:text-base"
                         ></textarea>
                     </div>
                     
                     <!-- Output Panel -->
-                    <div class="p-6 relative">
+                    <div class="p-4 sm:p-6 relative">
                         <div class="flex items-center justify-between mb-4">
                             <h3 class="text-lg font-semibold text-gray-900">Code Display</h3>
                             <div class="flex items-center gap-2">
@@ -260,14 +260,15 @@ e.g., Create a function to calculate fibonacci numbers"
             </div>
             
             <!-- Action Buttons -->
-            <div class="flex justify-center items-center gap-4 mt-6">
+            <div class="flex flex-col sm:flex-row justify-center items-center gap-3 sm:gap-4 mt-6">
                 <!-- I want to label -->
-                <span class="text-gray-700 font-medium text-lg">I want to</span>
+                <span class="text-gray-700 font-medium text-base sm:text-lg">I want to</span>
                 
                 <!-- Function Selection Dropdown -->
                 <select 
                     id="functionSelect" 
-                    class="px-4 py-3 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent font-medium text-gray-700"
+                    class="w-full sm:w-auto px-4 sm:px-4 py-3 sm:py-3 bg-white border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 font-medium text-gray-700 text-base sm:text-base shadow-sm hover:border-gray-300 transition-all duration-200 appearance-none bg-gradient-to-r from-white to-gray-50 max-w-xs sm:max-w-none"
+                    style="background-image: url('data:image/svg+xml;charset=US-ASCII,<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 4 5\"><path fill=\"%23666\" d=\"M2 0L0 2h4zm0 5L0 3h4z\"/></svg>'); background-repeat: no-repeat; background-position: right 12px center; background-size: 12px;"
                 >
                     <option value="generate">🔧 Generate Code</option>
                     <option value="convert">🔄 Convert Code</option>
@@ -275,18 +276,21 @@ e.g., Create a function to calculate fibonacci numbers"
                     <option value="debug">🐛 Debug Code</option>
                 </select>
                 
-                <button 
-                    onclick="generateCode()" 
-                    class="px-8 py-3 bg-black text-white font-semibold rounded-lg hover:bg-gray-800 transition-colors"
-                >
-                    Generate
-                </button>
-                <button 
-                    onclick="clearInput()" 
-                    class="px-8 py-3 bg-white text-gray-700 border border-gray-300 font-semibold rounded-lg hover:bg-gray-50 transition-colors flex items-center gap-2"
-                >
-                    <span>×</span> Clear
-                </button>
+                <!-- Button Group -->
+                <div class="flex gap-2 sm:gap-3 w-full sm:w-auto">
+                    <button 
+                        onclick="generateCode()" 
+                        class="flex-1 sm:flex-none px-4 sm:px-8 py-2 sm:py-3 bg-black text-white font-semibold rounded-lg hover:bg-gray-800 transition-colors text-sm sm:text-base"
+                    >
+                        Generate
+                    </button>
+                    <button 
+                        onclick="clearInput()" 
+                        class="flex-1 sm:flex-none px-4 sm:px-8 py-2 sm:py-3 bg-white text-gray-700 border border-gray-300 font-semibold rounded-lg hover:bg-gray-50 transition-colors flex items-center justify-center gap-2 text-sm sm:text-base"
+                    >
+                        <span>×</span> Clear
+                    </button>
+                </div>
             </div>
         </div>
     </section>
@@ -835,14 +839,15 @@ if __name__ == "__main__":
                                     ></textarea>
                                 </div>
                             </div>
-                            <div class="flex justify-end items-center gap-2 sm:gap-3 mt-3 sm:mt-6 pt-3 sm:pt-4 border-t border-gray-200">
+                            <div class="flex flex-col sm:flex-row justify-end items-center gap-2 sm:gap-3 mt-3 sm:mt-6 pt-3 sm:pt-4 border-t border-gray-200">
                                     <!-- I want to label for Modal -->
-                                    <span class="text-gray-700 font-medium text-sm sm:text-base">I want to</span>
+                                    <span class="text-gray-700 font-medium text-sm sm:text-base order-1 sm:order-none">I want to</span>
                                     
                                     <!-- Function Selection Dropdown for Modal -->
                                     <select 
                                         id="modalFunctionSelect" 
-                                        class="px-3 sm:px-4 py-2 sm:py-3 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent font-medium text-gray-700 text-sm sm:text-base"
+                                        class="w-full sm:w-auto px-3 sm:px-4 py-2 sm:py-3 bg-white border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 font-medium text-gray-700 text-sm sm:text-base shadow-sm hover:border-gray-300 transition-all duration-200 appearance-none bg-gradient-to-r from-white to-gray-50 max-w-xs sm:max-w-none order-2 sm:order-none"
+                                        style="background-image: url('data:image/svg+xml;charset=US-ASCII,<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 4 5\"><path fill=\"%23666\" d=\"M2 0L0 2h4zm0 5L0 3h4z\"/></svg>'); background-repeat: no-repeat; background-position: right 12px center; background-size: 12px;"
                                     >
                                         <option value="generate">🔧 Generate Code</option>
                                         <option value="convert">🔄 Convert Code</option>
@@ -850,18 +855,21 @@ if __name__ == "__main__":
                                         <option value="debug">🐛 Debug Code</option>
                                     </select>
                                     
-                                    <button 
-                                        onclick="generateCodeFromModal()" 
-                                        class="px-4 sm:px-8 py-2 sm:py-3 bg-black text-white font-semibold rounded-lg hover:bg-gray-800 transition-colors text-sm sm:text-base"
-                                    >
-                                        Generate
-                                    </button>
-                                    <button 
-                                        onclick="closeModalWindow()" 
-                                        class="px-4 sm:px-8 py-2 sm:py-3 bg-white text-gray-700 border border-gray-300 font-semibold rounded-lg hover:bg-gray-50 transition-colors text-sm sm:text-base"
-                                    >
-                                        Close
-                                    </button>
+                                    <!-- Button Group for Modal -->
+                                    <div class="flex gap-2 w-full sm:w-auto order-3 sm:order-none">
+                                        <button 
+                                            onclick="generateCodeFromModal()" 
+                                            class="flex-1 sm:flex-none px-4 sm:px-8 py-2 sm:py-3 bg-black text-white font-semibold rounded-lg hover:bg-gray-800 transition-colors text-sm sm:text-base"
+                                        >
+                                            Generate
+                                        </button>
+                                        <button 
+                                            onclick="closeModalWindow()" 
+                                            class="flex-1 sm:flex-none px-4 sm:px-8 py-2 sm:py-3 bg-white text-gray-700 border border-gray-300 font-semibold rounded-lg hover:bg-gray-50 transition-colors text-sm sm:text-base"
+                                        >
+                                            Close
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
                         </div>
