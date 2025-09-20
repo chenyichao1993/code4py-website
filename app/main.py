@@ -426,60 +426,14 @@ async def debug_code(request: CodeExplanationRequest):
     start_time = datetime.now()
     
     try:
-        system_prompt = """You are an expert Python debugger and code fixer. Analyze the following code and identify all issues.
-
-Requirements:
-1. **Identify bugs**: Find syntax errors, logic errors, runtime errors, and potential issues
-2. **Provide fixes**: Give corrected versions of problematic code sections
-3. **Explain problems**: Clearly explain what was wrong and why
-4. **Test cases**: Suggest test cases to verify the fixes
-5. **Best practices**: Recommend improvements for code quality
-
-Format your response as JSON with keys: bugs_found, fixed_code, explanations, test_cases, improvements
-
-Focus on making the code robust, efficient, and maintainable."""
-        
-        # 获取API配置
-        api_key = os.getenv("OPENROUTER_API_KEY")
-        api_base = os.getenv("OPENROUTER_API_BASE", "https://openrouter.ai/api/v1")
-        
-        if not api_key:
-            raise Exception("OpenRouter API key not found")
-        
-        # 创建OpenAI客户端
-        client = openai.AsyncOpenAI(
-            api_key=api_key,
-            base_url=api_base
-        )
-        
-        # 使用OpenRouter格式的模型名称
-        model_name = "openai/gpt-3.5-turbo"
-        
-        response = await client.chat.completions.create(
-            model=model_name,
-            messages=[
-                {"role": "system", "content": system_prompt},
-                {"role": "user", "content": request.code}
-            ],
-            max_tokens=2000,
-            temperature=0.3
-        )
-        
-        result = response.choices[0].message.content.strip()
-        
-        try:
-            analysis = json.loads(result)
-            fixed_code = analysis.get("fixed_code", request.code)
-            explanation = analysis.get("explanation", "No issues found")
-        except:
-            fixed_code = result
-            explanation = "Code analysis completed"
+        analysis = await debug_code_with_openai(request.code)
         
         execution_time = (datetime.now() - start_time).total_seconds()
         
         return CodeResponse(
-            code=fixed_code,
-            explanation=explanation,
+            code=analysis.get("fixed_code", request.code),
+            explanation=analysis.get("explanations", ["No issues found"]),
+            suggestions=analysis.get("improvements", []),
             execution_time=execution_time
         )
     
