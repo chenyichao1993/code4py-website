@@ -1,4 +1,4 @@
-from fastapi import FastAPI, HTTPException, Depends, status
+from fastapi import FastAPI, HTTPException, Depends, status, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from pydantic import BaseModel
@@ -80,7 +80,56 @@ class UserResponse(BaseModel):
 
 # Core AI functions
 
-# Rate limiting decorator
+# Get real IP address
+def get_real_ip(request: Request) -> str:
+    """Get the real IP address from request"""
+    # Check for forwarded IP (when behind proxy/load balancer)
+    forwarded_for = request.headers.get("X-Forwarded-For")
+    if forwarded_for:
+        return forwarded_for.split(",")[0].strip()
+    
+    # Check for real IP header
+    real_ip = request.headers.get("X-Real-IP")
+    if real_ip:
+        return real_ip
+    
+    # Fallback to client host
+    return request.client.host
+
+# Daily usage limit decorator
+def daily_usage_limit(key: str, limit: int = 10):
+    def decorator(func):
+        async def wrapper(*args, **kwargs):
+            current_date = datetime.now().strftime("%Y-%m-%d")
+            daily_key = f"daily_usage:{key}:{current_date}"
+            
+            # Check if user is in whitelist (for testing)
+            whitelist_ips = ["127.0.0.1", "::1"]  # Add your IP here
+            if key in whitelist_ips:
+                return await func(*args, **kwargs)
+            
+            # Check daily usage
+            current_usage = redis_client.get(daily_key)
+            if current_usage is None:
+                current_usage = 0
+            else:
+                current_usage = int(current_usage)
+            
+            if current_usage >= limit:
+                raise HTTPException(
+                    status_code=429, 
+                    detail="Daily usage limit exceeded. You have used all 10 free generations today. Please try again tomorrow."
+                )
+            
+            # Increment usage count
+            redis_client.incr(daily_key)
+            redis_client.expire(daily_key, 86400)  # Expire at midnight
+            
+            return await func(*args, **kwargs)
+        return wrapper
+    return decorator
+
+# Rate limiting decorator (for additional protection)
 def rate_limit(key: str, limit: int = 10, window: int = 3600):
     def decorator(func):
         async def wrapper(*args, **kwargs):
@@ -341,9 +390,38 @@ async def health_check():
 
 
 @app.post("/api/generate")
-async def generate_code(request: CodeGenerationRequest):
+async def generate_code(request: CodeGenerationRequest, http_request: Request):
     """Generate Python code from natural language description"""
     print(f"收到请求: {request.prompt}")
+    
+    # Get real IP address
+    user_ip = get_real_ip(http_request)
+    print(f"用户IP: {user_ip}")
+    
+    # Check daily usage limit
+    current_date = datetime.now().strftime("%Y-%m-%d")
+    daily_key = f"daily_usage:{user_ip}:{current_date}"
+    
+    # Check if user is in whitelist (for testing)
+    whitelist_ips = ["127.0.0.1", "::1"]  # Add your IP here
+    if user_ip not in whitelist_ips:
+        # Check daily usage
+        current_usage = redis_client.get(daily_key)
+        if current_usage is None:
+            current_usage = 0
+        else:
+            current_usage = int(current_usage)
+        
+            if current_usage >= 10:
+                raise HTTPException(
+                    status_code=429, 
+                    detail="Daily usage limit exceeded. You have used all 10 free generations today. Please try again tomorrow."
+                )
+        
+        # Increment usage count
+        redis_client.incr(daily_key)
+        redis_client.expire(daily_key, 86400)  # Expire at midnight
+        print(f"用户 {user_ip} 今日使用次数: {current_usage + 1}/10")
     
     try:
         # 使用真实的OpenRouter API生成代码
@@ -379,8 +457,31 @@ if __name__ == "__main__":
         }
 
 @app.post("/api/convert", response_model=CodeResponse)
-async def convert_code(request: CodeConversionRequest):
+async def convert_code(request: CodeConversionRequest, http_request: Request):
     """Convert code from one language to Python"""
+    # Get real IP address and check daily limit
+    user_ip = get_real_ip(http_request)
+    current_date = datetime.now().strftime("%Y-%m-%d")
+    daily_key = f"daily_usage:{user_ip}:{current_date}"
+    
+    # Check if user is in whitelist (for testing)
+    whitelist_ips = ["127.0.0.1", "::1"]
+    if user_ip not in whitelist_ips:
+        current_usage = redis_client.get(daily_key)
+        if current_usage is None:
+            current_usage = 0
+        else:
+            current_usage = int(current_usage)
+        
+            if current_usage >= 10:
+                raise HTTPException(
+                    status_code=429, 
+                    detail="Daily usage limit exceeded. You have used all 10 free generations today. Please try again tomorrow."
+                )
+        
+        redis_client.incr(daily_key)
+        redis_client.expire(daily_key, 86400)
+    
     start_time = datetime.now()
     
     try:
@@ -401,8 +502,31 @@ async def convert_code(request: CodeConversionRequest):
         raise HTTPException(status_code=500, detail=str(e))
 
 @app.post("/api/explain", response_model=CodeResponse)
-async def explain_code(request: CodeExplanationRequest):
+async def explain_code(request: CodeExplanationRequest, http_request: Request):
     """Explain and analyze Python code"""
+    # Get real IP address and check daily limit
+    user_ip = get_real_ip(http_request)
+    current_date = datetime.now().strftime("%Y-%m-%d")
+    daily_key = f"daily_usage:{user_ip}:{current_date}"
+    
+    # Check if user is in whitelist (for testing)
+    whitelist_ips = ["127.0.0.1", "::1"]
+    if user_ip not in whitelist_ips:
+        current_usage = redis_client.get(daily_key)
+        if current_usage is None:
+            current_usage = 0
+        else:
+            current_usage = int(current_usage)
+        
+            if current_usage >= 10:
+                raise HTTPException(
+                    status_code=429, 
+                    detail="Daily usage limit exceeded. You have used all 10 free generations today. Please try again tomorrow."
+                )
+        
+        redis_client.incr(daily_key)
+        redis_client.expire(daily_key, 86400)
+    
     start_time = datetime.now()
     
     try:
@@ -421,8 +545,31 @@ async def explain_code(request: CodeExplanationRequest):
         raise HTTPException(status_code=500, detail=str(e))
 
 @app.post("/api/debug", response_model=CodeResponse)
-async def debug_code(request: CodeExplanationRequest):
+async def debug_code(request: CodeExplanationRequest, http_request: Request):
     """Debug and fix Python code issues"""
+    # Get real IP address and check daily limit
+    user_ip = get_real_ip(http_request)
+    current_date = datetime.now().strftime("%Y-%m-%d")
+    daily_key = f"daily_usage:{user_ip}:{current_date}"
+    
+    # Check if user is in whitelist (for testing)
+    whitelist_ips = ["127.0.0.1", "::1"]
+    if user_ip not in whitelist_ips:
+        current_usage = redis_client.get(daily_key)
+        if current_usage is None:
+            current_usage = 0
+        else:
+            current_usage = int(current_usage)
+        
+            if current_usage >= 10:
+                raise HTTPException(
+                    status_code=429, 
+                    detail="Daily usage limit exceeded. You have used all 10 free generations today. Please try again tomorrow."
+                )
+        
+        redis_client.incr(daily_key)
+        redis_client.expire(daily_key, 86400)
+    
     start_time = datetime.now()
     
     try:
