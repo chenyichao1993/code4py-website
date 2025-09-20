@@ -260,6 +260,17 @@ e.g., Create a function to calculate fibonacci numbers"
             
             <!-- Action Buttons -->
             <div class="flex justify-center gap-4 mt-6">
+                <!-- Function Selection Dropdown -->
+                <select 
+                    id="functionSelect" 
+                    class="px-4 py-3 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent font-medium text-gray-700"
+                >
+                    <option value="generate">🔧 Generate Code</option>
+                    <option value="convert">🔄 Convert Code</option>
+                    <option value="explain">📖 Explain Code</option>
+                    <option value="debug">🐛 Debug Code</option>
+                </select>
+                
                 <button 
                     onclick="generateCode()" 
                     class="px-8 py-3 bg-black text-white font-semibold rounded-lg hover:bg-gray-800 transition-colors"
@@ -561,7 +572,10 @@ if __name__ == "__main__":
     </button>
 
     <script>
-        function generateCode() {
+        // API Configuration
+        const API_BASE_URL = 'http://127.0.0.1:8000'; // 本地后端服务地址
+        
+        async function generateCode() {
             const input = document.getElementById('codeInput').value.trim();
             const outputDiv = document.getElementById('codeOutput');
             const codeLoadingDiv = document.getElementById('codeLoading');
@@ -574,20 +588,62 @@ if __name__ == "__main__":
                 return;
             }
             
+            // Get selected function
+            const functionSelect = document.getElementById('functionSelect');
+            const selectedFunction = functionSelect ? functionSelect.value : 'generate';
+            
             // Show loading animation
             outputDiv.classList.add('hidden');
             codeLoadingDiv.classList.remove('hidden');
             codeContentDiv.classList.add('hidden');
             mainCodeButtons.classList.add('hidden');
             
-            // Simulate API call with loading
             const button = event.target;
             const originalText = button.textContent;
             button.textContent = 'Generating...';
             button.disabled = true;
             
-            setTimeout(() => {
-                // Generate sample code based on input
+            try {
+                // Call the backend API with timeout
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), 10000); // 10秒超时
+                
+                const response = await fetch(`${API_BASE_URL}/api/${selectedFunction}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        prompt: input,
+                        language: 'python'
+                    }),
+                    signal: controller.signal
+                });
+                
+                clearTimeout(timeoutId);
+                
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    throw new Error(`HTTP error! status: ${response.status}, message: ${errorText}`);
+                }
+                
+                const data = await response.json();
+                
+                // Display the generated code
+                codeElement.textContent = data.code;
+                codeLoadingDiv.classList.add('hidden');
+                codeContentDiv.classList.remove('hidden');
+                mainCodeButtons.classList.remove('hidden');
+                
+            } catch (error) {
+                console.error('Error generating code:', error);
+                
+                if (error.name === 'AbortError') {
+                    showCustomAlert('请求超时，请检查网络连接或稍后重试');
+                    return;
+                }
+                
+                // Fallback to sample code if API fails
                 let sampleCode = '';
                 
                 if (input.toLowerCase().includes('fibonacci')) {
@@ -730,11 +786,12 @@ if __name__ == "__main__":
                 codeContentDiv.classList.remove('hidden');
                 mainCodeButtons.classList.remove('hidden');
                 
-                
+                showCustomAlert('API暂时不可用，显示示例代码。请稍后重试。');
+            } finally {
                 // Reset button
                 button.textContent = originalText;
                 button.disabled = false;
-            }, 1500);
+            }
         }
         
         
@@ -774,6 +831,17 @@ if __name__ == "__main__":
                                 </div>
                             </div>
                             <div class="flex justify-end gap-2 sm:gap-3 mt-3 sm:mt-6 pt-3 sm:pt-4 border-t border-gray-200">
+                                    <!-- Function Selection Dropdown for Modal -->
+                                    <select 
+                                        id="modalFunctionSelect" 
+                                        class="px-3 sm:px-4 py-2 sm:py-3 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent font-medium text-gray-700 text-sm sm:text-base"
+                                    >
+                                        <option value="generate">🔧 Generate Code</option>
+                                        <option value="convert">🔄 Convert Code</option>
+                                        <option value="explain">📖 Explain Code</option>
+                                        <option value="debug">🐛 Debug Code</option>
+                                    </select>
+                                    
                                     <button 
                                         onclick="generateCodeFromModal()" 
                                         class="px-4 sm:px-8 py-2 sm:py-3 bg-black text-white font-semibold rounded-lg hover:bg-gray-800 transition-colors text-sm sm:text-base"
@@ -831,6 +899,14 @@ if __name__ == "__main__":
             modal.innerHTML = modalContent;
             document.body.appendChild(modal);
             
+            // Sync function selection when modal opens
+            if (panel === 'input') {
+                const modalFunctionSelect = document.getElementById('modalFunctionSelect');
+                const mainFunctionSelect = document.getElementById('functionSelect');
+                if (modalFunctionSelect && mainFunctionSelect) {
+                    modalFunctionSelect.value = mainFunctionSelect.value;
+                }
+            }
             
             // Close on background click
             modal.addEventListener('click', function(e) {
@@ -857,6 +933,14 @@ if __name__ == "__main__":
             
             // Copy to main input
             document.getElementById('codeInput').value = modalInput;
+            
+            // Sync function selection
+            const modalFunctionSelect = document.getElementById('modalFunctionSelect');
+            const mainFunctionSelect = document.getElementById('functionSelect');
+            if (modalFunctionSelect && mainFunctionSelect) {
+                mainFunctionSelect.value = modalFunctionSelect.value;
+            }
+            
             // Generate code
             generateCode();
             // Close modal
@@ -1071,6 +1155,7 @@ if __name__ == "__main__":
                 }
             }, 100);
         }
+
         
         // Custom alert modal
         function showCustomAlert(message) {
