@@ -198,8 +198,9 @@
                             id="codeInput" 
                             placeholder="To use this tool, take the following steps —
 
-1. Describe the code you want to generate here in this box
-2. Click Generate
+1. Select what you want to do from the dropdown
+2. Describe your task here in this box
+3. Click Generate
 
 e.g., Create a function to calculate fibonacci numbers"
                             class="w-full h-64 px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
@@ -259,7 +260,10 @@ e.g., Create a function to calculate fibonacci numbers"
             </div>
             
             <!-- Action Buttons -->
-            <div class="flex justify-center gap-4 mt-6">
+            <div class="flex justify-center items-center gap-4 mt-6">
+                <!-- I want to label -->
+                <span class="text-gray-700 font-medium text-lg">I want to</span>
+                
                 <!-- Function Selection Dropdown -->
                 <select 
                     id="functionSelect" 
@@ -819,8 +823,9 @@ if __name__ == "__main__":
                             <div class="flex-1 overflow-y-auto">
                                 <h4 class="font-semibold text-gray-900 mb-3 sm:mb-6 text-base sm:text-lg">To use this tool, take the following steps —</h4>
                                 <ol class="text-gray-600 space-y-2 sm:space-y-3 mb-4 sm:mb-8 text-sm sm:text-base">
-                                    <li>1. Describe the code you want to generate here in this box</li>
-                                    <li>2. Click Generate</li>
+                                    <li>1. Select what you want to do from the dropdown</li>
+                                    <li>2. Describe your task here in this box</li>
+                                    <li>3. Click Generate</li>
                                 </ol>
                                 <div class="bg-gray-50 rounded-lg p-3 sm:p-6">
                                     <textarea 
@@ -830,7 +835,10 @@ if __name__ == "__main__":
                                     ></textarea>
                                 </div>
                             </div>
-                            <div class="flex justify-end gap-2 sm:gap-3 mt-3 sm:mt-6 pt-3 sm:pt-4 border-t border-gray-200">
+                            <div class="flex justify-end items-center gap-2 sm:gap-3 mt-3 sm:mt-6 pt-3 sm:pt-4 border-t border-gray-200">
+                                    <!-- I want to label for Modal -->
+                                    <span class="text-gray-700 font-medium text-sm sm:text-base">I want to</span>
+                                    
                                     <!-- Function Selection Dropdown for Modal -->
                                     <select 
                                         id="modalFunctionSelect" 
