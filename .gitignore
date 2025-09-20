@@ -3,6 +3,19 @@
 production.env
 *.env
 
+# IDE和工具配置文件
+.cursorindexingignore
+.specstory/
+.vscode/
+.idea/
+
+# GitHub配置文件（可能包含敏感信息）
+.github/
+
+# 其他敏感文件
+config.json
+secrets.json
+
 # Python缓存文件
 __pycache__/
 *.py[cod]
