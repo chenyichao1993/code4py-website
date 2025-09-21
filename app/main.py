@@ -188,30 +188,24 @@ async def generate_code_with_replicate(prompt: str, context: str = None) -> str:
         if not client:
             raise Exception("Replicate client not initialized")
         
-        system_prompt = """You are an expert Python developer. Generate clean, production-ready Python code based on the user's natural language description. 
-
-Requirements:
-- Write complete, functional Python code
-- Include proper error handling and input validation
-- Add clear comments and docstrings
-- Follow Python best practices and PEP 8 style
-- Include usage examples if appropriate
-- Return only the code without explanations unless specifically asked
-
-Focus on creating practical, efficient solutions that solve the user's problem."""
+        # Use Code Llama 34B for cost-effective code generation
+        model_name = "meta/codellama-34b-instruct"
+        
+        # Format prompt according to Code Llama instruction format
+        system_prompt = "You are an expert Python developer. Generate clean, production-ready Python code based on the user's natural language description. Write complete, functional Python code with proper error handling, comments, and docstrings. Follow Python best practices and PEP 8 style. Return only the code without explanations unless specifically asked."
         
         user_prompt = prompt
         if context:
             user_prompt = f"Context: {context}\n\nRequest: {prompt}"
         
-        # Use Code Llama 34B for cost-effective code generation
-        model_name = "meta/codellama-34b-instruct"
+        # Use proper Code Llama instruction format
+        formatted_prompt = f"<s>[INST] <<SYS>>\n{system_prompt}\n<</SYS>>\n\n{user_prompt} [/INST]"
         
         response = client.run(
             model_name,
             input={
-                "prompt": f"{system_prompt}\n\nUser: {user_prompt}\n\nAssistant:",
-                "max_new_tokens": 1500,
+                "prompt": formatted_prompt,
+                "max_new_tokens": 512,
                 "temperature": 0.2,
                 "top_p": 0.9
             }
@@ -274,27 +268,23 @@ async def convert_code_with_replicate(code: str, from_lang: str, to_lang: str) -
         if not client:
             raise Exception("Replicate client not initialized")
         
-        system_prompt = f"""You are an expert programmer specializing in code conversion. Convert the following {from_lang} code to {to_lang} code.
-
-Requirements:
-- Maintain exact same functionality and logic
-- Adapt to {to_lang} syntax and conventions
-- Include proper error handling
-- Follow {to_lang} best practices
-- Preserve variable names and structure when possible
-- Add comments explaining any significant changes
-- Return only the converted code
-
-Ensure the converted code is functionally equivalent to the original."""
-        
         model_name = "meta/codellama-34b-instruct"
+        
+        # Format prompt according to Code Llama instruction format
+        system_prompt = f"You are an expert programmer specializing in code conversion. Convert the following {from_lang} code to {to_lang} code. Maintain exact same functionality and logic, adapt to {to_lang} syntax and conventions, include proper error handling, follow {to_lang} best practices, preserve variable names and structure when possible, add comments explaining any significant changes. Return only the converted code."
+        
+        user_prompt = f"Convert this {from_lang} code to {to_lang}:\n\n{code}"
+        
+        # Use proper Code Llama instruction format
+        formatted_prompt = f"<s>[INST] <<SYS>>\n{system_prompt}\n<</SYS>>\n\n{user_prompt} [/INST]"
         
         response = client.run(
             model_name,
             input={
-                "prompt": f"{system_prompt}\n\nCode to convert:\n{code}\n\nConverted {to_lang} code:",
-                "max_new_tokens": 1500,
-                "temperature": 0.3
+                "prompt": formatted_prompt,
+                "max_new_tokens": 512,
+                "temperature": 0.2,
+                "top_p": 0.9
             }
         )
         
@@ -323,26 +313,23 @@ async def explain_code_with_replicate(code: str, language: str) -> dict:
         if not client:
             raise Exception("Replicate client not initialized")
         
-        system_prompt = f"""You are an expert {language} developer and code analyst. Analyze the following code and provide a comprehensive explanation.
-
-Provide:
-1. **What the code does**: Clear, step-by-step explanation of functionality
-2. **How it works**: Technical details of algorithms, data structures, and logic flow
-3. **Key concepts**: Important programming concepts used
-4. **Input/Output**: What inputs are expected and what outputs are produced
-5. **Potential issues**: Any bugs, edge cases, or improvements needed
-6. **Optimization suggestions**: Ways to improve performance or readability
-
-Format your response as JSON with keys: explanation, how_it_works, key_concepts, input_output, issues, suggestions"""
-        
         model_name = "meta/codellama-34b-instruct"
+        
+        # Format prompt according to Code Llama instruction format
+        system_prompt = f"You are an expert {language} developer and code analyst. Analyze the following code and provide a comprehensive explanation. Cover: what the code does (clear step-by-step explanation), how it works (technical details), key concepts (important programming concepts), input/output (expected inputs and outputs), potential issues (bugs, edge cases, improvements), optimization suggestions (ways to improve performance or readability). Format your response as JSON with keys: explanation, how_it_works, key_concepts, input_output, issues, suggestions."
+        
+        user_prompt = f"Explain what this {language} code does:\n\n{code}"
+        
+        # Use proper Code Llama instruction format
+        formatted_prompt = f"<s>[INST] <<SYS>>\n{system_prompt}\n<</SYS>>\n\n{user_prompt} [/INST]"
         
         response = client.run(
             model_name,
             input={
-                "prompt": f"{system_prompt}\n\nCode to analyze:\n{code}\n\nAnalysis:",
-                "max_new_tokens": 1500,
-                "temperature": 0.5
+                "prompt": formatted_prompt,
+                "max_new_tokens": 512,
+                "temperature": 0.2,
+                "top_p": 0.9
             }
         )
         
@@ -400,24 +387,23 @@ async def debug_code_with_replicate(code: str) -> str:
         if not client:
             raise Exception("Replicate client not initialized")
         
-        system_prompt = """You are an expert Python debugger. Analyze the following code and provide a comprehensive debugging analysis.
-
-Please provide:
-1. **Issues found**: List any bugs, potential problems, or improvements needed
-2. **Fixed code**: Provide an improved version of the code
-3. **Explanation**: Explain what was wrong and how the fixes improve the code
-4. **Best practices**: Suggest any additional improvements
-
-Format your response as clear, readable text with sections marked with **bold headers**. Do not use JSON format."""
-        
         model_name = "meta/codellama-34b-instruct"
+        
+        # Format prompt according to Code Llama instruction format
+        system_prompt = "You are an expert Python debugger. Analyze the following code and provide a comprehensive debugging analysis. Provide: issues found (list any bugs, potential problems, or improvements needed), fixed code (provide an improved version of the code), explanation (explain what was wrong and how the fixes improve the code), best practices (suggest any additional improvements). Format your response as clear, readable text with sections marked with **bold headers**. Do not use JSON format."
+        
+        user_prompt = f"Debug this Python code:\n\n{code}"
+        
+        # Use proper Code Llama instruction format
+        formatted_prompt = f"<s>[INST] <<SYS>>\n{system_prompt}\n<</SYS>>\n\n{user_prompt} [/INST]"
         
         response = client.run(
             model_name,
             input={
-                "prompt": f"{system_prompt}\n\nCode to debug:\n{code}\n\nDebug Analysis:",
-                "max_new_tokens": 1500,
-                "temperature": 0.3
+                "prompt": formatted_prompt,
+                "max_new_tokens": 512,
+                "temperature": 0.2,
+                "top_p": 0.9
             }
         )
         
