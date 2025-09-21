@@ -447,37 +447,10 @@ async def generate_code(request: CodeGenerationRequest, http_request: Request):
         import traceback
         traceback.print_exc()
         
-        # 如果AI生成失败，返回一个基本的代码模板
-        if "fibonacci" in request.prompt.lower():
-            fallback_code = '''def fibonacci(n):
-    """Calculate the nth Fibonacci number"""
-    if n <= 0:
-        return 0
-    elif n == 1:
-        return 1
-    else:
-        return fibonacci(n-1) + fibonacci(n-2)
-
-# 使用示例
-if __name__ == "__main__":
-    n = 10
-    result = fibonacci(n)
-    print(f"Fibonacci({n}) = {result}")'''
-        else:
-            fallback_code = f'''def generated_function():
-    """
-    {request.prompt}
-    """
-    # TODO: 实现您的需求
-    pass
-
-# 使用示例
-if __name__ == "__main__":
-    result = generated_function()
-    print(result)'''
-        
+        # 如果AI生成失败，返回错误信息
         return {
-            "code": fallback_code,
+            "error": f"AI生成失败: {str(e)}",
+            "code": None,
             "execution_time": 0.1
         }
 
