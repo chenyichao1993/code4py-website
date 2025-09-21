@@ -327,7 +327,15 @@ Format your response as JSON with keys: explanation, how_it_works, key_concepts,
             }
     
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Code analysis failed: {str(e)}")
+        print(f"Explain code error: {e}")
+        return {
+            "explanation": f"Unable to explain code due to an error: {str(e)}",
+            "how_it_works": "Error occurred during analysis",
+            "key_concepts": [],
+            "input_output": "Unable to determine",
+            "issues": [f"Error: {str(e)}"],
+            "suggestions": []
+        }
 
 async def debug_code_with_openai(code: str) -> dict:
     """Debug and fix Python code issues"""
@@ -539,8 +547,27 @@ async def explain_code(request: CodeExplanationRequest, http_request: Request):
         
         execution_time = (datetime.now() - start_time).total_seconds()
         
+        # Format explanation as readable text
+        explanation_text = f"""**What the code does:**
+{analysis.get('explanation', 'No explanation available')}
+
+**How it works:**
+{analysis.get('how_it_works', 'No technical details available')}
+
+**Key concepts:**
+{', '.join(analysis.get('key_concepts', [])) if analysis.get('key_concepts') else 'No key concepts identified'}
+
+**Input/Output:**
+{analysis.get('input_output', 'No input/output information available')}
+
+**Potential issues:**
+{', '.join(analysis.get('issues', [])) if analysis.get('issues') else 'No issues identified'}
+
+**Optimization suggestions:**
+{', '.join(analysis.get('suggestions', [])) if analysis.get('suggestions') else 'No suggestions available'}"""
+
         return CodeResponse(
-            code=request.code,
+            code=explanation_text,
             explanation=analysis.get("explanation"),
             suggestions=analysis.get("suggestions", []),
             execution_time=execution_time
@@ -582,8 +609,26 @@ async def debug_code(request: CodeExplanationRequest, http_request: Request):
         
         execution_time = (datetime.now() - start_time).total_seconds()
         
+        # Format debug analysis as readable text
+        debug_text = f"""**Bugs found:**
+{', '.join(analysis.get('bugs_found', [])) if analysis.get('bugs_found') else 'No bugs found'}
+
+**Fixed code:**
+```python
+{analysis.get('fixed_code', request.code)}
+```
+
+**Explanations:**
+{', '.join(analysis.get('explanations', [])) if analysis.get('explanations') else 'No explanations available'}
+
+**Test cases:**
+{', '.join(analysis.get('test_cases', [])) if analysis.get('test_cases') else 'No test cases suggested'}
+
+**Improvements:**
+{', '.join(analysis.get('improvements', [])) if analysis.get('improvements') else 'No improvements suggested'}"""
+
         return CodeResponse(
-            code=analysis.get("fixed_code", request.code),
+            code=debug_text,
             explanation=analysis.get("explanations", ["No issues found"]),
             suggestions=analysis.get("improvements", []),
             execution_time=execution_time
