@@ -204,15 +204,16 @@ Focus on creating practical, efficient solutions that solve the user's problem."
         if context:
             user_prompt = f"Context: {context}\n\nRequest: {prompt}"
         
-        # Use OpenAI GPT-4o Mini for cost-effective code generation
-        model_name = "openai/gpt-4o-mini"
+        # Use a more reliable model for code generation
+        model_name = "replicate/llama-2-70b-chat"
         
         response = client.run(
             model_name,
             input={
                 "prompt": f"{system_prompt}\n\nUser: {user_prompt}\n\nAssistant:",
-                "max_new_tokens": 2000,
-                "temperature": 0.7
+                "max_new_tokens": 1000,
+                "temperature": 0.7,
+                "top_p": 0.9
             }
         )
         
@@ -279,7 +280,7 @@ Requirements:
 
 Ensure the converted code is functionally equivalent to the original."""
         
-        model_name = "openai/gpt-4o-mini"
+        model_name = "replicate/llama-2-70b-chat"
         
         response = client.run(
             model_name,
@@ -327,7 +328,7 @@ Provide:
 
 Format your response as JSON with keys: explanation, how_it_works, key_concepts, input_output, issues, suggestions"""
         
-        model_name = "openai/gpt-4o-mini"
+        model_name = "replicate/llama-2-70b-chat"
         
         response = client.run(
             model_name,
@@ -402,7 +403,7 @@ Please provide:
 
 Format your response as clear, readable text with sections marked with **bold headers**. Do not use JSON format."""
         
-        model_name = "openai/gpt-4o-mini"
+        model_name = "replicate/llama-2-70b-chat"
         
         response = client.run(
             model_name,
