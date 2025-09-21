@@ -211,7 +211,7 @@ Focus on creating practical, efficient solutions that solve the user's problem."
             model_name,
             input={
                 "prompt": f"{system_prompt}\n\nUser: {user_prompt}\n\nAssistant:",
-                "max_new_tokens": 1000,
+                "max_new_tokens": 1500,
                 "temperature": 0.7,
                 "top_p": 0.9
             }
@@ -286,7 +286,7 @@ Ensure the converted code is functionally equivalent to the original."""
             model_name,
             input={
                 "prompt": f"{system_prompt}\n\nCode to convert:\n{code}\n\nConverted {to_lang} code:",
-                "max_new_tokens": 2000,
+                "max_new_tokens": 1500,
                 "temperature": 0.3
             }
         )
