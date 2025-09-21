@@ -5,7 +5,6 @@ from pydantic import BaseModel
 from typing import Optional, List
 import os
 from dotenv import load_dotenv
-import openai
 import redis
 import json
 from datetime import datetime, timedelta
@@ -30,10 +29,6 @@ app.add_middleware(
     allow_headers=["*"],
     expose_headers=["*"],
 )
-
-# Initialize OpenAI (支持OpenRouter)
-openai.api_key = os.getenv("OPENROUTER_API_KEY") or os.getenv("OPENAI_API_KEY")
-openai.api_base = os.getenv("OPENROUTER_API_BASE", "https://openrouter.ai/api/v1")
 
 # Initialize Replicate
 replicate_token = os.getenv("REPLICATE_API_TOKEN")
@@ -180,58 +175,6 @@ async def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(s
     # In a real app, validate JWT token here
     return {"id": "user_123", "subscription_type": "premium"}
 
-# OpenAI helper functions
-async def generate_code_with_openai(prompt: str, context: str = None) -> str:
-    """Generate Python code using OpenRouter API"""
-    try:
-        # 获取API配置
-        api_key = os.getenv("OPENROUTER_API_KEY")
-        api_base = os.getenv("OPENROUTER_API_BASE", "https://openrouter.ai/api/v1")
-        
-        if not api_key:
-            raise Exception("OpenRouter API key not found")
-        
-        # 创建OpenAI客户端
-        client = openai.AsyncOpenAI(
-            api_key=api_key,
-            base_url=api_base
-        )
-        
-        system_prompt = """You are an expert Python developer. Generate clean, production-ready Python code based on the user's natural language description. 
-
-Requirements:
-- Write complete, functional Python code
-- Include proper error handling and input validation
-- Add clear comments and docstrings
-- Follow Python best practices and PEP 8 style
-- Include usage examples if appropriate
-- Return only the code without explanations unless specifically asked
-
-Focus on creating practical, efficient solutions that solve the user's problem."""
-        
-        user_prompt = prompt
-        if context:
-            user_prompt = f"Context: {context}\n\nRequest: {prompt}"
-        
-        # 使用OpenRouter格式的模型名称
-        model_name = "openai/gpt-3.5-turbo"
-        
-        response = await client.chat.completions.create(
-            model=model_name,
-            messages=[
-                {"role": "system", "content": system_prompt},
-                {"role": "user", "content": user_prompt}
-            ],
-            max_tokens=2000,
-            temperature=0.7
-        )
-        
-        return response.choices[0].message.content.strip()
-    
-    except Exception as e:
-        print(f"OpenRouter API error: {e}")
-        raise Exception(f"Code generation failed: {str(e)}")
-
 # Replicate helper functions
 async def generate_code_with_replicate(prompt: str, context: str = None) -> str:
     """Generate Python code using Replicate API"""
@@ -259,9 +202,9 @@ Focus on creating practical, efficient solutions that solve the user's problem."
             user_prompt = f"Context: {context}\n\nRequest: {prompt}"
         
         # Use a suitable model from Replicate
-        model_name = "meta/llama-2-70b-chat"
+        model_name = "replicate/llama-2-70b-chat"
         
-        response = await client.run(
+        response = client.run(
             model_name,
             input={
                 "prompt": f"{system_prompt}\n\nUser: {user_prompt}\n\nAssistant:",
@@ -276,9 +219,15 @@ Focus on creating practical, efficient solutions that solve the user's problem."
         print(f"Replicate API error: {e}")
         raise Exception(f"Code generation failed: {str(e)}")
 
-async def convert_code_with_openai(code: str, from_lang: str, to_lang: str) -> str:
-    """Convert code from one language to another"""
+async def convert_code_with_replicate(code: str, from_lang: str, to_lang: str) -> str:
+    """Convert code from one language to another using Replicate"""
     try:
+        api_token = os.getenv("REPLICATE_API_TOKEN")
+        if not api_token:
+            raise Exception("Replicate API token not found")
+        
+        client = replicate.Client(api_token=api_token)
+        
         system_prompt = f"""You are an expert programmer specializing in code conversion. Convert the following {from_lang} code to {to_lang} code.
 
 Requirements:
@@ -292,40 +241,31 @@ Requirements:
 
 Ensure the converted code is functionally equivalent to the original."""
         
-        # Get API configuration
-        api_key = os.getenv("OPENROUTER_API_KEY")
-        api_base = os.getenv("OPENROUTER_API_BASE", "https://openrouter.ai/api/v1")
+        model_name = "replicate/llama-2-70b-chat"
         
-        if not api_key:
-            raise Exception("OpenRouter API key not found")
-        
-        # Create OpenAI client
-        client = openai.AsyncOpenAI(
-            api_key=api_key,
-            base_url=api_base
+        response = client.run(
+            model_name,
+            input={
+                "prompt": f"{system_prompt}\n\nCode to convert:\n{code}\n\nConverted {to_lang} code:",
+                "max_new_tokens": 2000,
+                "temperature": 0.3
+            }
         )
         
-        # Use OpenRouter format model name
-        model_name = "openai/gpt-3.5-turbo"
-        
-        response = await client.chat.completions.create(
-            model=model_name,
-            messages=[
-                {"role": "system", "content": system_prompt},
-                {"role": "user", "content": code}
-            ],
-            max_tokens=2000,
-            temperature=0.3
-        )
-        
-        return response.choices[0].message.content.strip()
+        return response.strip()
     
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Code conversion failed: {str(e)}")
 
-async def explain_code_with_openai(code: str, language: str) -> dict:
-    """Explain and analyze code"""
+async def explain_code_with_replicate(code: str, language: str) -> dict:
+    """Explain and analyze code using Replicate"""
     try:
+        api_token = os.getenv("REPLICATE_API_TOKEN")
+        if not api_token:
+            raise Exception("Replicate API token not found")
+        
+        client = replicate.Client(api_token=api_token)
+        
         system_prompt = f"""You are an expert {language} developer and code analyst. Analyze the following code and provide a comprehensive explanation.
 
 Provide:
@@ -338,33 +278,18 @@ Provide:
 
 Format your response as JSON with keys: explanation, how_it_works, key_concepts, input_output, issues, suggestions"""
         
-        # Get API configuration
-        api_key = os.getenv("OPENROUTER_API_KEY")
-        api_base = os.getenv("OPENROUTER_API_BASE", "https://openrouter.ai/api/v1")
+        model_name = "replicate/llama-2-70b-chat"
         
-        if not api_key:
-            raise Exception("OpenRouter API key not found")
-        
-        # Create OpenAI client
-        client = openai.AsyncOpenAI(
-            api_key=api_key,
-            base_url=api_base
+        response = client.run(
+            model_name,
+            input={
+                "prompt": f"{system_prompt}\n\nCode to analyze:\n{code}\n\nAnalysis:",
+                "max_new_tokens": 1500,
+                "temperature": 0.5
+            }
         )
         
-        # Use OpenRouter format model name
-        model_name = "openai/gpt-3.5-turbo"
-        
-        response = await client.chat.completions.create(
-            model=model_name,
-            messages=[
-                {"role": "system", "content": system_prompt},
-                {"role": "user", "content": code}
-            ],
-            max_tokens=1500,
-            temperature=0.5
-        )
-        
-        result = response.choices[0].message.content.strip()
+        result = response.strip()
         
         # Try to parse as JSON, fallback to plain text
         try:
@@ -387,9 +312,29 @@ Format your response as JSON with keys: explanation, how_it_works, key_concepts,
             "suggestions": []
         }
 
-async def debug_code_with_openai(code: str) -> str:
-    """Debug and fix Python code issues - simplified version"""
+async def debug_code_with_replicate(code: str) -> str:
+    """Debug and fix Python code issues using Replicate"""
     try:
+        api_token = os.getenv("REPLICATE_API_TOKEN")
+        if not api_token:
+            return f"""**Debug Analysis Failed**
+
+**Error:** Replicate API token not found. Please check your environment variables.
+
+**Original Code:**
+```python
+{code}
+```
+
+**Setup Required:**
+1. Set REPLICATE_API_TOKEN environment variable
+2. Ensure you have a valid Replicate API token
+3. Restart the application
+
+**Unable to perform debugging analysis due to missing API configuration.**"""
+        
+        client = replicate.Client(api_token=api_token)
+        
         system_prompt = """You are an expert Python debugger. Analyze the following code and provide a comprehensive debugging analysis.
 
 Please provide:
@@ -400,47 +345,18 @@ Please provide:
 
 Format your response as clear, readable text with sections marked with **bold headers**. Do not use JSON format."""
         
-        # Get API configuration
-        api_key = os.getenv("OPENROUTER_API_KEY")
-        api_base = os.getenv("OPENROUTER_API_BASE", "https://openrouter.ai/api/v1")
+        model_name = "replicate/llama-2-70b-chat"
         
-        if not api_key:
-            return f"""**Debug Analysis Failed**
-
-**Error:** API configuration not found. Please check your environment variables.
-
-**Original Code:**
-```python
-{code}
-```
-
-**Setup Required:**
-1. Set OPENROUTER_API_KEY environment variable
-2. Ensure you have a valid OpenRouter API key
-3. Restart the application
-
-**Unable to perform debugging analysis due to missing API configuration.**"""
-        
-        # Create OpenAI client
-        client = openai.AsyncOpenAI(
-            api_key=api_key,
-            base_url=api_base
+        response = client.run(
+            model_name,
+            input={
+                "prompt": f"{system_prompt}\n\nCode to debug:\n{code}\n\nDebug Analysis:",
+                "max_new_tokens": 1500,
+                "temperature": 0.3
+            }
         )
         
-        # Use OpenRouter format model name
-        model_name = "openai/gpt-3.5-turbo"
-        
-        response = await client.chat.completions.create(
-            model=model_name,
-            messages=[
-                {"role": "system", "content": system_prompt},
-                {"role": "user", "content": code}
-            ],
-            max_tokens=1500,
-            temperature=0.3
-        )
-        
-        return response.choices[0].message.content.strip()
+        return response.strip()
     
     except Exception as e:
         print(f"Debug code error: {e}")
@@ -448,7 +364,7 @@ Format your response as clear, readable text with sections marked with **bold he
         
         # Provide more specific error messages
         if "401" in error_msg or "User not found" in error_msg:
-            error_msg = "Invalid API key. Please check your OpenRouter API key configuration."
+            error_msg = "Invalid API token. Please check your Replicate API token configuration."
         elif "429" in error_msg:
             error_msg = "API rate limit exceeded. Please try again later."
         elif "timeout" in error_msg.lower():
@@ -464,7 +380,7 @@ Format your response as clear, readable text with sections marked with **bold he
 ```
 
 **Troubleshooting:**
-1. Check your API key configuration
+1. Check your API token configuration
 2. Verify your internet connection
 3. Try again in a few moments
 
@@ -515,14 +431,9 @@ async def generate_code(request: CodeGenerationRequest, http_request: Request):
         print(f"用户 {user_ip} 今日使用次数: {current_usage + 1}/10")
     
     try:
-        # Try Replicate first, fallback to OpenRouter
-        try:
-            generated_code = await generate_code_with_replicate(request.prompt, request.context)
-            print(f"Replicate generated code length: {len(generated_code)}")
-        except Exception as replicate_error:
-            print(f"Replicate failed, trying OpenRouter: {replicate_error}")
-            generated_code = await generate_code_with_openai(request.prompt, request.context)
-            print(f"OpenRouter generated code length: {len(generated_code)}")
+        # Use Replicate for code generation
+        generated_code = await generate_code_with_replicate(request.prompt, request.context)
+        print(f"Replicate generated code length: {len(generated_code)}")
         
         return {
             "code": generated_code,
@@ -566,7 +477,7 @@ async def convert_code(request: CodeConversionRequest, http_request: Request):
     start_time = datetime.now()
     
     try:
-        converted_code = await convert_code_with_openai(
+        converted_code = await convert_code_with_replicate(
             request.code, 
             request.from_language, 
             request.to_language
@@ -611,7 +522,7 @@ async def explain_code(request: CodeExplanationRequest, http_request: Request):
     start_time = datetime.now()
     
     try:
-        analysis = await explain_code_with_openai(request.code, request.language)
+        analysis = await explain_code_with_replicate(request.code, request.language)
         
         execution_time = (datetime.now() - start_time).total_seconds()
         
@@ -673,7 +584,7 @@ async def debug_code(request: CodeExplanationRequest, http_request: Request):
     start_time = datetime.now()
     
     try:
-        debug_analysis = await debug_code_with_openai(request.code)
+        debug_analysis = await debug_code_with_replicate(request.code)
         
         execution_time = (datetime.now() - start_time).total_seconds()
         
