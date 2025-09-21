@@ -242,20 +242,20 @@ Requirements:
 
 Ensure the converted code is functionally equivalent to the original."""
         
-        # 获取API配置
+        # Get API configuration
         api_key = os.getenv("OPENROUTER_API_KEY")
         api_base = os.getenv("OPENROUTER_API_BASE", "https://openrouter.ai/api/v1")
         
         if not api_key:
             raise Exception("OpenRouter API key not found")
         
-        # 创建OpenAI客户端
+        # Create OpenAI client
         client = openai.AsyncOpenAI(
             api_key=api_key,
             base_url=api_base
         )
         
-        # 使用OpenRouter格式的模型名称
+        # Use OpenRouter format model name
         model_name = "openai/gpt-3.5-turbo"
         
         response = await client.chat.completions.create(
@@ -288,20 +288,20 @@ Provide:
 
 Format your response as JSON with keys: explanation, how_it_works, key_concepts, input_output, issues, suggestions"""
         
-        # 获取API配置
+        # Get API configuration
         api_key = os.getenv("OPENROUTER_API_KEY")
         api_base = os.getenv("OPENROUTER_API_BASE", "https://openrouter.ai/api/v1")
         
         if not api_key:
             raise Exception("OpenRouter API key not found")
         
-        # 创建OpenAI客户端
+        # Create OpenAI client
         client = openai.AsyncOpenAI(
             api_key=api_key,
             base_url=api_base
         )
         
-        # 使用OpenRouter格式的模型名称
+        # Use OpenRouter format model name
         model_name = "openai/gpt-3.5-turbo"
         
         response = await client.chat.completions.create(
@@ -350,20 +350,20 @@ Please provide:
 
 Format your response as clear, readable text with sections marked with **bold headers**. Do not use JSON format."""
         
-        # 获取API配置
+        # Get API configuration
         api_key = os.getenv("OPENROUTER_API_KEY")
         api_base = os.getenv("OPENROUTER_API_BASE", "https://openrouter.ai/api/v1")
         
         if not api_key:
             raise Exception("OpenRouter API key not found")
         
-        # 创建OpenAI客户端
+        # Create OpenAI client
         client = openai.AsyncOpenAI(
             api_key=api_key,
             base_url=api_base
         )
         
-        # 使用OpenRouter格式的模型名称
+        # Use OpenRouter format model name
         model_name = "openai/gpt-3.5-turbo"
         
         response = await client.chat.completions.create(
@@ -446,13 +446,13 @@ async def generate_code(request: CodeGenerationRequest, http_request: Request):
         }
     
     except Exception as e:
-        print(f"AI生成失败: {e}")
+        print(f"AI generation failed: {e}")
         import traceback
         traceback.print_exc()
         
-        # 如果AI生成失败，返回错误信息
+        # If AI generation fails, return error information
         return {
-            "error": f"AI生成失败: {str(e)}",
+            "error": f"AI generation failed: {str(e)}",
             "code": None,
             "execution_time": 0.1
         }
