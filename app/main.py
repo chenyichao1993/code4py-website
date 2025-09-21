@@ -32,8 +32,9 @@ app.add_middleware(
 
 # Initialize Replicate
 replicate_token = os.getenv("REPLICATE_API_TOKEN")
+replicate_client = None
 if replicate_token:
-    replicate.Client(api_token=replicate_token)
+    replicate_client = replicate.Client(api_token=replicate_token)
 
 # Initialize Redis (with fallback for free hosting)
 try:
@@ -183,7 +184,9 @@ async def generate_code_with_replicate(prompt: str, context: str = None) -> str:
         if not api_token:
             raise Exception("Replicate API token not found")
         
-        client = replicate.Client(api_token=api_token)
+        client = replicate_client
+        if not client:
+            raise Exception("Replicate client not initialized")
         
         system_prompt = """You are an expert Python developer. Generate clean, production-ready Python code based on the user's natural language description. 
 
@@ -207,11 +210,8 @@ Focus on creating practical, efficient solutions that solve the user's problem."
         response = client.run(
             model_name,
             input={
-                "messages": [
-                    {"role": "system", "content": system_prompt},
-                    {"role": "user", "content": user_prompt}
-                ],
-                "max_tokens": 2000,
+                "prompt": f"{system_prompt}\n\nUser: {user_prompt}\n\nAssistant:",
+                "max_new_tokens": 2000,
                 "temperature": 0.7
             }
         )
@@ -220,7 +220,19 @@ Focus on creating practical, efficient solutions that solve the user's problem."
     
     except Exception as e:
         print(f"Replicate API error: {e}")
-        raise Exception(f"Code generation failed: {str(e)}")
+        # Return a fallback response instead of raising exception
+        return f"""# Code Generation Failed
+
+**Error:** {str(e)}
+
+**Please try again later or contact support if the issue persists.**
+
+**Fallback Example:**
+```python
+def example_function():
+    # Your code here
+    pass
+```"""
 
 async def convert_code_with_replicate(code: str, from_lang: str, to_lang: str) -> str:
     """Convert code from one language to another using Replicate"""
@@ -229,7 +241,9 @@ async def convert_code_with_replicate(code: str, from_lang: str, to_lang: str) -
         if not api_token:
             raise Exception("Replicate API token not found")
         
-        client = replicate.Client(api_token=api_token)
+        client = replicate_client
+        if not client:
+            raise Exception("Replicate client not initialized")
         
         system_prompt = f"""You are an expert programmer specializing in code conversion. Convert the following {from_lang} code to {to_lang} code.
 
@@ -249,11 +263,8 @@ Ensure the converted code is functionally equivalent to the original."""
         response = client.run(
             model_name,
             input={
-                "messages": [
-                    {"role": "system", "content": system_prompt},
-                    {"role": "user", "content": f"Code to convert:\n{code}"}
-                ],
-                "max_tokens": 2000,
+                "prompt": f"{system_prompt}\n\nCode to convert:\n{code}\n\nConverted {to_lang} code:",
+                "max_new_tokens": 2000,
                 "temperature": 0.3
             }
         )
@@ -270,7 +281,9 @@ async def explain_code_with_replicate(code: str, language: str) -> dict:
         if not api_token:
             raise Exception("Replicate API token not found")
         
-        client = replicate.Client(api_token=api_token)
+        client = replicate_client
+        if not client:
+            raise Exception("Replicate client not initialized")
         
         system_prompt = f"""You are an expert {language} developer and code analyst. Analyze the following code and provide a comprehensive explanation.
 
@@ -289,11 +302,8 @@ Format your response as JSON with keys: explanation, how_it_works, key_concepts,
         response = client.run(
             model_name,
             input={
-                "messages": [
-                    {"role": "system", "content": system_prompt},
-                    {"role": "user", "content": f"Code to analyze:\n{code}"}
-                ],
-                "max_tokens": 1500,
+                "prompt": f"{system_prompt}\n\nCode to analyze:\n{code}\n\nAnalysis:",
+                "max_new_tokens": 1500,
                 "temperature": 0.5
             }
         )
@@ -342,7 +352,9 @@ async def debug_code_with_replicate(code: str) -> str:
 
 **Unable to perform debugging analysis due to missing API configuration.**"""
         
-        client = replicate.Client(api_token=api_token)
+        client = replicate_client
+        if not client:
+            raise Exception("Replicate client not initialized")
         
         system_prompt = """You are an expert Python debugger. Analyze the following code and provide a comprehensive debugging analysis.
 
@@ -359,11 +371,8 @@ Format your response as clear, readable text with sections marked with **bold he
         response = client.run(
             model_name,
             input={
-                "messages": [
-                    {"role": "system", "content": system_prompt},
-                    {"role": "user", "content": f"Code to debug:\n{code}"}
-                ],
-                "max_tokens": 1500,
+                "prompt": f"{system_prompt}\n\nCode to debug:\n{code}\n\nDebug Analysis:",
+                "max_new_tokens": 1500,
                 "temperature": 0.3
             }
         )
