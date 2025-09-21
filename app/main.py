@@ -355,7 +355,16 @@ Format your response as clear, readable text with sections marked with **bold he
         api_base = os.getenv("OPENROUTER_API_BASE", "https://openrouter.ai/api/v1")
         
         if not api_key:
-            raise Exception("OpenRouter API key not found")
+            return f"""**Debug Analysis Failed**
+
+**Error:** OpenRouter API key not found
+
+**Original Code:**
+```python
+{code}
+```
+
+**Unable to perform debugging analysis due to missing API key. Please try again later.**"""
         
         # Create OpenAI client
         client = openai.AsyncOpenAI(
