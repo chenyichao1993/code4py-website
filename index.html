@@ -727,7 +727,8 @@ e.g., def divide(a, b): return a / b  # This might cause errors`;
                 if (selectedFunction === 'generate') {
                     requestBody = {
                         prompt: input,
-                        language: 'python'
+                        language: 'python',
+                        context: null
                     };
                 } else if (selectedFunction === 'convert') {
                     requestBody = {
