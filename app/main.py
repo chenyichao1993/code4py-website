@@ -34,13 +34,20 @@ app.add_middleware(
 openai.api_key = os.getenv("OPENROUTER_API_KEY") or os.getenv("OPENAI_API_KEY")
 openai.api_base = os.getenv("OPENROUTER_API_BASE", "https://openrouter.ai/api/v1")
 
-# Initialize Redis
-redis_client = redis.Redis(
-    host=os.getenv("REDIS_HOST", "localhost"),
-    port=int(os.getenv("REDIS_PORT", 6379)),
-    password=os.getenv("REDIS_PASSWORD"),
-    decode_responses=True
-)
+# Initialize Redis (with fallback for free hosting)
+try:
+    redis_client = redis.Redis(
+        host=os.getenv("REDIS_HOST", "localhost"),
+        port=int(os.getenv("REDIS_PORT", 6379)),
+        password=os.getenv("REDIS_PASSWORD"),
+        decode_responses=True
+    )
+    # Test connection
+    redis_client.ping()
+    print("Redis connected successfully")
+except Exception as e:
+    print(f"Redis not available: {e}")
+    redis_client = None
 
 # Security
 security = HTTPBearer(auto_error=False)
@@ -109,21 +116,22 @@ def daily_usage_limit(key: str, limit: int = 10):
                 return await func(*args, **kwargs)
             
             # Check daily usage
-            current_usage = redis_client.get(daily_key)
-            if current_usage is None:
-                current_usage = 0
-            else:
-                current_usage = int(current_usage)
-            
-            if current_usage >= limit:
-                raise HTTPException(
-                    status_code=429, 
-                    detail="Daily usage limit exceeded. You have used all 10 free generations today. Please try again tomorrow."
-                )
-            
-            # Increment usage count
-            redis_client.incr(daily_key)
-            redis_client.expire(daily_key, 86400)  # Expire at midnight
+            if redis_client:
+                current_usage = redis_client.get(daily_key)
+                if current_usage is None:
+                    current_usage = 0
+                else:
+                    current_usage = int(current_usage)
+                
+                if current_usage >= limit:
+                    raise HTTPException(
+                        status_code=429, 
+                        detail="Daily usage limit exceeded. You have used all 10 free generations today. Please try again tomorrow."
+                    )
+                
+                # Increment usage count
+                redis_client.incr(daily_key)
+                redis_client.expire(daily_key, 86400)  # Expire at midnight
             
             return await func(*args, **kwargs)
         return wrapper
@@ -137,21 +145,22 @@ def rate_limit(key: str, limit: int = 10, window: int = 3600):
             window_start = current_time - timedelta(seconds=window)
             
             # Check rate limit
-            user_requests = redis_client.zrangebyscore(
-                f"rate_limit:{key}", 
-                window_start.timestamp(), 
-                current_time.timestamp()
-            )
-            
-            if len(user_requests) >= limit:
-                raise HTTPException(
-                    status_code=429, 
-                    detail="Rate limit exceeded. Please try again later."
+            if redis_client:
+                user_requests = redis_client.zrangebyscore(
+                    f"rate_limit:{key}", 
+                    window_start.timestamp(), 
+                    current_time.timestamp()
                 )
-            
-            # Add current request
-            redis_client.zadd(f"rate_limit:{key}", {str(uuid.uuid4()): current_time.timestamp()})
-            redis_client.expire(f"rate_limit:{key}", window)
+                
+                if len(user_requests) >= limit:
+                    raise HTTPException(
+                        status_code=429, 
+                        detail="Rate limit exceeded. Please try again later."
+                    )
+                
+                # Add current request
+                redis_client.zadd(f"rate_limit:{key}", {str(uuid.uuid4()): current_time.timestamp()})
+                redis_client.expire(f"rate_limit:{key}", window)
             
             return await func(*args, **kwargs)
         return wrapper
@@ -404,7 +413,7 @@ async def generate_code(request: CodeGenerationRequest, http_request: Request):
     
     # Check if user is in whitelist (for testing)
     whitelist_ips = ["127.0.0.1", "::1"]  # Add your IP here
-    if user_ip not in whitelist_ips:
+    if user_ip not in whitelist_ips and redis_client:
         # Check daily usage
         current_usage = redis_client.get(daily_key)
         if current_usage is None:
@@ -466,7 +475,7 @@ async def convert_code(request: CodeConversionRequest, http_request: Request):
     
     # Check if user is in whitelist (for testing)
     whitelist_ips = ["127.0.0.1", "::1"]
-    if user_ip not in whitelist_ips:
+    if user_ip not in whitelist_ips and redis_client:
         current_usage = redis_client.get(daily_key)
         if current_usage is None:
             current_usage = 0
@@ -511,7 +520,7 @@ async def explain_code(request: CodeExplanationRequest, http_request: Request):
     
     # Check if user is in whitelist (for testing)
     whitelist_ips = ["127.0.0.1", "::1"]
-    if user_ip not in whitelist_ips:
+    if user_ip not in whitelist_ips and redis_client:
         current_usage = redis_client.get(daily_key)
         if current_usage is None:
             current_usage = 0
@@ -554,7 +563,7 @@ async def debug_code(request: CodeExplanationRequest, http_request: Request):
     
     # Check if user is in whitelist (for testing)
     whitelist_ips = ["127.0.0.1", "::1"]
-    if user_ip not in whitelist_ips:
+    if user_ip not in whitelist_ips and redis_client:
         current_usage = redis_client.get(daily_key)
         if current_usage is None:
             current_usage = 0
