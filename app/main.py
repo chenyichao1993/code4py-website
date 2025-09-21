@@ -386,7 +386,14 @@ Focus on making the code robust, efficient, and maintainable."""
             }
     
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Code debugging failed: {str(e)}")
+        print(f"Debug code error: {e}")
+        return {
+            "bugs_found": [f"Error: {str(e)}"],
+            "fixed_code": code,
+            "explanations": ["Unable to debug code due to an error"],
+            "test_cases": [],
+            "improvements": []
+        }
 
 # API Routes
 @app.get("/")
