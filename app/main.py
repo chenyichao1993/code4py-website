@@ -216,7 +216,14 @@ Focus on creating practical, efficient solutions that solve the user's problem."
             }
         )
         
-        return response.strip()
+        # Handle different response types from Replicate
+        if isinstance(response, list):
+            # If response is a list, join the elements
+            return '\n'.join(str(item) for item in response)
+        elif isinstance(response, str):
+            return response.strip()
+        else:
+            return str(response)
     
     except Exception as e:
         print(f"Replicate API error: {e}")
@@ -269,7 +276,13 @@ Ensure the converted code is functionally equivalent to the original."""
             }
         )
         
-        return response.strip()
+        # Handle different response types from Replicate
+        if isinstance(response, list):
+            return '\n'.join(str(item) for item in response)
+        elif isinstance(response, str):
+            return response.strip()
+        else:
+            return str(response)
     
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Code conversion failed: {str(e)}")
@@ -308,7 +321,13 @@ Format your response as JSON with keys: explanation, how_it_works, key_concepts,
             }
         )
         
-        result = response.strip()
+        # Handle different response types from Replicate
+        if isinstance(response, list):
+            result = '\n'.join(str(item) for item in response)
+        elif isinstance(response, str):
+            result = response.strip()
+        else:
+            result = str(response)
         
         # Try to parse as JSON, fallback to plain text
         try:
@@ -377,7 +396,13 @@ Format your response as clear, readable text with sections marked with **bold he
             }
         )
         
-        return response.strip()
+        # Handle different response types from Replicate
+        if isinstance(response, list):
+            return '\n'.join(str(item) for item in response)
+        elif isinstance(response, str):
+            return response.strip()
+        else:
+            return str(response)
     
     except Exception as e:
         print(f"Debug code error: {e}")
