@@ -204,8 +204,8 @@ Focus on creating practical, efficient solutions that solve the user's problem."
         if context:
             user_prompt = f"Context: {context}\n\nRequest: {prompt}"
         
-        # Use a more stable model for code generation
-        model_name = "meta/llama-2-70b-chat"
+        # Use OpenAI GPT-4o Mini for cost-effective code generation
+        model_name = "openai/gpt-4o-mini"
         
         response = client.run(
             model_name,
@@ -218,11 +218,16 @@ Focus on creating practical, efficient solutions that solve the user's problem."
         
         # Handle different response types from Replicate
         print(f"Response type: {type(response)}")
-        print(f"Response content: {response}")
+        print(f"Response content preview: {str(response)[:200]}...")
         
         if isinstance(response, list):
-            # If response is a list, join the elements
-            result = '\n'.join(str(item) for item in response)
+            # If response is a list, join the elements properly
+            if len(response) == 1 and isinstance(response[0], str):
+                # Single string in list
+                result = response[0].strip()
+            else:
+                # Multiple elements, join with spaces
+                result = ' '.join(str(item) for item in response)
             print(f"Converted list to string: {result[:100]}...")
             return result
         elif isinstance(response, str):
@@ -274,7 +279,7 @@ Requirements:
 
 Ensure the converted code is functionally equivalent to the original."""
         
-        model_name = "meta/llama-2-70b-chat"
+        model_name = "openai/gpt-4o-mini"
         
         response = client.run(
             model_name,
@@ -287,7 +292,10 @@ Ensure the converted code is functionally equivalent to the original."""
         
         # Handle different response types from Replicate
         if isinstance(response, list):
-            return '\n'.join(str(item) for item in response)
+            if len(response) == 1 and isinstance(response[0], str):
+                return response[0].strip()
+            else:
+                return ' '.join(str(item) for item in response)
         elif isinstance(response, str):
             return response.strip()
         else:
@@ -319,7 +327,7 @@ Provide:
 
 Format your response as JSON with keys: explanation, how_it_works, key_concepts, input_output, issues, suggestions"""
         
-        model_name = "meta/llama-2-70b-chat"
+        model_name = "openai/gpt-4o-mini"
         
         response = client.run(
             model_name,
@@ -394,7 +402,7 @@ Please provide:
 
 Format your response as clear, readable text with sections marked with **bold headers**. Do not use JSON format."""
         
-        model_name = "meta/llama-2-70b-chat"
+        model_name = "openai/gpt-4o-mini"
         
         response = client.run(
             model_name,
@@ -407,7 +415,10 @@ Format your response as clear, readable text with sections marked with **bold he
         
         # Handle different response types from Replicate
         if isinstance(response, list):
-            return '\n'.join(str(item) for item in response)
+            if len(response) == 1 and isinstance(response[0], str):
+                return response[0].strip()
+            else:
+                return ' '.join(str(item) for item in response)
         elif isinstance(response, str):
             return response.strip()
         else:
