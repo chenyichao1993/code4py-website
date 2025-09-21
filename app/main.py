@@ -188,18 +188,18 @@ async def generate_code_with_replicate(prompt: str, context: str = None) -> str:
         if not client:
             raise Exception("Replicate client not initialized")
         
-        # Use Code Llama 34B for cost-effective code generation
-        model_name = "meta/codellama-34b-instruct"
+        # Use a more reliable model for code generation
+        model_name = "replicate/llama-2-70b-chat"
         
-        # Format prompt according to Code Llama instruction format
+        # Simple prompt format for Llama-2
         system_prompt = "You are an expert Python developer. Generate clean, production-ready Python code based on the user's natural language description. Write complete, functional Python code with proper error handling, comments, and docstrings. Follow Python best practices and PEP 8 style. Return only the code without explanations unless specifically asked."
         
         user_prompt = prompt
         if context:
             user_prompt = f"Context: {context}\n\nRequest: {prompt}"
         
-        # Use proper Code Llama instruction format
-        formatted_prompt = f"<s>[INST] <<SYS>>\n{system_prompt}\n<</SYS>>\n\n{user_prompt} [/INST]"
+        # Simple prompt format
+        formatted_prompt = f"{system_prompt}\n\nUser: {user_prompt}\n\nAssistant:"
         
         response = client.run(
             model_name,
@@ -268,15 +268,15 @@ async def convert_code_with_replicate(code: str, from_lang: str, to_lang: str) -
         if not client:
             raise Exception("Replicate client not initialized")
         
-        model_name = "meta/codellama-34b-instruct"
+        model_name = "replicate/llama-2-70b-chat"
         
-        # Format prompt according to Code Llama instruction format
+        # Simple prompt format for Llama-2
         system_prompt = f"You are an expert programmer specializing in code conversion. Convert the following {from_lang} code to {to_lang} code. Maintain exact same functionality and logic, adapt to {to_lang} syntax and conventions, include proper error handling, follow {to_lang} best practices, preserve variable names and structure when possible, add comments explaining any significant changes. Return only the converted code."
         
         user_prompt = f"Convert this {from_lang} code to {to_lang}:\n\n{code}"
         
-        # Use proper Code Llama instruction format
-        formatted_prompt = f"<s>[INST] <<SYS>>\n{system_prompt}\n<</SYS>>\n\n{user_prompt} [/INST]"
+        # Simple prompt format
+        formatted_prompt = f"{system_prompt}\n\nUser: {user_prompt}\n\nAssistant:"
         
         response = client.run(
             model_name,
@@ -313,15 +313,15 @@ async def explain_code_with_replicate(code: str, language: str) -> dict:
         if not client:
             raise Exception("Replicate client not initialized")
         
-        model_name = "meta/codellama-34b-instruct"
+        model_name = "replicate/llama-2-70b-chat"
         
-        # Format prompt according to Code Llama instruction format
+        # Simple prompt format for Llama-2
         system_prompt = f"You are an expert {language} developer and code analyst. Analyze the following code and provide a comprehensive explanation. Cover: what the code does (clear step-by-step explanation), how it works (technical details), key concepts (important programming concepts), input/output (expected inputs and outputs), potential issues (bugs, edge cases, improvements), optimization suggestions (ways to improve performance or readability). Format your response as JSON with keys: explanation, how_it_works, key_concepts, input_output, issues, suggestions."
         
         user_prompt = f"Explain what this {language} code does:\n\n{code}"
         
-        # Use proper Code Llama instruction format
-        formatted_prompt = f"<s>[INST] <<SYS>>\n{system_prompt}\n<</SYS>>\n\n{user_prompt} [/INST]"
+        # Simple prompt format
+        formatted_prompt = f"{system_prompt}\n\nUser: {user_prompt}\n\nAssistant:"
         
         response = client.run(
             model_name,
@@ -387,15 +387,15 @@ async def debug_code_with_replicate(code: str) -> str:
         if not client:
             raise Exception("Replicate client not initialized")
         
-        model_name = "meta/codellama-34b-instruct"
+        model_name = "replicate/llama-2-70b-chat"
         
-        # Format prompt according to Code Llama instruction format
+        # Simple prompt format for Llama-2
         system_prompt = "You are an expert Python debugger. Analyze the following code and provide a comprehensive debugging analysis. Provide: issues found (list any bugs, potential problems, or improvements needed), fixed code (provide an improved version of the code), explanation (explain what was wrong and how the fixes improve the code), best practices (suggest any additional improvements). Format your response as clear, readable text with sections marked with **bold headers**. Do not use JSON format."
         
         user_prompt = f"Debug this Python code:\n\n{code}"
         
-        # Use proper Code Llama instruction format
-        formatted_prompt = f"<s>[INST] <<SYS>>\n{system_prompt}\n<</SYS>>\n\n{user_prompt} [/INST]"
+        # Simple prompt format
+        formatted_prompt = f"{system_prompt}\n\nUser: {user_prompt}\n\nAssistant:"
         
         response = client.run(
             model_name,
