@@ -10,6 +10,7 @@ import redis
 import json
 from datetime import datetime, timedelta
 import uuid
+import replicate
 
 # Load environment variables
 load_dotenv()
@@ -33,6 +34,11 @@ app.add_middleware(
 # Initialize OpenAI (支持OpenRouter)
 openai.api_key = os.getenv("OPENROUTER_API_KEY") or os.getenv("OPENAI_API_KEY")
 openai.api_base = os.getenv("OPENROUTER_API_BASE", "https://openrouter.ai/api/v1")
+
+# Initialize Replicate
+replicate_token = os.getenv("REPLICATE_API_TOKEN")
+if replicate_token:
+    replicate.Client(api_token=replicate_token)
 
 # Initialize Redis (with fallback for free hosting)
 try:
@@ -224,6 +230,50 @@ Focus on creating practical, efficient solutions that solve the user's problem."
     
     except Exception as e:
         print(f"OpenRouter API error: {e}")
+        raise Exception(f"Code generation failed: {str(e)}")
+
+# Replicate helper functions
+async def generate_code_with_replicate(prompt: str, context: str = None) -> str:
+    """Generate Python code using Replicate API"""
+    try:
+        api_token = os.getenv("REPLICATE_API_TOKEN")
+        if not api_token:
+            raise Exception("Replicate API token not found")
+        
+        client = replicate.Client(api_token=api_token)
+        
+        system_prompt = """You are an expert Python developer. Generate clean, production-ready Python code based on the user's natural language description. 
+
+Requirements:
+- Write complete, functional Python code
+- Include proper error handling and input validation
+- Add clear comments and docstrings
+- Follow Python best practices and PEP 8 style
+- Include usage examples if appropriate
+- Return only the code without explanations unless specifically asked
+
+Focus on creating practical, efficient solutions that solve the user's problem."""
+        
+        user_prompt = prompt
+        if context:
+            user_prompt = f"Context: {context}\n\nRequest: {prompt}"
+        
+        # Use a suitable model from Replicate
+        model_name = "meta/llama-2-70b-chat"
+        
+        response = await client.run(
+            model_name,
+            input={
+                "prompt": f"{system_prompt}\n\nUser: {user_prompt}\n\nAssistant:",
+                "max_new_tokens": 2000,
+                "temperature": 0.7
+            }
+        )
+        
+        return response.strip()
+    
+    except Exception as e:
+        print(f"Replicate API error: {e}")
         raise Exception(f"Code generation failed: {str(e)}")
 
 async def convert_code_with_openai(code: str, from_lang: str, to_lang: str) -> str:
@@ -465,10 +515,15 @@ async def generate_code(request: CodeGenerationRequest, http_request: Request):
         print(f"用户 {user_ip} 今日使用次数: {current_usage + 1}/10")
     
     try:
-        # 使用真实的OpenRouter API生成代码
-        generated_code = await generate_code_with_openai(request.prompt, request.context)
+        # Try Replicate first, fallback to OpenRouter
+        try:
+            generated_code = await generate_code_with_replicate(request.prompt, request.context)
+            print(f"Replicate generated code length: {len(generated_code)}")
+        except Exception as replicate_error:
+            print(f"Replicate failed, trying OpenRouter: {replicate_error}")
+            generated_code = await generate_code_with_openai(request.prompt, request.context)
+            print(f"OpenRouter generated code length: {len(generated_code)}")
         
-        print(f"AI生成代码长度: {len(generated_code)}")
         return {
             "code": generated_code,
             "execution_time": 0.5
