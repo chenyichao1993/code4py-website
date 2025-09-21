@@ -590,11 +590,11 @@ async def debug_code(request: CodeExplanationRequest, http_request: Request):
         else:
             current_usage = int(current_usage)
         
-            if current_usage >= 10:
-                raise HTTPException(
-                    status_code=429, 
-                    detail="Daily usage limit exceeded. You have used all 10 free generations today. Please try again tomorrow."
-                )
+        if current_usage >= 10:
+            raise HTTPException(
+                status_code=429, 
+                detail="Daily usage limit exceeded. You have used all 10 free generations today. Please try again tomorrow."
+            )
         
         redis_client.incr(daily_key)
         redis_client.expire(daily_key, 86400)
