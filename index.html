@@ -789,7 +789,7 @@ e.g., def divide(a, b): return a / b  # This might cause errors`;
                 console.error('Error generating code:', error);
                 
                 if (error.name === 'AbortError') {
-                    showCustomAlert('Request timeout, please check your network connection or try again later');
+                    showCustomAlert('Code generation failed, please try again later.');
                     return;
                 }
                 
@@ -936,7 +936,7 @@ if __name__ == "__main__":
                 codeContentDiv.classList.remove('hidden');
                 mainCodeButtons.classList.remove('hidden');
                 
-                showCustomAlert('API temporarily unavailable, showing sample code. Please try again later.');
+                showCustomAlert('Code generation failed, please try again later.');
             } finally {
                 // Reset button
                 button.textContent = originalText;
