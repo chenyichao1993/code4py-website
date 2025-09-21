@@ -635,7 +635,23 @@ async def debug_code(request: CodeExplanationRequest, http_request: Request):
         )
     
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        print(f"Debug endpoint error: {e}")
+        error_text = f"""**Error occurred during debugging:**
+{str(e)}
+
+**Original code:**
+```python
+{request.code}
+```
+
+**Unable to perform debugging analysis due to an error.**"""
+
+        return CodeResponse(
+            code=error_text,
+            explanation=[f"Error: {str(e)}"],
+            suggestions=[],
+            execution_time=0.1
+        )
 
 # User management endpoints (simplified)
 @app.post("/api/auth/register", response_model=UserResponse)
