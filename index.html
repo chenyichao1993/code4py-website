@@ -278,18 +278,18 @@ e.g., Create a function to calculate fibonacci numbers"
                 
                 <!-- Button Group -->
                 <div class="flex gap-2 sm:gap-3 w-full sm:w-auto">
-                    <button 
-                        onclick="generateCode()" 
+                <button 
+                    onclick="generateCode()" 
                         class="flex-1 sm:flex-none px-4 sm:px-8 py-2 sm:py-3 bg-black text-white font-semibold rounded-lg hover:bg-gray-800 transition-colors text-sm sm:text-base"
-                    >
-                        Generate
-                    </button>
-                    <button 
-                        onclick="clearInput()" 
+                >
+                    Generate
+                </button>
+                <button 
+                    onclick="clearInput()" 
                         class="flex-1 sm:flex-none px-4 sm:px-8 py-2 sm:py-3 bg-white text-gray-700 border border-gray-300 font-semibold rounded-lg hover:bg-gray-50 transition-colors flex items-center justify-center gap-2 text-sm sm:text-base"
-                    >
-                        <span>×</span> Clear
-                    </button>
+                >
+                    <span>×</span> Clear
+                </button>
                 </div>
             </div>
         </div>
@@ -581,7 +581,7 @@ if __name__ == "__main__":
 
     <script>
         // API Configuration
-        const API_BASE_URL = 'http://127.0.0.1:8000'; // 本地后端服务地址
+        const API_BASE_URL = 'https://code4py-website.onrender.com'; // Render后端服务地址
         
         // 动态更新输入框提示文字
         function updateInputPlaceholder() {
@@ -999,18 +999,18 @@ if __name__ == "__main__":
                                     
                                     <!-- Button Group for Modal -->
                                     <div class="flex gap-2 w-full sm:w-auto order-3 sm:order-none">
-                                        <button 
-                                            onclick="generateCodeFromModal()" 
+                                    <button 
+                                        onclick="generateCodeFromModal()" 
                                             class="flex-1 sm:flex-none px-4 sm:px-8 py-2 sm:py-3 bg-black text-white font-semibold rounded-lg hover:bg-gray-800 transition-colors text-sm sm:text-base"
-                                        >
-                                            Generate
-                                        </button>
-                                        <button 
-                                            onclick="closeModalWindow()" 
+                                    >
+                                        Generate
+                                    </button>
+                                    <button 
+                                        onclick="closeModalWindow()" 
                                             class="flex-1 sm:flex-none px-4 sm:px-8 py-2 sm:py-3 bg-white text-gray-700 border border-gray-300 font-semibold rounded-lg hover:bg-gray-50 transition-colors text-sm sm:text-base"
-                                        >
-                                            Close
-                                        </button>
+                                    >
+                                        Close
+                                    </button>
                                     </div>
                                 </div>
                             </div>
