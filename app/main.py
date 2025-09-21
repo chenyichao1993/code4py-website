@@ -204,8 +204,8 @@ Focus on creating practical, efficient solutions that solve the user's problem."
         if context:
             user_prompt = f"Context: {context}\n\nRequest: {prompt}"
         
-        # Use OpenAI GPT-4o Mini for cost-effective code generation
-        model_name = "openai/gpt-4o-mini"
+        # Use a more stable model for code generation
+        model_name = "meta/llama-2-70b-chat"
         
         response = client.run(
             model_name,
@@ -217,13 +217,22 @@ Focus on creating practical, efficient solutions that solve the user's problem."
         )
         
         # Handle different response types from Replicate
+        print(f"Response type: {type(response)}")
+        print(f"Response content: {response}")
+        
         if isinstance(response, list):
             # If response is a list, join the elements
-            return '\n'.join(str(item) for item in response)
+            result = '\n'.join(str(item) for item in response)
+            print(f"Converted list to string: {result[:100]}...")
+            return result
         elif isinstance(response, str):
-            return response.strip()
+            result = response.strip()
+            print(f"String response: {result[:100]}...")
+            return result
         else:
-            return str(response)
+            result = str(response)
+            print(f"Other type response: {result[:100]}...")
+            return result
     
     except Exception as e:
         print(f"Replicate API error: {e}")
@@ -265,7 +274,7 @@ Requirements:
 
 Ensure the converted code is functionally equivalent to the original."""
         
-        model_name = "openai/gpt-4o-mini"
+        model_name = "meta/llama-2-70b-chat"
         
         response = client.run(
             model_name,
@@ -310,7 +319,7 @@ Provide:
 
 Format your response as JSON with keys: explanation, how_it_works, key_concepts, input_output, issues, suggestions"""
         
-        model_name = "openai/gpt-4o-mini"
+        model_name = "meta/llama-2-70b-chat"
         
         response = client.run(
             model_name,
@@ -385,7 +394,7 @@ Please provide:
 
 Format your response as clear, readable text with sections marked with **bold headers**. Do not use JSON format."""
         
-        model_name = "openai/gpt-4o-mini"
+        model_name = "meta/llama-2-70b-chat"
         
         response = client.run(
             model_name,
