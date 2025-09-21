@@ -357,14 +357,19 @@ Format your response as clear, readable text with sections marked with **bold he
         if not api_key:
             return f"""**Debug Analysis Failed**
 
-**Error:** OpenRouter API key not found
+**Error:** API configuration not found. Please check your environment variables.
 
 **Original Code:**
 ```python
 {code}
 ```
 
-**Unable to perform debugging analysis due to missing API key. Please try again later.**"""
+**Setup Required:**
+1. Set OPENROUTER_API_KEY environment variable
+2. Ensure you have a valid OpenRouter API key
+3. Restart the application
+
+**Unable to perform debugging analysis due to missing API configuration.**"""
         
         # Create OpenAI client
         client = openai.AsyncOpenAI(
@@ -389,14 +394,29 @@ Format your response as clear, readable text with sections marked with **bold he
     
     except Exception as e:
         print(f"Debug code error: {e}")
+        error_msg = str(e)
+        
+        # Provide more specific error messages
+        if "401" in error_msg or "User not found" in error_msg:
+            error_msg = "Invalid API key. Please check your OpenRouter API key configuration."
+        elif "429" in error_msg:
+            error_msg = "API rate limit exceeded. Please try again later."
+        elif "timeout" in error_msg.lower():
+            error_msg = "Request timeout. Please try again."
+        
         return f"""**Debug Analysis Failed**
 
-**Error:** {str(e)}
+**Error:** {error_msg}
 
 **Original Code:**
 ```python
 {code}
 ```
+
+**Troubleshooting:**
+1. Check your API key configuration
+2. Verify your internet connection
+3. Try again in a few moments
 
 **Unable to perform debugging analysis due to an error. Please try again later.**"""
 
@@ -459,12 +479,8 @@ async def generate_code(request: CodeGenerationRequest, http_request: Request):
         import traceback
         traceback.print_exc()
         
-        # If AI generation fails, return error information
-        return {
-            "error": f"AI generation failed: {str(e)}",
-            "code": None,
-            "execution_time": 0.1
-        }
+        # If AI generation fails, raise HTTPException for consistent error handling
+        raise HTTPException(status_code=500, detail=f"AI generation failed: {str(e)}")
 
 @app.post("/api/convert", response_model=CodeResponse)
 async def convert_code(request: CodeConversionRequest, http_request: Request):
@@ -615,23 +631,7 @@ async def debug_code(request: CodeExplanationRequest, http_request: Request):
     
     except Exception as e:
         print(f"Debug endpoint error: {e}")
-        error_text = f"""**Debug Analysis Failed**
-
-**Error:** {str(e)}
-
-**Original Code:**
-```python
-{request.code}
-```
-
-**Unable to perform debugging analysis due to an error. Please try again later.**"""
-
-        return CodeResponse(
-            code=error_text,
-            explanation=[f"Error: {str(e)}"],
-            suggestions=[],
-            execution_time=0.1
-        )
+        raise HTTPException(status_code=500, detail=str(e))
 
 # User management endpoints (simplified)
 @app.post("/api/auth/register", response_model=UserResponse)
