@@ -204,16 +204,16 @@ Focus on creating practical, efficient solutions that solve the user's problem."
         if context:
             user_prompt = f"Context: {context}\n\nRequest: {prompt}"
         
-        # Use a more reliable model for code generation
-        model_name = "replicate/llama-2-70b-chat"
+        # Use Code Llama for better code generation
+        model_name = "replicate/codellama-70b-instruct"
         
         response = client.run(
             model_name,
             input={
                 "prompt": f"{system_prompt}\n\nUser: {user_prompt}\n\nAssistant:",
                 "max_new_tokens": 1500,
-                "temperature": 0.7,
-                "top_p": 0.9
+                "temperature": 0.1,
+                "top_p": 0.95
             }
         )
         
@@ -242,12 +242,19 @@ Focus on creating practical, efficient solutions that solve the user's problem."
     
     except Exception as e:
         print(f"Replicate API error: {e}")
-        # Return a fallback response instead of raising exception
+        print(f"Error type: {type(e)}")
+        print(f"Error details: {str(e)}")
+        
+        # Return a more helpful fallback response
         return f"""# Code Generation Failed
 
 **Error:** {str(e)}
 
-**Please try again later or contact support if the issue persists.**
+**Troubleshooting:**
+1. Check if the model is available on Replicate
+2. Verify API token is valid
+3. Ensure sufficient credits in Replicate account
+4. Try again in a few minutes
 
 **Fallback Example:**
 ```python
@@ -280,7 +287,7 @@ Requirements:
 
 Ensure the converted code is functionally equivalent to the original."""
         
-        model_name = "replicate/llama-2-70b-chat"
+        model_name = "replicate/codellama-70b-instruct"
         
         response = client.run(
             model_name,
@@ -328,7 +335,7 @@ Provide:
 
 Format your response as JSON with keys: explanation, how_it_works, key_concepts, input_output, issues, suggestions"""
         
-        model_name = "replicate/llama-2-70b-chat"
+        model_name = "replicate/codellama-70b-instruct"
         
         response = client.run(
             model_name,
@@ -403,7 +410,7 @@ Please provide:
 
 Format your response as clear, readable text with sections marked with **bold headers**. Do not use JSON format."""
         
-        model_name = "replicate/llama-2-70b-chat"
+        model_name = "replicate/codellama-70b-instruct"
         
         response = client.run(
             model_name,
