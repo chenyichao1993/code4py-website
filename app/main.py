@@ -337,21 +337,18 @@ Format your response as JSON with keys: explanation, how_it_works, key_concepts,
             "suggestions": []
         }
 
-async def debug_code_with_openai(code: str) -> dict:
-    """Debug and fix Python code issues"""
+async def debug_code_with_openai(code: str) -> str:
+    """Debug and fix Python code issues - simplified version"""
     try:
-        system_prompt = """You are an expert Python debugger and code fixer. Analyze the following code and identify all issues.
+        system_prompt = """You are an expert Python debugger. Analyze the following code and provide a comprehensive debugging analysis.
 
-Requirements:
-1. **Identify bugs**: Find syntax errors, logic errors, runtime errors, and potential issues
-2. **Provide fixes**: Give corrected versions of problematic code sections
-3. **Explain problems**: Clearly explain what was wrong and why
-4. **Test cases**: Suggest test cases to verify the fixes
-5. **Best practices**: Recommend improvements for code quality
+Please provide:
+1. **Issues found**: List any bugs, potential problems, or improvements needed
+2. **Fixed code**: Provide an improved version of the code
+3. **Explanation**: Explain what was wrong and how the fixes improve the code
+4. **Best practices**: Suggest any additional improvements
 
-Format your response as JSON with keys: bugs_found, fixed_code, explanations, test_cases, improvements
-
-Focus on making the code robust, efficient, and maintainable."""
+Format your response as clear, readable text with sections marked with **bold headers**. Do not use JSON format."""
         
         # 获取API配置
         api_key = os.getenv("OPENROUTER_API_KEY")
@@ -375,33 +372,24 @@ Focus on making the code robust, efficient, and maintainable."""
                 {"role": "system", "content": system_prompt},
                 {"role": "user", "content": code}
             ],
-            max_tokens=2000,
+            max_tokens=1500,
             temperature=0.3
         )
         
-        result = response.choices[0].message.content.strip()
-        
-        try:
-            analysis = json.loads(result)
-            return analysis
-        except:
-            return {
-                "bugs_found": ["Unable to parse AI response"],
-                "fixed_code": code,
-                "explanations": ["AI response was not in valid JSON format"],
-                "test_cases": [],
-                "improvements": []
-            }
+        return response.choices[0].message.content.strip()
     
     except Exception as e:
         print(f"Debug code error: {e}")
-        return {
-            "bugs_found": [f"Error: {str(e)}"],
-            "fixed_code": code,
-            "explanations": ["Unable to debug code due to an error"],
-            "test_cases": [],
-            "improvements": []
-        }
+        return f"""**Debug Analysis Failed**
+
+**Error:** {str(e)}
+
+**Original Code:**
+```python
+{code}
+```
+
+**Unable to perform debugging analysis due to an error. Please try again later.**"""
 
 # API Routes
 @app.get("/")
@@ -605,46 +593,29 @@ async def debug_code(request: CodeExplanationRequest, http_request: Request):
     start_time = datetime.now()
     
     try:
-        analysis = await debug_code_with_openai(request.code)
+        debug_analysis = await debug_code_with_openai(request.code)
         
         execution_time = (datetime.now() - start_time).total_seconds()
         
-        # Format debug analysis as readable text
-        debug_text = f"""**Bugs found:**
-{', '.join(analysis.get('bugs_found', [])) if analysis.get('bugs_found') else 'No bugs found'}
-
-**Fixed code:**
-```python
-{analysis.get('fixed_code', request.code)}
-```
-
-**Explanations:**
-{', '.join(analysis.get('explanations', [])) if analysis.get('explanations') else 'No explanations available'}
-
-**Test cases:**
-{', '.join(analysis.get('test_cases', [])) if analysis.get('test_cases') else 'No test cases suggested'}
-
-**Improvements:**
-{', '.join(analysis.get('improvements', [])) if analysis.get('improvements') else 'No improvements suggested'}"""
-
         return CodeResponse(
-            code=debug_text,
-            explanation=analysis.get("explanations", ["No issues found"]),
-            suggestions=analysis.get("improvements", []),
+            code=debug_analysis,
+            explanation=["Debug analysis completed"],
+            suggestions=[],
             execution_time=execution_time
         )
     
     except Exception as e:
         print(f"Debug endpoint error: {e}")
-        error_text = f"""**Error occurred during debugging:**
-{str(e)}
+        error_text = f"""**Debug Analysis Failed**
 
-**Original code:**
+**Error:** {str(e)}
+
+**Original Code:**
 ```python
 {request.code}
 ```
 
-**Unable to perform debugging analysis due to an error.**"""
+**Unable to perform debugging analysis due to an error. Please try again later.**"""
 
         return CodeResponse(
             code=error_text,
