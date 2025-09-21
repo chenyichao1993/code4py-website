@@ -198,13 +198,12 @@ async def generate_code_with_replicate(prompt: str, context: str = None) -> str:
         if context:
             user_prompt = f"Context: {context}\n\nRequest: {prompt}"
         
-        # Simple prompt format
-        formatted_prompt = f"{system_prompt}\n\nUser: {user_prompt}\n\nAssistant:"
-        
+        # Use proper Llama-2 API format according to documentation
         response = client.run(
             model_name,
             input={
-                "prompt": formatted_prompt,
+                "prompt": user_prompt,
+                "system_prompt": system_prompt,
                 "max_new_tokens": 512,
                 "temperature": 0.2,
                 "top_p": 0.9
@@ -275,13 +274,12 @@ async def convert_code_with_replicate(code: str, from_lang: str, to_lang: str) -
         
         user_prompt = f"Convert this {from_lang} code to {to_lang}:\n\n{code}"
         
-        # Simple prompt format
-        formatted_prompt = f"{system_prompt}\n\nUser: {user_prompt}\n\nAssistant:"
-        
+        # Use proper Llama-2 API format according to documentation
         response = client.run(
             model_name,
             input={
-                "prompt": formatted_prompt,
+                "prompt": user_prompt,
+                "system_prompt": system_prompt,
                 "max_new_tokens": 512,
                 "temperature": 0.2,
                 "top_p": 0.9
@@ -320,13 +318,12 @@ async def explain_code_with_replicate(code: str, language: str) -> dict:
         
         user_prompt = f"Explain what this {language} code does:\n\n{code}"
         
-        # Simple prompt format
-        formatted_prompt = f"{system_prompt}\n\nUser: {user_prompt}\n\nAssistant:"
-        
+        # Use proper Llama-2 API format according to documentation
         response = client.run(
             model_name,
             input={
-                "prompt": formatted_prompt,
+                "prompt": user_prompt,
+                "system_prompt": system_prompt,
                 "max_new_tokens": 512,
                 "temperature": 0.2,
                 "top_p": 0.9
@@ -394,13 +391,12 @@ async def debug_code_with_replicate(code: str) -> str:
         
         user_prompt = f"Debug this Python code:\n\n{code}"
         
-        # Simple prompt format
-        formatted_prompt = f"{system_prompt}\n\nUser: {user_prompt}\n\nAssistant:"
-        
+        # Use proper Llama-2 API format according to documentation
         response = client.run(
             model_name,
             input={
-                "prompt": formatted_prompt,
+                "prompt": user_prompt,
+                "system_prompt": system_prompt,
                 "max_new_tokens": 512,
                 "temperature": 0.2,
                 "top_p": 0.9
