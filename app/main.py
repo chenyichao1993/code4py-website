@@ -201,14 +201,17 @@ Focus on creating practical, efficient solutions that solve the user's problem."
         if context:
             user_prompt = f"Context: {context}\n\nRequest: {prompt}"
         
-        # Use a suitable model from Replicate
-        model_name = "replicate/llama-2-70b-chat"
+        # Use OpenAI GPT-4o Mini for cost-effective code generation
+        model_name = "openai/gpt-4o-mini"
         
         response = client.run(
             model_name,
             input={
-                "prompt": f"{system_prompt}\n\nUser: {user_prompt}\n\nAssistant:",
-                "max_new_tokens": 2000,
+                "messages": [
+                    {"role": "system", "content": system_prompt},
+                    {"role": "user", "content": user_prompt}
+                ],
+                "max_tokens": 2000,
                 "temperature": 0.7
             }
         )
@@ -241,13 +244,16 @@ Requirements:
 
 Ensure the converted code is functionally equivalent to the original."""
         
-        model_name = "replicate/llama-2-70b-chat"
+        model_name = "openai/gpt-4o-mini"
         
         response = client.run(
             model_name,
             input={
-                "prompt": f"{system_prompt}\n\nCode to convert:\n{code}\n\nConverted {to_lang} code:",
-                "max_new_tokens": 2000,
+                "messages": [
+                    {"role": "system", "content": system_prompt},
+                    {"role": "user", "content": f"Code to convert:\n{code}"}
+                ],
+                "max_tokens": 2000,
                 "temperature": 0.3
             }
         )
@@ -278,13 +284,16 @@ Provide:
 
 Format your response as JSON with keys: explanation, how_it_works, key_concepts, input_output, issues, suggestions"""
         
-        model_name = "replicate/llama-2-70b-chat"
+        model_name = "openai/gpt-4o-mini"
         
         response = client.run(
             model_name,
             input={
-                "prompt": f"{system_prompt}\n\nCode to analyze:\n{code}\n\nAnalysis:",
-                "max_new_tokens": 1500,
+                "messages": [
+                    {"role": "system", "content": system_prompt},
+                    {"role": "user", "content": f"Code to analyze:\n{code}"}
+                ],
+                "max_tokens": 1500,
                 "temperature": 0.5
             }
         )
@@ -345,13 +354,16 @@ Please provide:
 
 Format your response as clear, readable text with sections marked with **bold headers**. Do not use JSON format."""
         
-        model_name = "replicate/llama-2-70b-chat"
+        model_name = "openai/gpt-4o-mini"
         
         response = client.run(
             model_name,
             input={
-                "prompt": f"{system_prompt}\n\nCode to debug:\n{code}\n\nDebug Analysis:",
-                "max_new_tokens": 1500,
+                "messages": [
+                    {"role": "system", "content": system_prompt},
+                    {"role": "user", "content": f"Code to debug:\n{code}"}
+                ],
+                "max_tokens": 1500,
                 "temperature": 0.3
             }
         )
