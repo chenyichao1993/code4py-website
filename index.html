@@ -779,6 +779,12 @@ e.g., def divide(a, b): return a / b  # This might cause errors`;
                 
                 const data = await response.json();
                 
+                // Check if there's an error in the response
+                if (data.error) {
+                    showCustomAlert('Code generation failed, please try again later.');
+                    return;
+                }
+                
                 // Display the generated code
                 codeElement.textContent = data.code;
                 codeLoadingDiv.classList.add('hidden');
