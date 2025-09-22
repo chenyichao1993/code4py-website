@@ -192,30 +192,21 @@ async def generate_code_with_replicate(prompt: str, context: str = None) -> str:
         # Use a more reliable model for code generation
         model_name = "meta/llama-2-70b-chat"
         
-        # System prompt for code generation
-        system_prompt = """You are an expert Python developer. Generate clean, production-ready Python code based on the user's natural language description. 
-
-Requirements:
-- Write complete, functional Python code
-- Include proper error handling, comments, and docstrings
-- Follow Python best practices and PEP 8 style
-- Return only the code without explanations unless specifically asked
-- Make the code immediately runnable
-- Include example usage if appropriate"""
-        
-        user_prompt = prompt
+        # Format prompt according to Llama-2 chat format
         if context:
-            user_prompt = f"Context: {context}\n\nRequest: {prompt}"
+            formatted_prompt = f"[INST] Context: {context}\n\nRequest: {prompt} [/INST]"
+        else:
+            formatted_prompt = f"[INST] {prompt} [/INST]"
         
-        # Use Replicate API with proper error handling
+        # Use Replicate API with proper Llama-2 format
         response = replicate_client.run(
             model_name,
             input={
-                "prompt": user_prompt,
-                "system_prompt": system_prompt,
+                "prompt": formatted_prompt,
                 "max_new_tokens": 1000,
-                "temperature": 0.2,
-                "top_p": 0.9
+                "temperature": 0.1,
+                "top_p": 0.9,
+                "stop_sequences": ["[/INST]"]
             }
         )
         
@@ -276,27 +267,16 @@ async def convert_code_with_replicate(code: str, from_lang: str, to_lang: str) -
         
         model_name = "meta/llama-2-70b-chat"
         
-        system_prompt = f"""You are an expert programmer specializing in code conversion. Convert the following {from_lang} code to {to_lang} code.
-
-Requirements:
-- Maintain exact same functionality and logic
-- Adapt to {to_lang} syntax and conventions
-- Include proper error handling
-- Follow {to_lang} best practices
-- Preserve variable names and structure when possible
-- Add comments explaining any significant changes
-- Return only the converted code"""
-        
-        user_prompt = f"Convert this {from_lang} code to {to_lang}:\n\n{code}"
+        formatted_prompt = f"[INST] Convert this {from_lang} code to {to_lang}. Maintain exact same functionality and logic, adapt to {to_lang} syntax and conventions, include proper error handling, follow {to_lang} best practices, preserve variable names and structure when possible, add comments explaining any significant changes. Return only the converted code:\n\n{code} [/INST]"
         
         response = replicate_client.run(
             model_name,
             input={
-                "prompt": user_prompt,
-                "system_prompt": system_prompt,
+                "prompt": formatted_prompt,
                 "max_new_tokens": 1000,
-                "temperature": 0.2,
-                "top_p": 0.9
+                "temperature": 0.1,
+                "top_p": 0.9,
+                "stop_sequences": ["[/INST]"]
             }
         )
         
@@ -325,28 +305,16 @@ async def explain_code_with_replicate(code: str, language: str) -> dict:
         
         model_name = "meta/llama-2-70b-chat"
         
-        system_prompt = f"""You are an expert {language} developer and code analyst. Analyze the following code and provide a comprehensive explanation.
-
-Cover these aspects:
-- What the code does (clear step-by-step explanation)
-- How it works (technical details)
-- Key concepts (important programming concepts)
-- Input/output (expected inputs and outputs)
-- Potential issues (bugs, edge cases, improvements)
-- Optimization suggestions (ways to improve performance or readability)
-
-Format your response as JSON with keys: explanation, how_it_works, key_concepts, input_output, issues, suggestions."""
-        
-        user_prompt = f"Explain what this {language} code does:\n\n{code}"
+        formatted_prompt = f"[INST] Explain what this {language} code does. Provide a clear, readable explanation covering: what the code does, how it works, key concepts, input/output, potential issues, and optimization suggestions. Format as plain text with clear sections, not JSON:\n\n{code} [/INST]"
         
         response = replicate_client.run(
             model_name,
             input={
-                "prompt": user_prompt,
-                "system_prompt": system_prompt,
+                "prompt": formatted_prompt,
                 "max_new_tokens": 1000,
-                "temperature": 0.2,
-                "top_p": 0.9
+                "temperature": 0.1,
+                "top_p": 0.9,
+                "stop_sequences": ["[/INST]"]
             }
         )
         
@@ -358,18 +326,15 @@ Format your response as JSON with keys: explanation, how_it_works, key_concepts,
         else:
             result = str(response)
         
-        # Try to parse as JSON, fallback to plain text
-        try:
-            return json.loads(result)
-        except:
-            return {
-                "explanation": result,
-                "how_it_works": "Analysis completed",
-                "key_concepts": [],
-                "input_output": "See explanation above",
-                "issues": [],
-                "suggestions": []
-            }
+        # Return plain text explanation
+        return {
+            "explanation": result,
+            "how_it_works": "See explanation above",
+            "key_concepts": [],
+            "input_output": "See explanation above", 
+            "issues": [],
+            "suggestions": []
+        }
     
     except Exception as e:
         print(f"Explain code error: {e}")
@@ -407,26 +372,16 @@ async def debug_code_with_replicate(code: str) -> str:
         
         model_name = "meta/llama-2-70b-chat"
         
-        system_prompt = """You are an expert Python debugger. Analyze the following code and provide a comprehensive debugging analysis.
-
-Provide:
-- Issues found (list any bugs, potential problems, or improvements needed)
-- Fixed code (provide an improved version of the code)
-- Explanation (explain what was wrong and how the fixes improve the code)
-- Best practices (suggest any additional improvements)
-
-Format your response as clear, readable text with sections marked with **bold headers**. Do not use JSON format."""
-        
-        user_prompt = f"Debug this Python code:\n\n{code}"
+        formatted_prompt = f"[INST] Debug this Python code. Analyze and provide: issues found (list any bugs, potential problems, or improvements needed), fixed code (provide an improved version), explanation (explain what was wrong and how fixes improve the code), best practices (suggest additional improvements). Format as clear, readable text with sections marked with **bold headers**:\n\n{code} [/INST]"
         
         response = replicate_client.run(
             model_name,
             input={
-                "prompt": user_prompt,
-                "system_prompt": system_prompt,
+                "prompt": formatted_prompt,
                 "max_new_tokens": 1000,
-                "temperature": 0.2,
-                "top_p": 0.9
+                "temperature": 0.1,
+                "top_p": 0.9,
+                "stop_sequences": ["[/INST]"]
             }
         )
         
