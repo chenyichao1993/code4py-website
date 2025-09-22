@@ -279,7 +279,7 @@ async def generate_code_with_replicate(prompt: str, context: str = None) -> str:
                 "max_new_tokens": 1000,
                 "temperature": 0.1,
                 "top_p": 0.9,
-                "stop_sequences": ["[/INST]"]
+                "stop_sequences": "[/INST]"
             }
         )
         
@@ -365,7 +365,7 @@ async def convert_code_with_replicate(code: str, from_lang: str, to_lang: str) -
                 "max_new_tokens": 1000,
                 "temperature": 0.1,
                 "top_p": 0.9,
-                "stop_sequences": ["[/INST]"]
+                "stop_sequences": "[/INST]"
             }
         )
         
@@ -411,7 +411,7 @@ async def explain_code_with_replicate(code: str, language: str) -> dict:
                 "max_new_tokens": 1000,
                 "temperature": 0.1,
                 "top_p": 0.9,
-                "stop_sequences": ["[/INST]"]
+                "stop_sequences": "[/INST]"
             }
         )
         
@@ -486,7 +486,7 @@ async def debug_code_with_replicate(code: str) -> str:
                 "max_new_tokens": 1000,
                 "temperature": 0.1,
                 "top_p": 0.9,
-                "stop_sequences": ["[/INST]"]
+                "stop_sequences": "[/INST]"
             }
         )
         
