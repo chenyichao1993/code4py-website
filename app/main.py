@@ -4,6 +4,7 @@ from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from pydantic import BaseModel
 from typing import Optional, List
 import os
+import time
 from dotenv import load_dotenv
 import redis
 import json
@@ -53,6 +54,78 @@ try:
 except Exception as e:
     print(f"Redis not available: {e}")
     redis_client = None
+
+# Memory storage as fallback when Redis is unavailable
+memory_storage = {}
+
+def get_memory_value(key: str, default=None):
+    """Get value from memory storage"""
+    return memory_storage.get(key, default)
+
+def set_memory_value(key: str, value, expire_seconds=None):
+    """Set value in memory storage"""
+    memory_storage[key] = value
+    if expire_seconds:
+        # Simple expiration using timestamp
+        memory_storage[f"{key}_expire"] = time.time() + expire_seconds
+
+def increment_memory_value(key: str, amount=1):
+    """Increment value in memory storage"""
+    current = memory_storage.get(key, 0)
+    if isinstance(current, str):
+        current = int(current)
+    memory_storage[key] = current + amount
+    return memory_storage[key]
+
+def is_memory_expired(key: str) -> bool:
+    """Check if memory key is expired"""
+    expire_key = f"{key}_expire"
+    if expire_key in memory_storage:
+        return time.time() > memory_storage[expire_key]
+    return False
+
+def check_daily_usage_limit(user_ip: str, daily_key: str):
+    """Check and enforce daily usage limit with Redis or memory fallback"""
+    whitelist_ips = ["127.0.0.1", "::1"]
+    if user_ip in whitelist_ips:
+        return  # Skip limit for whitelisted IPs
+    
+    if redis_client:
+        # Use Redis
+        current_usage = redis_client.get(daily_key)
+        if current_usage is None:
+            current_usage = 0
+        else:
+            current_usage = int(current_usage)
+        
+        if current_usage >= 10:
+            raise HTTPException(
+                status_code=429, 
+                detail="Daily usage limit exceeded. You have used all 10 free generations today. Please try again tomorrow."
+            )
+        
+        redis_client.incr(daily_key)
+        redis_client.expire(daily_key, 86400)
+        print(f"用户 {user_ip} 今日使用次数: {current_usage + 1}/10")
+    else:
+        # Use memory storage
+        if is_memory_expired(daily_key):
+            memory_storage.pop(daily_key, None)
+            memory_storage.pop(f"{daily_key}_expire", None)
+        
+        current_usage = get_memory_value(daily_key, 0)
+        if isinstance(current_usage, str):
+            current_usage = int(current_usage)
+        
+        if current_usage >= 10:
+            raise HTTPException(
+                status_code=429, 
+                detail="Daily usage limit exceeded. You have used all 10 free generations today. Please try again tomorrow."
+            )
+        
+        new_usage = increment_memory_value(daily_key)
+        set_memory_value(daily_key, new_usage, 86400)
+        print(f"用户 {user_ip} 今日使用次数: {new_usage}/10 (内存存储)")
 
 # Security
 security = HTTPBearer(auto_error=False)
@@ -327,14 +400,14 @@ async def explain_code_with_replicate(code: str, language: str) -> dict:
             result = str(response)
         
         # Return plain text explanation
-        return {
-            "explanation": result,
+            return {
+                "explanation": result,
             "how_it_works": "See explanation above",
             "key_concepts": [],
             "input_output": "See explanation above", 
-            "issues": [],
-            "suggestions": []
-        }
+                "issues": [],
+                "suggestions": []
+            }
     
     except Exception as e:
         print(f"Explain code error: {e}")
@@ -446,27 +519,7 @@ async def generate_code(request: CodeGenerationRequest, http_request: Request):
     # Check daily usage limit
     current_date = datetime.now().strftime("%Y-%m-%d")
     daily_key = f"daily_usage:{user_ip}:{current_date}"
-    
-    # Check if user is in whitelist (for testing)
-    whitelist_ips = ["127.0.0.1", "::1"]  # Add your IP here
-    if user_ip not in whitelist_ips and redis_client:
-        # Check daily usage
-        current_usage = redis_client.get(daily_key)
-        if current_usage is None:
-            current_usage = 0
-        else:
-            current_usage = int(current_usage)
-        
-            if current_usage >= 10:
-                raise HTTPException(
-                    status_code=429, 
-                    detail="Daily usage limit exceeded. You have used all 10 free generations today. Please try again tomorrow."
-                )
-        
-        # Increment usage count
-        redis_client.incr(daily_key)
-        redis_client.expire(daily_key, 86400)  # Expire at midnight
-        print(f"用户 {user_ip} 今日使用次数: {current_usage + 1}/10")
+    check_daily_usage_limit(user_ip, daily_key)
     
     try:
         # Use Replicate for code generation
@@ -601,23 +654,7 @@ async def debug_code(request: CodeExplanationRequest, http_request: Request):
     current_date = datetime.now().strftime("%Y-%m-%d")
     daily_key = f"daily_usage:{user_ip}:{current_date}"
     
-    # Check if user is in whitelist (for testing)
-    whitelist_ips = ["127.0.0.1", "::1"]
-    if user_ip not in whitelist_ips and redis_client:
-        current_usage = redis_client.get(daily_key)
-        if current_usage is None:
-            current_usage = 0
-        else:
-            current_usage = int(current_usage)
-        
-        if current_usage >= 10:
-            raise HTTPException(
-                status_code=429, 
-                detail="Daily usage limit exceeded. You have used all 10 free generations today. Please try again tomorrow."
-            )
-        
-        redis_client.incr(daily_key)
-        redis_client.expire(daily_key, 86400)
+    check_daily_usage_limit(user_ip, daily_key)
     
     start_time = datetime.now()
     
