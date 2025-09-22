@@ -35,6 +35,9 @@ replicate_token = os.getenv("REPLICATE_API_TOKEN")
 replicate_client = None
 if replicate_token:
     replicate_client = replicate.Client(api_token=replicate_token)
+    print("Replicate client initialized successfully")
+else:
+    print("Warning: No Replicate API token found")
 
 # Initialize Redis (with fallback for free hosting)
 try:
@@ -180,31 +183,37 @@ async def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(s
 async def generate_code_with_replicate(prompt: str, context: str = None) -> str:
     """Generate Python code using Replicate API"""
     try:
-        api_token = os.getenv("REPLICATE_API_TOKEN")
-        if not api_token:
+        if not replicate_token:
             raise Exception("Replicate API token not found")
         
-        client = replicate_client
-        if not client:
+        if not replicate_client:
             raise Exception("Replicate client not initialized")
         
         # Use a more reliable model for code generation
-        model_name = "replicate/llama-2-70b-chat"
+        model_name = "meta/llama-2-70b-chat"
         
-        # Simple prompt format for Llama-2
-        system_prompt = "You are an expert Python developer. Generate clean, production-ready Python code based on the user's natural language description. Write complete, functional Python code with proper error handling, comments, and docstrings. Follow Python best practices and PEP 8 style. Return only the code without explanations unless specifically asked."
+        # System prompt for code generation
+        system_prompt = """You are an expert Python developer. Generate clean, production-ready Python code based on the user's natural language description. 
+
+Requirements:
+- Write complete, functional Python code
+- Include proper error handling, comments, and docstrings
+- Follow Python best practices and PEP 8 style
+- Return only the code without explanations unless specifically asked
+- Make the code immediately runnable
+- Include example usage if appropriate"""
         
         user_prompt = prompt
         if context:
             user_prompt = f"Context: {context}\n\nRequest: {prompt}"
         
-        # Use proper Llama-2 API format according to documentation
-        response = client.run(
+        # Use Replicate API with proper error handling
+        response = replicate_client.run(
             model_name,
             input={
                 "prompt": user_prompt,
                 "system_prompt": system_prompt,
-                "max_new_tokens": 512,
+                "max_new_tokens": 1000,
                 "temperature": 0.2,
                 "top_p": 0.9
             }
@@ -244,8 +253,8 @@ async def generate_code_with_replicate(prompt: str, context: str = None) -> str:
 **Error:** {str(e)}
 
 **Troubleshooting:**
-1. Check if the model is available on Replicate
-2. Verify API token is valid
+1. Check if Replicate API token is valid
+2. Verify internet connection
 3. Ensure sufficient credits in Replicate account
 4. Try again in a few minutes
 
@@ -259,28 +268,33 @@ def example_function():
 async def convert_code_with_replicate(code: str, from_lang: str, to_lang: str) -> str:
     """Convert code from one language to another using Replicate"""
     try:
-        api_token = os.getenv("REPLICATE_API_TOKEN")
-        if not api_token:
+        if not replicate_token:
             raise Exception("Replicate API token not found")
         
-        client = replicate_client
-        if not client:
+        if not replicate_client:
             raise Exception("Replicate client not initialized")
         
-        model_name = "replicate/llama-2-70b-chat"
+        model_name = "meta/llama-2-70b-chat"
         
-        # Simple prompt format for Llama-2
-        system_prompt = f"You are an expert programmer specializing in code conversion. Convert the following {from_lang} code to {to_lang} code. Maintain exact same functionality and logic, adapt to {to_lang} syntax and conventions, include proper error handling, follow {to_lang} best practices, preserve variable names and structure when possible, add comments explaining any significant changes. Return only the converted code."
+        system_prompt = f"""You are an expert programmer specializing in code conversion. Convert the following {from_lang} code to {to_lang} code.
+
+Requirements:
+- Maintain exact same functionality and logic
+- Adapt to {to_lang} syntax and conventions
+- Include proper error handling
+- Follow {to_lang} best practices
+- Preserve variable names and structure when possible
+- Add comments explaining any significant changes
+- Return only the converted code"""
         
         user_prompt = f"Convert this {from_lang} code to {to_lang}:\n\n{code}"
         
-        # Use proper Llama-2 API format according to documentation
-        response = client.run(
+        response = replicate_client.run(
             model_name,
             input={
                 "prompt": user_prompt,
                 "system_prompt": system_prompt,
-                "max_new_tokens": 512,
+                "max_new_tokens": 1000,
                 "temperature": 0.2,
                 "top_p": 0.9
             }
@@ -303,28 +317,34 @@ async def convert_code_with_replicate(code: str, from_lang: str, to_lang: str) -
 async def explain_code_with_replicate(code: str, language: str) -> dict:
     """Explain and analyze code using Replicate"""
     try:
-        api_token = os.getenv("REPLICATE_API_TOKEN")
-        if not api_token:
+        if not replicate_token:
             raise Exception("Replicate API token not found")
         
-        client = replicate_client
-        if not client:
+        if not replicate_client:
             raise Exception("Replicate client not initialized")
         
-        model_name = "replicate/llama-2-70b-chat"
+        model_name = "meta/llama-2-70b-chat"
         
-        # Simple prompt format for Llama-2
-        system_prompt = f"You are an expert {language} developer and code analyst. Analyze the following code and provide a comprehensive explanation. Cover: what the code does (clear step-by-step explanation), how it works (technical details), key concepts (important programming concepts), input/output (expected inputs and outputs), potential issues (bugs, edge cases, improvements), optimization suggestions (ways to improve performance or readability). Format your response as JSON with keys: explanation, how_it_works, key_concepts, input_output, issues, suggestions."
+        system_prompt = f"""You are an expert {language} developer and code analyst. Analyze the following code and provide a comprehensive explanation.
+
+Cover these aspects:
+- What the code does (clear step-by-step explanation)
+- How it works (technical details)
+- Key concepts (important programming concepts)
+- Input/output (expected inputs and outputs)
+- Potential issues (bugs, edge cases, improvements)
+- Optimization suggestions (ways to improve performance or readability)
+
+Format your response as JSON with keys: explanation, how_it_works, key_concepts, input_output, issues, suggestions."""
         
         user_prompt = f"Explain what this {language} code does:\n\n{code}"
         
-        # Use proper Llama-2 API format according to documentation
-        response = client.run(
+        response = replicate_client.run(
             model_name,
             input={
                 "prompt": user_prompt,
                 "system_prompt": system_prompt,
-                "max_new_tokens": 512,
+                "max_new_tokens": 1000,
                 "temperature": 0.2,
                 "top_p": 0.9
             }
@@ -344,6 +364,9 @@ async def explain_code_with_replicate(code: str, language: str) -> dict:
         except:
             return {
                 "explanation": result,
+                "how_it_works": "Analysis completed",
+                "key_concepts": [],
+                "input_output": "See explanation above",
                 "issues": [],
                 "suggestions": []
             }
@@ -362,8 +385,7 @@ async def explain_code_with_replicate(code: str, language: str) -> dict:
 async def debug_code_with_replicate(code: str) -> str:
     """Debug and fix Python code issues using Replicate"""
     try:
-        api_token = os.getenv("REPLICATE_API_TOKEN")
-        if not api_token:
+        if not replicate_token:
             return f"""**Debug Analysis Failed**
 
 **Error:** Replicate API token not found. Please check your environment variables.
@@ -380,24 +402,29 @@ async def debug_code_with_replicate(code: str) -> str:
 
 **Unable to perform debugging analysis due to missing API configuration.**"""
         
-        client = replicate_client
-        if not client:
+        if not replicate_client:
             raise Exception("Replicate client not initialized")
         
-        model_name = "replicate/llama-2-70b-chat"
+        model_name = "meta/llama-2-70b-chat"
         
-        # Simple prompt format for Llama-2
-        system_prompt = "You are an expert Python debugger. Analyze the following code and provide a comprehensive debugging analysis. Provide: issues found (list any bugs, potential problems, or improvements needed), fixed code (provide an improved version of the code), explanation (explain what was wrong and how the fixes improve the code), best practices (suggest any additional improvements). Format your response as clear, readable text with sections marked with **bold headers**. Do not use JSON format."
+        system_prompt = """You are an expert Python debugger. Analyze the following code and provide a comprehensive debugging analysis.
+
+Provide:
+- Issues found (list any bugs, potential problems, or improvements needed)
+- Fixed code (provide an improved version of the code)
+- Explanation (explain what was wrong and how the fixes improve the code)
+- Best practices (suggest any additional improvements)
+
+Format your response as clear, readable text with sections marked with **bold headers**. Do not use JSON format."""
         
         user_prompt = f"Debug this Python code:\n\n{code}"
         
-        # Use proper Llama-2 API format according to documentation
-        response = client.run(
+        response = replicate_client.run(
             model_name,
             input={
                 "prompt": user_prompt,
                 "system_prompt": system_prompt,
-                "max_new_tokens": 512,
+                "max_new_tokens": 1000,
                 "temperature": 0.2,
                 "top_p": 0.9
             }

@@ -22,8 +22,8 @@ def test_generate_code():
             "language": "python"
         }
     )
-    # This will fail without OpenAI API key, but tests the endpoint structure
-    assert response.status_code in [200, 500]  # 500 if no API key
+    # This will fail without Replicate API token, but tests the endpoint structure
+    assert response.status_code in [200, 500]  # 500 if no API token
 
 def test_convert_code():
     response = client.post(
