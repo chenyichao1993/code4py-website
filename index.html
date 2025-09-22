@@ -712,21 +712,19 @@ e.g., def divide(a, b): return a / b  # This might cause errors`;
             codeContentDiv.classList.add('hidden');
             mainCodeButtons.classList.add('hidden');
             
-            // Update loading message
+            // Update loading message - clean spinner only
             const loadingDiv = codeLoadingDiv.querySelector('.loading-spinner');
             if (loadingDiv) {
                 loadingDiv.innerHTML = `
                     <div class="text-center">
                         <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-                        <div class="mt-2 text-gray-500">AI正在生成高质量代码...</div>
-                        <div class="mt-1 text-sm text-gray-400">使用专业提示词，预计15-25秒</div>
                     </div>
                 `;
             }
             
             const button = event.target;
             const originalText = button.textContent;
-            button.textContent = 'Generating...';
+            button.textContent = '...';
             button.disabled = true;
             
             try {
