@@ -283,6 +283,22 @@ async def generate_code_with_replicate(prompt: str, context: str = None) -> str:
             }
         )
         
+        # Wait for the response to complete
+        if hasattr(response, '__iter__'):
+            # For async generators, collect all chunks
+            result_chunks = []
+            for chunk in response:
+                result_chunks.append(str(chunk))
+            response = ''.join(result_chunks)
+        
+        # Wait for the response to complete
+        if hasattr(response, '__iter__'):
+            # For async generators, collect all chunks
+            result_chunks = []
+            for chunk in response:
+                result_chunks.append(str(chunk))
+            response = ''.join(result_chunks)
+        
         # Handle different response types from Replicate
         print(f"Response type: {type(response)}")
         print(f"Response content preview: {str(response)[:200]}...")
@@ -353,6 +369,14 @@ async def convert_code_with_replicate(code: str, from_lang: str, to_lang: str) -
             }
         )
         
+        # Wait for the response to complete
+        if hasattr(response, '__iter__'):
+            # For async generators, collect all chunks
+            result_chunks = []
+            for chunk in response:
+                result_chunks.append(str(chunk))
+            response = ''.join(result_chunks)
+        
         # Handle different response types from Replicate
         if isinstance(response, list):
             if len(response) == 1 and isinstance(response[0], str):
@@ -390,6 +414,14 @@ async def explain_code_with_replicate(code: str, language: str) -> dict:
                 "stop_sequences": ["[/INST]"]
             }
         )
+        
+        # Wait for the response to complete
+        if hasattr(response, '__iter__'):
+            # For async generators, collect all chunks
+            result_chunks = []
+            for chunk in response:
+                result_chunks.append(str(chunk))
+            response = ''.join(result_chunks)
         
         # Handle different response types from Replicate
         if isinstance(response, list):
@@ -457,6 +489,14 @@ async def debug_code_with_replicate(code: str) -> str:
                 "stop_sequences": ["[/INST]"]
             }
         )
+        
+        # Wait for the response to complete
+        if hasattr(response, '__iter__'):
+            # For async generators, collect all chunks
+            result_chunks = []
+            for chunk in response:
+                result_chunks.append(str(chunk))
+            response = ''.join(result_chunks)
         
         # Handle different response types from Replicate
         if isinstance(response, list):
