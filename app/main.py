@@ -70,7 +70,7 @@ async def generate(request: Request):
         
         print(f"Generated: {len(result)} characters")
         return {"code": result, "execution_time": 1.0}
-        
+    
     except Exception as e:
         print(f"Error: {e}")
         return {"code": f"# Error: {str(e)}", "execution_time": 0}
@@ -106,7 +106,7 @@ async def convert(request: Request):
             result += str(chunk)
         
         return {"code": result, "execution_time": 1.0}
-        
+    
     except Exception as e:
         print(f"Error: {e}")
         return {"code": f"# Error: {str(e)}", "execution_time": 0}
@@ -142,7 +142,7 @@ async def explain(request: Request):
             result += str(chunk)
         
         return {"code": result, "execution_time": 1.0}
-        
+    
     except Exception as e:
         print(f"Error: {e}")
         return {"code": f"# Error: {str(e)}", "execution_time": 0}
@@ -178,7 +178,7 @@ async def debug(request: Request):
             result += str(chunk)
         
         return {"code": result, "execution_time": 1.0}
-        
+    
     except Exception as e:
         print(f"Error: {e}")
         return {"code": f"# Error: {str(e)}", "execution_time": 0}

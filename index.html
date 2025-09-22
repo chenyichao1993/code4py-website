@@ -722,31 +722,10 @@ e.g., def divide(a, b): return a / b  # This might cause errors`;
                 const controller = new AbortController();
                 const timeoutId = setTimeout(() => controller.abort(), 10000); // 10秒超时
                 
-                // 根据功能选择不同的API参数
-                let requestBody;
-                if (selectedFunction === 'generate') {
-                    requestBody = {
-                        prompt: input,
-                        language: 'python',
-                        context: null
-                    };
-                } else if (selectedFunction === 'convert') {
-                    requestBody = {
-                        code: input,
-                        from_language: 'auto',
-                        to_language: 'python'
-                    };
-                } else if (selectedFunction === 'explain') {
-                    requestBody = {
-                        code: input,
-                        language: 'python'
-                    };
-                } else if (selectedFunction === 'debug') {
-                    requestBody = {
-                        code: input,
-                        language: 'python'
-                    };
-                }
+                // 所有API都使用相同的简单格式
+                const requestBody = {
+                    prompt: input
+                };
                 
                 const response = await fetch(`${API_BASE_URL}/api/${selectedFunction}`, {
                     method: 'POST',
