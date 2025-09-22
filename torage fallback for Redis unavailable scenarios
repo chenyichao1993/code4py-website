@@ -1,0 +1,3 @@
+[33m740db2b[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m)[m Fix Replicate API calls with proper Llama-2 format
+[33mec787ff[m Fix API integration: Switch to Replicate API and clean up project files
+[33m24d1bdc[m Fix API call format: use separate prompt and system_prompt parameters

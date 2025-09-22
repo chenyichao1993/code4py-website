@@ -1,0 +1,5 @@
+[33mec787ff[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m)[m Fix API integration: Switch to Replicate API and clean up project files
+[33m24d1bdc[m Fix API call format: use separate prompt and system_prompt parameters
+[33m0400c38[m Switch back to llama-2-70b-chat with simple prompt format
+[33m54792fd[m Fix all 4 functions with proper Code Llama instruction format
+[33m08d64b6[m Switch to meta/codellama-34b-instruct for better cost efficiency
