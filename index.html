@@ -706,11 +706,23 @@ e.g., def divide(a, b): return a / b  # This might cause errors`;
                 return;
             }
             
-            // Show loading animation
+            // Show loading animation with progress indicator
             outputDiv.classList.add('hidden');
             codeLoadingDiv.classList.remove('hidden');
             codeContentDiv.classList.add('hidden');
             mainCodeButtons.classList.add('hidden');
+            
+            // Update loading message
+            const loadingDiv = codeLoadingDiv.querySelector('.loading-spinner');
+            if (loadingDiv) {
+                loadingDiv.innerHTML = `
+                    <div class="text-center">
+                        <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+                        <div class="mt-2 text-gray-500">AI正在生成代码...</div>
+                        <div class="mt-1 text-sm text-gray-400">这可能需要15-30秒</div>
+                    </div>
+                `;
+            }
             
             const button = event.target;
             const originalText = button.textContent;

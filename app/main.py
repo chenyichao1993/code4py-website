@@ -59,7 +59,7 @@ async def generate(request: Request):
                         "content": f"Generate Python code for: {request.prompt}"
                     }
                 ],
-                "max_tokens": 1000,
+                "max_tokens": 800,
                 "temperature": 0.1
             }
         )
@@ -98,7 +98,7 @@ async def convert(request: Request):
                         "content": f"Convert this code to Python: {request.prompt}"
                     }
                 ],
-                "max_tokens": 1000,
+                "max_tokens": 800,
                 "temperature": 0.1
             }
         )
@@ -134,7 +134,7 @@ async def explain(request: Request):
                         "content": f"Explain this Python code: {request.prompt}"
                     }
                 ],
-                "max_tokens": 1000,
+                "max_tokens": 800,
                 "temperature": 0.1
             }
         )
@@ -170,7 +170,7 @@ async def debug(request: Request):
                         "content": f"Debug this Python code: {request.prompt}"
                     }
                 ],
-                "max_tokens": 1000,
+                "max_tokens": 800,
                 "temperature": 0.1
             }
         )
