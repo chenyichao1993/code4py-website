@@ -65,10 +65,12 @@ async def generate(request: Request):
         )
         
         result = ""
+        chunk_count = 0
         for chunk in response:
             result += str(chunk)
+            chunk_count += 1
         
-        print(f"Generated: {len(result)} characters")
+        print(f"Generated: {len(result)} characters, {chunk_count} chunks")
         return {"code": result, "execution_time": 1.0}
     
     except Exception as e:
