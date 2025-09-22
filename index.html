@@ -785,12 +785,12 @@ e.g., def divide(a, b): return a / b  # This might cause errors`;
                 console.error('Error generating code:', error);
                 
                 if (error.name === 'AbortError') {
-                    showCustomAlert('请求超时，请稍后重试。API调用可能需要更长时间。');
+                    showCustomAlert('Request timeout, please try again later. Code generation may take longer.');
                     return;
                 }
                 
                 if (error.message.includes('fetch')) {
-                    showCustomAlert('网络连接失败，请检查网络后重试。');
+                    showCustomAlert('Network connection failed, please check your connection and try again.');
                     return;
                 }
                 
