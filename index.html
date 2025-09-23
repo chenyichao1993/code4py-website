@@ -55,12 +55,30 @@
         
         /* Loading Spinner */
         .loading-spinner {
-            width: 40px;
-            height: 40px;
-            border: 4px solid #e5e7eb;
-            border-top: 4px solid #3B82F6;
+            width: 50px;
+            height: 50px;
+            border: 5px solid #e5e7eb;
+            border-top: 5px solid #3B82F6;
             border-radius: 50%;
             animation: spin 1s linear infinite;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+        
+        .progress-text {
+            font-size: 12px;
+            font-weight: bold;
+            color: #3B82F6;
+            position: absolute;
+            z-index: 1;
+            animation: counter-rotate 1s linear infinite;
+        }
+        
+        @keyframes counter-rotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(-360deg); }
         }
         
         @keyframes spin {
@@ -247,7 +265,9 @@ e.g., Create a function to calculate fibonacci numbers"
                             </div>
                             <div id="codeLoading" class="hidden h-full">
                                 <div class="h-full flex items-center justify-center">
-                                    <div class="loading-spinner"></div>
+                                    <div class="loading-spinner">
+                                        <span class="progress-text">0%</span>
+                                    </div>
                                 </div>
                             </div>
                             <div id="codeContent" class="hidden h-full overflow-hidden">
@@ -712,15 +732,19 @@ e.g., def divide(a, b): return a / b  # This might cause errors`;
             codeContentDiv.classList.add('hidden');
             mainCodeButtons.classList.add('hidden');
             
-            // Update loading message - clean spinner only
-            const loadingDiv = codeLoadingDiv.querySelector('.loading-spinner');
-            if (loadingDiv) {
-                loadingDiv.innerHTML = `
-                    <div class="text-center">
-                        <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-                    </div>
-                `;
-            }
+            // Initialize progress display
+            const progressText = codeLoadingDiv.querySelector('.progress-text');
+            let progress = 0;
+            let progressInterval;
+            
+            // Start progress animation
+            progressInterval = setInterval(() => {
+                progress += Math.random() * 1 + 0.8; // 0.8-1.8% random increase
+                if (progress > 99) progress = 99;
+                if (progressText) {
+                    progressText.textContent = Math.round(progress) + '%';
+                }
+            }, 500);
             
             const button = event.target;
             const originalText = button.textContent;
@@ -777,12 +801,28 @@ e.g., def divide(a, b): return a / b  # This might cause errors`;
                 
                 // Display the generated code
                 codeElement.textContent = data.code;
+                
+                // Complete progress display
+                if (progressText) {
+                    progressText.textContent = '100%';
+                }
+                
+                // Clear progress interval
+                if (progressInterval) {
+                    clearInterval(progressInterval);
+                }
+                
                 codeLoadingDiv.classList.add('hidden');
                 codeContentDiv.classList.remove('hidden');
                 mainCodeButtons.classList.remove('hidden');
                 
             } catch (error) {
                 console.error('Error generating code:', error);
+                
+                // Clear progress interval on error
+                if (progressInterval) {
+                    clearInterval(progressInterval);
+                }
                 
                 if (error.name === 'AbortError') {
                     showCustomAlert('Request timeout, please try again later. Code generation may take longer.');
@@ -1144,6 +1184,12 @@ if __name__ == "__main__":
             document.getElementById('codeLoading').classList.add('hidden');
             document.getElementById('codeContent').classList.add('hidden');
             document.getElementById('mainCodeButtons').classList.add('hidden');
+            
+            // Reset progress display
+            const progressText = document.querySelector('.progress-text');
+            if (progressText) {
+                progressText.textContent = '0%';
+            }
         }
         
         function downloadCode() {
