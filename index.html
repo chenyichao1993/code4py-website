@@ -739,7 +739,7 @@ e.g., def divide(a, b): return a / b  # This might cause errors`;
             
             // Start progress animation
             progressInterval = setInterval(() => {
-                progress += Math.random() * 1 + 0.8; // 0.8-1.8% random increase
+                progress += Math.random() * 1 + 1.2; // 1.2-2.2% random increase
                 if (progress > 99) progress = 99;
                 if (progressText) {
                     progressText.textContent = Math.round(progress) + '%';
