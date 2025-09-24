@@ -299,7 +299,6 @@ if __name__ == "__main__":
                 <div class="flex items-center justify-between">
                     <div class="text-gray-500 text-sm">
                         <span class="mr-4">👁️ 2,156 views</span>
-                        <span>💬 28 comments</span>
                         <span class="ml-4">📅 January 20, 2024</span>
                     </div>
                     <div class="flex space-x-4">
@@ -326,7 +325,7 @@ if __name__ == "__main__":
     <footer class="bg-gray-900 text-white py-8">
         <div class="max-w-4xl mx-auto px-4 text-center">
             <p class="text-gray-400">
-                © 2024 AI Python Code Generator. Free tool for developers worldwide.
+                © <span id="currentYear">2024</span> AI Python Code Generator. Free tool for developers worldwide.
             </p>
         </div>
     </footer>
@@ -349,6 +348,15 @@ if __name__ == "__main__":
                 behavior: 'smooth'
             });
         }
+
+        // Update current year dynamically
+        document.addEventListener('DOMContentLoaded', function() {
+            const currentYear = new Date().getFullYear();
+            const yearElement = document.getElementById('currentYear');
+            if (yearElement) {
+                yearElement.textContent = currentYear;
+            }
+        });
     </script>
 </body>
 </html>
