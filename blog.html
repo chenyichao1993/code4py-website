@@ -77,7 +77,7 @@
             <div class="flex justify-between items-center h-16">
                 <!-- Logo -->
                 <div class="flex items-center">
-                    <div class="flex-shrink-0 flex items-center cursor-pointer" onclick="window.location.href='/'">
+                    <div class="flex-shrink-0 flex items-center cursor-pointer" onclick="window.location.href='index.html'">
                         <div class="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg flex items-center justify-center mr-3">
                             <span class="text-white font-bold text-lg">C</span>
                         </div>
@@ -88,18 +88,19 @@
                 <!-- Navigation Links -->
                 <div class="hidden md:block">
                     <div class="ml-10 flex items-baseline space-x-8">
-                        <a href="/#features" class="text-gray-700 hover:text-blue-600 px-3 py-2 text-sm font-medium transition-colors">Features</a>
-                        <a href="/#how-it-works" class="text-gray-700 hover:text-blue-600 px-3 py-2 text-sm font-medium transition-colors">How It Works</a>
-                        <a href="/#pricing" class="text-gray-700 hover:text-blue-600 px-3 py-2 text-sm font-medium transition-colors">Pricing</a>
-                        <a href="/#faq" class="text-gray-700 hover:text-blue-600 px-3 py-2 text-sm font-medium transition-colors">FAQ</a>
+                        <a href="index.html" class="text-gray-700 hover:text-blue-600 px-3 py-2 text-sm font-medium transition-colors">Home</a>
+                        <a href="index.html#features" class="text-gray-700 hover:text-blue-600 px-3 py-2 text-sm font-medium transition-colors">Features</a>
+                        <a href="index.html#how-it-works" class="text-gray-700 hover:text-blue-600 px-3 py-2 text-sm font-medium transition-colors">How It Works</a>
+                        <a href="index.html#pricing" class="text-gray-700 hover:text-blue-600 px-3 py-2 text-sm font-medium transition-colors">Pricing</a>
+                        <a href="index.html#faq" class="text-gray-700 hover:text-blue-600 px-3 py-2 text-sm font-medium transition-colors">FAQ</a>
                         <a href="mailto:motionjoy93@gmail.com" class="text-gray-700 hover:text-blue-600 px-3 py-2 text-sm font-medium transition-colors">Contact</a>
-                        <a href="/blog" class="text-blue-600 px-3 py-2 text-sm font-medium transition-colors">Blog</a>
+                        <a href="#" onclick="scrollToTop(); return false;" class="text-blue-600 px-3 py-2 text-sm font-medium transition-colors">Blog</a>
                     </div>
                 </div>
                 
                 <!-- CTA Button -->
                 <div class="hidden md:block">
-                    <button onclick="window.location.href='/'" class="bg-gradient-to-r from-blue-500 to-blue-600 text-white px-6 py-2 rounded-lg font-medium hover:from-blue-600 hover:to-blue-700 transition-all duration-200">
+                    <button onclick="window.location.href='index.html'" class="bg-gradient-to-r from-blue-500 to-blue-600 text-white px-6 py-2 rounded-lg font-medium hover:from-blue-600 hover:to-blue-700 transition-all duration-200">
                         Try Free
                     </button>
                 </div>
@@ -117,13 +118,14 @@
             <!-- Mobile menu -->
             <div id="mobile-menu" class="md:hidden hidden">
                 <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3 bg-white border-t">
-                    <a href="/#features" class="text-gray-700 hover:text-blue-600 block px-3 py-2 text-base font-medium">Features</a>
-                    <a href="/#how-it-works" class="text-gray-700 hover:text-blue-600 block px-3 py-2 text-base font-medium">How It Works</a>
-                    <a href="/#pricing" class="text-gray-700 hover:text-blue-600 block px-3 py-2 text-base font-medium">Pricing</a>
-                    <a href="/#faq" class="text-gray-700 hover:text-blue-600 block px-3 py-2 text-base font-medium">FAQ</a>
+                    <a href="index.html" class="text-gray-700 hover:text-blue-600 block px-3 py-2 text-base font-medium">Home</a>
+                    <a href="index.html#features" class="text-gray-700 hover:text-blue-600 block px-3 py-2 text-base font-medium">Features</a>
+                    <a href="index.html#how-it-works" class="text-gray-700 hover:text-blue-600 block px-3 py-2 text-base font-medium">How It Works</a>
+                    <a href="index.html#pricing" class="text-gray-700 hover:text-blue-600 block px-3 py-2 text-base font-medium">Pricing</a>
+                    <a href="index.html#faq" class="text-gray-700 hover:text-blue-600 block px-3 py-2 text-base font-medium">FAQ</a>
                     <a href="mailto:motionjoy93@gmail.com" class="text-gray-700 hover:text-blue-600 block px-3 py-2 text-base font-medium">Contact</a>
-                    <a href="/blog" class="text-blue-600 block px-3 py-2 text-base font-medium">Blog</a>
-                    <button onclick="window.location.href='/'" class="w-full bg-gradient-to-r from-blue-500 to-blue-600 text-white px-6 py-2 rounded-lg font-medium mt-4">
+                    <a href="#" onclick="scrollToTop(); return false;" class="text-blue-600 block px-3 py-2 text-base font-medium">Blog</a>
+                    <button onclick="window.location.href='index.html'" class="w-full bg-gradient-to-r from-blue-500 to-blue-600 text-white px-6 py-2 rounded-lg font-medium mt-4">
                         Try Free
                     </button>
                 </div>
@@ -138,7 +140,7 @@
                 Code4Py Blog
             </h1>
             <p class="text-xl opacity-90 max-w-2xl mx-auto">
-                分享AI Python代码生成的最新动态、使用教程和编程资源
+                Latest updates, tutorials, and programming resources for AI Python code generation
             </p>
         </div>
     </section>
@@ -151,23 +153,23 @@
                 <div class="bg-white rounded-xl shadow-lg overflow-hidden blog-card">
                     <div class="p-8">
                         <div class="flex items-center mb-4">
-                            <span class="category-badge bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-medium">功能介绍</span>
-                            <span class="text-gray-500 text-sm ml-4">2024年1月15日</span>
-                            <span class="text-gray-500 text-sm ml-2">• 5分钟阅读</span>
+                            <span class="category-badge bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-medium">Guide</span>
+                            <span class="text-gray-500 text-sm ml-4">2024年1月20日</span>
+                            <span class="text-gray-500 text-sm ml-2">• 8 min read</span>
                         </div>
                         <h2 class="text-2xl font-bold text-gray-900 mb-4">
-                            Code4Py核心功能详解：让AI成为你的编程助手
+                            Code4Py User Guide: How to Generate Python Code with AI in One Click
                         </h2>
                         <p class="text-gray-600 mb-6 leading-relaxed">
-                            Code4Py不仅仅是一个代码生成工具，它是一个完整的Python开发助手。本文将深入介绍我们的四大核心功能：自然语言转代码、代码转换、代码解释和调试优化，帮助开发者更好地理解和使用这些强大的AI功能。
+                            Discover the power of AI Python code generation with Code4Py, the best free AI Python code generator online. Learn how to convert your ideas into production-ready Python code instantly, without any coding experience required. This comprehensive guide covers everything from basic usage to advanced features.
                         </p>
                         <div class="flex items-center justify-between">
                             <button class="bg-blue-600 text-white px-6 py-2 rounded-lg font-medium hover:bg-blue-700 transition-colors">
-                                阅读全文
+                                Read More
                             </button>
                             <div class="text-gray-500 text-sm">
-                                <span class="mr-4">👁️ 1,234 次阅读</span>
-                                <span>💬 12 条评论</span>
+                                <span class="mr-4">👁️ 2,156 views</span>
+                                <span>💬 28 comments</span>
                             </div>
                         </div>
                     </div>
@@ -179,120 +181,120 @@
                 <!-- Article 1 -->
                 <div class="bg-white rounded-lg shadow-lg p-6 blog-card">
                     <div class="flex items-center mb-4">
-                        <span class="category-badge bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm font-medium">使用教程</span>
+                        <span class="category-badge bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm font-medium">Beginner</span>
                         <span class="text-gray-500 text-sm ml-4">2024年1月12日</span>
                     </div>
                     <h3 class="text-xl font-bold text-gray-900 mb-3">
-                        新手入门指南：5分钟学会使用Code4Py
+                        Can't Code? Use Code4Py to Auto-Generate Python Scripts
                     </h3>
                     <p class="text-gray-600 mb-4 leading-relaxed">
-                        第一次使用Code4Py？不用担心！本教程将带你从零开始，通过简单的步骤快速上手AI代码生成，让你在5分钟内就能生成第一个Python程序。
+                        No coding experience? No problem! Learn how Code4Py's beginner-friendly Python code generator can transform your natural language descriptions into working Python scripts. Perfect for automation, data processing, and web scraping tasks.
                     </p>
                     <div class="flex items-center justify-between">
                         <button class="text-blue-600 font-medium hover:text-blue-700 transition-colors">
-                            阅读更多 →
+                            Read More →
                         </button>
-                        <span class="text-gray-500 text-sm">3分钟阅读</span>
+                        <span class="text-gray-500 text-sm">6 min read</span>
                     </div>
                 </div>
 
                 <!-- Article 2 -->
                 <div class="bg-white rounded-lg shadow-lg p-6 blog-card">
                     <div class="flex items-center mb-4">
-                        <span class="category-badge bg-purple-100 text-purple-800 px-3 py-1 rounded-full text-sm font-medium">编程资源</span>
+                        <span class="category-badge bg-purple-100 text-purple-800 px-3 py-1 rounded-full text-sm font-medium">Comparison</span>
                         <span class="text-gray-500 text-sm ml-4">2024年1月10日</span>
                     </div>
                     <h3 class="text-xl font-bold text-gray-900 mb-3">
-                        Python编程最佳实践：写出更优雅的代码
+                        AI Code Generator Comparison: ChatGPT vs Cursor vs Code4Py
                     </h3>
                     <p class="text-gray-600 mb-4 leading-relaxed">
-                        分享Python编程的最佳实践和代码规范，包括命名约定、代码结构、错误处理等技巧，帮助开发者写出更优雅、更易维护的Python代码。
+                        Discover the best AI tool to write Python code with our comprehensive comparison of ChatGPT, Cursor, and Code4Py. Learn which AI Python code generator offers the best features, ease of use, and value for your programming needs.
                     </p>
                     <div class="flex items-center justify-between">
                         <button class="text-blue-600 font-medium hover:text-blue-700 transition-colors">
-                            阅读更多 →
+                            Read More →
                         </button>
-                        <span class="text-gray-500 text-sm">8分钟阅读</span>
+                        <span class="text-gray-500 text-sm">7 min read</span>
                     </div>
                 </div>
 
                 <!-- Article 3 -->
                 <div class="bg-white rounded-lg shadow-lg p-6 blog-card">
                     <div class="flex items-center mb-4">
-                        <span class="category-badge bg-orange-100 text-orange-800 px-3 py-1 rounded-full text-sm font-medium">更新日志</span>
+                        <span class="category-badge bg-orange-100 text-orange-800 px-3 py-1 rounded-full text-sm font-medium">Automation</span>
                         <span class="text-gray-500 text-sm ml-4">2024年1月8日</span>
                     </div>
                     <h3 class="text-xl font-bold text-gray-900 mb-3">
-                        Code4Py v2.1 更新：新增代码优化功能
+                        Top 10 Python Automation Scripts with Code4Py
                     </h3>
                     <p class="text-gray-600 mb-4 leading-relaxed">
-                        最新版本带来了强大的代码优化功能，AI现在可以自动分析你的代码并提供性能优化建议，让生成的代码更加高效和优雅。
+                        Explore 10 powerful Python automation scripts you can generate instantly with Code4Py. From web scraping to file processing, learn how AI can help you create production-ready automation code for common tasks.
                     </p>
                     <div class="flex items-center justify-between">
                         <button class="text-blue-600 font-medium hover:text-blue-700 transition-colors">
-                            阅读更多 →
+                            Read More →
                         </button>
-                        <span class="text-gray-500 text-sm">4分钟阅读</span>
+                        <span class="text-gray-500 text-sm">9 min read</span>
                     </div>
                 </div>
 
                 <!-- Article 4 -->
                 <div class="bg-white rounded-lg shadow-lg p-6 blog-card">
                     <div class="flex items-center mb-4">
-                        <span class="category-badge bg-red-100 text-red-800 px-3 py-1 rounded-full text-sm font-medium">使用技巧</span>
+                        <span class="category-badge bg-red-100 text-red-800 px-3 py-1 rounded-full text-sm font-medium">Future</span>
                         <span class="text-gray-500 text-sm ml-4">2024年1月5日</span>
                     </div>
                     <h3 class="text-xl font-bold text-gray-900 mb-3">
-                        高级使用技巧：如何提高代码生成质量
+                        Future Vision: Code4Py Multi-Language Support
                     </h3>
                     <p class="text-gray-600 mb-4 leading-relaxed">
-                        掌握这些高级技巧，让你的AI代码生成更加精准。包括如何编写更好的提示词、如何指定代码风格、以及如何生成复杂的算法实现。
+                        Discover Code4Py's roadmap for expanding beyond Python to support JavaScript, Java, C++, and more languages. Learn about upcoming features and how this AI code generator multi-language support will revolutionize development.
                     </p>
                     <div class="flex items-center justify-between">
                         <button class="text-blue-600 font-medium hover:text-blue-700 transition-colors">
-                            阅读更多 →
+                            Read More →
                         </button>
-                        <span class="text-gray-500 text-sm">6分钟阅读</span>
+                        <span class="text-gray-500 text-sm">6 min read</span>
                     </div>
                 </div>
 
                 <!-- Article 5 -->
                 <div class="bg-white rounded-lg shadow-lg p-6 blog-card">
                     <div class="flex items-center mb-4">
-                        <span class="category-badge bg-indigo-100 text-indigo-800 px-3 py-1 rounded-full text-sm font-medium">技术分享</span>
+                        <span class="category-badge bg-indigo-100 text-indigo-800 px-3 py-1 rounded-full text-sm font-medium">Tech</span>
                         <span class="text-gray-500 text-sm ml-4">2024年1月3日</span>
                     </div>
                     <h3 class="text-xl font-bold text-gray-900 mb-3">
-                        AI代码生成的工作原理：从自然语言到Python代码
+                        How AI Code Generation Works: Technical Deep Dive
                     </h3>
                     <p class="text-gray-600 mb-4 leading-relaxed">
-                        深入了解Code4Py背后的技术原理，包括自然语言处理、代码理解、以及如何确保生成代码的准确性和可执行性。
+                        Explore the technical principles behind AI code generation, from natural language processing to code synthesis. Understand how Code4Py's AI Python tool transforms your descriptions into executable Python code.
                     </p>
                     <div class="flex items-center justify-between">
                         <button class="text-blue-600 font-medium hover:text-blue-700 transition-colors">
-                            阅读更多 →
+                            Read More →
                         </button>
-                        <span class="text-gray-500 text-sm">10分钟阅读</span>
+                        <span class="text-gray-500 text-sm">8 min read</span>
                     </div>
                 </div>
 
                 <!-- Article 6 -->
                 <div class="bg-white rounded-lg shadow-lg p-6 blog-card">
                     <div class="flex items-center mb-4">
-                        <span class="category-badge bg-yellow-100 text-yellow-800 px-3 py-1 rounded-full text-sm font-medium">常见问题</span>
+                        <span class="category-badge bg-yellow-100 text-yellow-800 px-3 py-1 rounded-full text-sm font-medium">FAQ</span>
                         <span class="text-gray-500 text-sm ml-4">2024年1月1日</span>
                     </div>
                     <h3 class="text-xl font-bold text-gray-900 mb-3">
-                        常见问题解答：Code4Py使用中的疑问
+                        FAQ: Common Questions About AI Python Code Generation
                     </h3>
                     <p class="text-gray-600 mb-4 leading-relaxed">
-                        整理了用户最常遇到的问题和解答，包括使用限制、代码质量保证、以及如何获得更好的生成结果等实用信息。
+                        Get answers to the most frequently asked questions about AI Python code generators. Learn about safety, accuracy, costs, and best practices for using AI tools like Code4Py for Python development.
                     </p>
                     <div class="flex items-center justify-between">
                         <button class="text-blue-600 font-medium hover:text-blue-700 transition-colors">
-                            阅读更多 →
+                            Read More →
                         </button>
-                        <span class="text-gray-500 text-sm">5分钟阅读</span>
+                        <span class="text-gray-500 text-sm">6 min read</span>
                     </div>
                 </div>
             </div>
@@ -300,7 +302,7 @@
             <!-- Load More Button -->
             <div class="text-center mt-12">
                 <button class="bg-white text-blue-600 border border-blue-600 px-8 py-3 rounded-lg font-medium hover:bg-blue-50 transition-colors">
-                    加载更多文章
+                    Load More Articles
                 </button>
             </div>
         </div>
@@ -310,19 +312,19 @@
     <section class="py-16 bg-gradient-to-r from-blue-600 to-purple-600 text-white">
         <div class="max-w-4xl mx-auto px-4 text-center">
             <h2 class="text-3xl font-bold mb-4">
-                订阅我们的博客
+                Subscribe to Our Blog
             </h2>
             <p class="text-xl opacity-90 mb-8">
-                获取最新的技术文章、使用技巧和产品更新
+                Get the latest tech articles, tips, and product updates
             </p>
             <div class="flex flex-col sm:flex-row justify-center items-center gap-4 max-w-md mx-auto">
                 <input 
                     type="email" 
-                    placeholder="输入您的邮箱地址" 
+                    placeholder="Enter your email address" 
                     class="flex-1 px-4 py-3 rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-white"
                 >
                 <button class="bg-white text-blue-600 px-6 py-3 rounded-lg font-medium hover:bg-gray-100 transition-colors">
-                    订阅
+                    Subscribe
                 </button>
             </div>
         </div>
