@@ -87,6 +87,31 @@
                         Try Free
                     </button>
                 </div>
+                
+                <!-- Mobile menu button -->
+                <div class="md:hidden">
+                    <button type="button" class="text-gray-700 hover:text-blue-600 focus:outline-none focus:text-blue-600" onclick="toggleMobileMenu()">
+                        <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Mobile menu -->
+            <div id="mobile-menu" class="md:hidden hidden">
+                <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3 bg-white border-t">
+                    <a href="index.html" class="text-gray-700 hover:text-blue-600 block px-3 py-2 text-base font-medium">Home</a>
+                    <a href="index.html#features" class="text-gray-700 hover:text-blue-600 block px-3 py-2 text-base font-medium">Features</a>
+                    <a href="index.html#how-it-works" class="text-gray-700 hover:text-blue-600 block px-3 py-2 text-base font-medium">How It Works</a>
+                    <a href="index.html#pricing" class="text-gray-700 hover:text-blue-600 block px-3 py-2 text-base font-medium">Pricing</a>
+                    <a href="index.html#faq" class="text-gray-700 hover:text-blue-600 block px-3 py-2 text-base font-medium">FAQ</a>
+                    <a href="mailto:motionjoy93@gmail.com" class="text-gray-700 hover:text-blue-600 block px-3 py-2 text-base font-medium">Contact</a>
+                    <a href="blog.html" class="text-blue-600 block px-3 py-2 text-base font-medium">Blog</a>
+                    <button onclick="window.location.href='index.html'" class="w-full bg-gradient-to-r from-blue-500 to-blue-600 text-white px-6 py-2 rounded-lg font-medium mt-4">
+                        Try Free
+                    </button>
+                </div>
             </div>
         </div>
     </nav>
@@ -331,6 +356,25 @@ if __name__ == "__main__":
     </footer>
 
     <script>
+        // Mobile menu toggle function
+        function toggleMobileMenu() {
+            const mobileMenu = document.getElementById('mobile-menu');
+            mobileMenu.classList.toggle('hidden');
+        }
+        
+        // Close mobile menu when clicking outside
+        document.addEventListener('click', function(event) {
+            const mobileMenu = document.getElementById('mobile-menu');
+            const mobileMenuButton = event.target.closest('[onclick="toggleMobileMenu()"]');
+            
+            // If mobile menu is open and click is not on menu button or inside menu
+            if (!mobileMenu.classList.contains('hidden') && 
+                !mobileMenuButton && 
+                !mobileMenu.contains(event.target)) {
+                mobileMenu.classList.add('hidden');
+            }
+        });
+        
         // Show/hide back to top button
         window.addEventListener('scroll', function() {
             const backToTopBtn = document.getElementById('backToTop');
