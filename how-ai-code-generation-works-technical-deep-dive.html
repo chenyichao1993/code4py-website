@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How AI Code Generation Works: Technical Deep Dive</title>
+    
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="Explore the technical principles behind AI code generation, from natural language processing to code synthesis. Understand how Code4Py's AI Python tool transforms descriptions into executable code.">
+    <meta name="keywords" content="AI code generation technical, natural language processing, code synthesis, Code4Py technical, AI programming principles, machine learning code generation">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cdefs%3E%3ClinearGradient id='grad' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' style='stop-color:%233B82F6;stop-opacity:1' /%3E%3Cstop offset='100%25' style='stop-color:%238B5CF6;stop-opacity:1' /%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='32' height='32' rx='6' fill='url(%23grad)'/%3E%3Ctext x='16' y='22' font-family='Arial, sans-serif' font-size='18' font-weight='bold' text-anchor='middle' fill='white'%3EC%3C/text%3E%3C/svg%3E">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'primary': '#3B82F6',
+                        'secondary': '#8B5CF6'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .logo-text {
+            background: linear-gradient(135deg, #3B82F6, #8B5CF6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .back-to-top {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: linear-gradient(135deg, #3B82F6, #8B5CF6);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            cursor: pointer;
+            display: none;
+            z-index: 1000;
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+            transition: all 0.3s ease;
+        }
+        .back-to-top:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(59, 130, 246, 0.4);
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- Navigation Bar -->
+    <nav class="bg-white shadow-lg fixed w-full top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <!-- Logo -->
+                <div class="flex items-center">
+                    <div class="flex-shrink-0 flex items-center cursor-pointer" onclick="window.location.href='index.html'">
+                        <div class="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg flex items-center justify-center mr-3">
+                            <span class="text-white font-bold text-lg">C</span>
+                        </div>
+                        <span class="logo-text text-2xl font-bold">Code4Py</span>
+                    </div>
+                </div>
+                
+                <!-- Navigation Links -->
+                <div class="hidden md:block">
+                    <div class="ml-10 flex items-baseline space-x-8">
+                        <a href="index.html" class="text-gray-700 hover:text-blue-600 px-3 py-2 text-sm font-medium transition-colors">Home</a>
+                        <a href="index.html#features" class="text-gray-700 hover:text-blue-600 px-3 py-2 text-sm font-medium transition-colors">Features</a>
+                        <a href="index.html#how-it-works" class="text-gray-700 hover:text-blue-600 px-3 py-2 text-sm font-medium transition-colors">How It Works</a>
+                        <a href="index.html#pricing" class="text-gray-700 hover:text-blue-600 px-3 py-2 text-sm font-medium transition-colors">Pricing</a>
+                        <a href="index.html#faq" class="text-gray-700 hover:text-blue-600 px-3 py-2 text-sm font-medium transition-colors">FAQ</a>
+                        <a href="mailto:motionjoy93@gmail.com" class="text-gray-700 hover:text-blue-600 px-3 py-2 text-sm font-medium transition-colors">Contact</a>
+                        <a href="blog.html" class="text-blue-600 px-3 py-2 text-sm font-medium transition-colors">Blog</a>
+                    </div>
+                </div>
+                
+                <!-- CTA Button -->
+                <div class="hidden md:block">
+                    <button onclick="window.location.href='index.html'" class="bg-gradient-to-r from-blue-500 to-blue-600 text-white px-6 py-2 rounded-lg font-medium hover:from-blue-600 hover:to-blue-700 transition-all duration-200">
+                        Try Free
+                    </button>
+                </div>
+                
+                <!-- Mobile menu button -->
+                <div class="md:hidden">
+                    <button type="button" class="text-gray-700 hover:text-blue-600 focus:outline-none focus:text-blue-600" onclick="toggleMobileMenu()">
+                        <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Mobile menu -->
+            <div id="mobile-menu" class="md:hidden hidden">
+                <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3 bg-white border-t">
+                    <a href="index.html" class="text-gray-700 hover:text-blue-600 block px-3 py-2 text-base font-medium">Home</a>
+                    <a href="index.html#features" class="text-gray-700 hover:text-blue-600 block px-3 py-2 text-base font-medium">Features</a>
+                    <a href="index.html#how-it-works" class="text-gray-700 hover:text-blue-600 block px-3 py-2 text-base font-medium">How It Works</a>
+                    <a href="index.html#pricing" class="text-gray-700 hover:text-blue-600 block px-3 py-2 text-base font-medium">Pricing</a>
+                    <a href="index.html#faq" class="text-gray-700 hover:text-blue-600 block px-3 py-2 text-base font-medium">FAQ</a>
+                    <a href="mailto:motionjoy93@gmail.com" class="text-gray-700 hover:text-blue-600 block px-3 py-2 text-base font-medium">Contact</a>
+                    <a href="blog.html" class="text-blue-600 block px-3 py-2 text-base font-medium">Blog</a>
+                    <button onclick="window.location.href='index.html'" class="w-full bg-gradient-to-r from-blue-500 to-blue-600 text-white px-6 py-2 rounded-lg font-medium mt-4">
+                        Try Free
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Article Content -->
+    <article class="pt-24 pb-12">
+        <div class="max-w-4xl mx-auto px-4">
+            <!-- Article Header -->
+            <header class="mb-12">
+                <div class="flex items-center mb-4">
+                    <span class="bg-indigo-100 text-indigo-800 text-sm font-medium px-3 py-1 rounded-full">Tech</span>
+                    <span class="text-gray-500 text-sm ml-4">January 20, 2024 • 8 min read</span>
+                </div>
+                <h1 class="text-4xl font-bold text-gray-900 mb-6">How AI Code Generation Works: Technical Deep Dive</h1>
+                <p class="text-xl text-gray-600 leading-relaxed">
+                    Explore the technical principles behind AI code generation, from natural language processing to code synthesis. Understand how Code4Py's AI Python tool transforms your descriptions into executable Python code.
+                </p>
+            </header>
+
+            <!-- Article Body -->
+            <div class="prose prose-lg max-w-none">
+                <p class="text-gray-700 mb-8 leading-relaxed">
+                    AI code generation represents one of the most fascinating applications of artificial intelligence in software development. Behind the seemingly magical transformation of natural language descriptions into executable Python code lies a complex interplay of machine learning models, natural language processing, and code synthesis techniques. This technical deep dive explores how tools like Code4Py achieve this remarkable feat.
+                </p>
+
+                <h2 class="text-2xl font-bold text-gray-900 mb-4">The Foundation: Large Language Models</h2>
+                <p class="text-gray-700 mb-4 leading-relaxed">
+                    At the heart of AI code generation are Large Language Models (LLMs), sophisticated neural networks trained on vast amounts of text data, including code repositories, documentation, and programming tutorials. These models learn patterns, syntax, and semantic relationships that enable them to understand and generate code.
+                </p>
+
+                <div class="bg-blue-50 p-6 rounded-lg mb-8">
+                    <h3 class="text-lg font-semibold text-blue-900 mb-4">Key Components of LLMs for Code Generation</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="bg-white p-4 rounded border">
+                            <h4 class="font-semibold text-gray-900 mb-2">🧠 Transformer Architecture</h4>
+                            <p class="text-sm text-gray-700">Self-attention mechanisms that understand relationships between words and code tokens across long sequences.</p>
+                        </div>
+                        <div class="bg-white p-4 rounded border">
+                            <h4 class="font-semibold text-gray-900 mb-2">📚 Code Training Data</h4>
+                            <p class="text-sm text-gray-700">Massive datasets containing millions of code files, comments, and documentation from various programming languages.</p>
+                        </div>
+                        <div class="bg-white p-4 rounded border">
+                            <h4 class="font-semibold text-gray-900 mb-2">🔗 Context Understanding</h4>
+                            <p class="text-sm text-gray-700">Ability to maintain context across multiple lines of code and understand programming patterns.</p>
+                        </div>
+                        <div class="bg-white p-4 rounded border">
+                            <h4 class="font-semibold text-gray-900 mb-2">⚡ Token Processing</h4>
+                            <p class="text-sm text-gray-700">Efficient tokenization that breaks down code into meaningful units for processing and generation.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <h2 class="text-2xl font-bold text-gray-900 mb-4">Natural Language Processing Pipeline</h2>
+                <p class="text-gray-700 mb-4 leading-relaxed">
+                    The journey from natural language description to Python code begins with sophisticated NLP processing that extracts intent, identifies requirements, and structures the input for code generation.
+                </p>
+
+                <div class="bg-green-50 p-6 rounded-lg mb-8">
+                    <h3 class="text-lg font-semibold text-green-900 mb-4">NLP Processing Steps</h3>
+                    <ol class="list-decimal list-inside text-green-800 space-y-2">
+                        <li><strong>Intent Recognition:</strong> Identifying the type of task (data processing, web scraping, automation, etc.)</li>
+                        <li><strong>Entity Extraction:</strong> Pulling out specific requirements, parameters, and constraints</li>
+                        <li><strong>Context Analysis:</strong> Understanding the broader context and dependencies</li>
+                        <li><strong>Requirement Structuring:</strong> Organizing information into a format suitable for code generation</li>
+                        <li><strong>Ambiguity Resolution:</strong> Handling unclear or incomplete specifications</li>
+                    </ol>
+                </div>
+
+                <h2 class="text-2xl font-bold text-gray-900 mb-4">Code Synthesis and Generation</h2>
+                <p class="text-gray-700 mb-4 leading-relaxed">
+                    Once the natural language input is processed and structured, the AI model begins the code synthesis process. This involves generating Python code that fulfills the specified requirements while following best practices and coding standards.
+                </p>
+
+                <div class="bg-purple-50 p-6 rounded-lg mb-8">
+                    <h3 class="text-lg font-semibold text-purple-900 mb-4">Code Generation Process</h3>
+                    <div class="space-y-4">
+                        <div class="bg-white p-4 rounded border-l-4 border-purple-500">
+                            <h4 class="font-semibold text-gray-900 mb-2">1. Template Selection</h4>
+                            <p class="text-gray-700 text-sm">The model identifies appropriate code patterns and templates based on the task type and requirements.</p>
+                        </div>
+                        <div class="bg-white p-4 rounded border-l-4 border-purple-500">
+                            <h4 class="font-semibold text-gray-900 mb-2">2. Library Integration</h4>
+                            <p class="text-gray-700 text-sm">Selecting and importing relevant Python libraries and modules needed for the task.</p>
+                        </div>
+                        <div class="bg-white p-4 rounded border-l-4 border-purple-500">
+                            <h4 class="font-semibold text-gray-900 mb-2">3. Logic Implementation</h4>
+                            <p class="text-gray-700 text-sm">Generating the core logic and algorithms to fulfill the specified requirements.</p>
+                        </div>
+                        <div class="bg-white p-4 rounded border-l-4 border-purple-500">
+                            <h4 class="font-semibold text-gray-900 mb-2">4. Error Handling</h4>
+                            <p class="text-gray-700 text-sm">Adding appropriate error handling, validation, and edge case management.</p>
+                        </div>
+                        <div class="bg-white p-4 rounded border-l-4 border-purple-500">
+                            <h4 class="font-semibold text-gray-900 mb-2">5. Documentation</h4>
+                            <p class="text-gray-700 text-sm">Including comments, docstrings, and explanations to make the code maintainable.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <h2 class="text-2xl font-bold text-gray-900 mb-4">Machine Learning Techniques in Code Generation</h2>
+                <p class="text-gray-700 mb-4 leading-relaxed">
+                    Modern AI code generators employ several advanced machine learning techniques to improve accuracy, efficiency, and code quality.
+                </p>
+
+                <div class="bg-yellow-50 p-6 rounded-lg mb-8">
+                    <h3 class="text-lg font-semibold text-yellow-900 mb-4">Key ML Techniques</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <h4 class="font-semibold text-gray-900 mb-2">🎯 Fine-Tuning</h4>
+                            <p class="text-sm text-gray-700 mb-2">Models are fine-tuned on specific programming languages and domains to improve accuracy for particular use cases.</p>
+                        </div>
+                        <div>
+                            <h4 class="font-semibold text-gray-900 mb-2">🔄 Reinforcement Learning</h4>
+                            <p class="text-sm text-gray-700 mb-2">Models learn from feedback to improve code quality and correctness over time.</p>
+                        </div>
+                        <div>
+                            <h4 class="font-semibold text-gray-900 mb-2">📊 Few-Shot Learning</h4>
+                            <p class="text-sm text-gray-700 mb-2">Ability to adapt to new programming patterns with minimal examples.</p>
+                        </div>
+                        <div>
+                            <h4 class="font-semibold text-gray-900 mb-2">🔍 Retrieval-Augmented Generation</h4>
+                            <p class="text-sm text-gray-700 mb-2">Combining generated code with retrieved examples for better accuracy.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <h2 class="text-2xl font-bold text-gray-900 mb-4">Code Quality and Validation</h2>
+                <p class="text-gray-700 mb-4 leading-relaxed">
+                    Ensuring generated code meets quality standards is crucial for AI code generators. This involves multiple validation layers and quality checks.
+                </p>
+
+                <div class="bg-red-50 p-6 rounded-lg mb-8">
+                    <h3 class="text-lg font-semibold text-red-900 mb-4">Quality Assurance Pipeline</h3>
+                    <ul class="list-disc list-inside text-red-800 space-y-2">
+                        <li><strong>Syntax Validation:</strong> Ensuring generated code follows Python syntax rules</li>
+                        <li><strong>Static Analysis:</strong> Checking for common programming errors and anti-patterns</li>
+                        <li><strong>Security Scanning:</strong> Identifying potential security vulnerabilities in generated code</li>
+                        <li><strong>Performance Optimization:</strong> Suggesting improvements for efficiency and resource usage</li>
+                        <li><strong>Best Practices Compliance:</strong> Ensuring code follows Python coding standards (PEP 8)</li>
+                        <li><strong>Dependency Management:</strong> Verifying that required libraries are available and properly imported</li>
+                    </ul>
+                </div>
+
+                <h2 class="text-2xl font-bold text-gray-900 mb-4">The Code4Py Architecture</h2>
+                <p class="text-gray-700 mb-4 leading-relaxed">
+                    Code4Py implements a specialized architecture optimized for Python code generation, combining multiple AI models and techniques to deliver high-quality, production-ready code.
+                </p>
+
+                <div class="bg-indigo-50 p-6 rounded-lg mb-8">
+                    <h3 class="text-lg font-semibold text-indigo-900 mb-4">Code4Py's Technical Stack</h3>
+                    <div class="space-y-4">
+                        <div class="flex justify-between items-center p-3 bg-white rounded border">
+                            <span class="font-medium">Primary Model</span>
+                            <span class="text-indigo-600 text-sm">Fine-tuned GPT architecture specialized for Python</span>
+                        </div>
+                        <div class="flex justify-between items-center p-3 bg-white rounded border">
+                            <span class="font-medium">Code Understanding</span>
+                            <span class="text-indigo-600 text-sm">AST-based parsing and semantic analysis</span>
+                        </div>
+                        <div class="flex justify-between items-center p-3 bg-white rounded border">
+                            <span class="font-medium">Quality Assurance</span>
+                            <span class="text-indigo-600 text-sm">Multi-layer validation and optimization</span>
+                        </div>
+                        <div class="flex justify-between items-center p-3 bg-white rounded border">
+                            <span class="font-medium">Performance</span>
+                            <span class="text-indigo-600 text-sm">Optimized inference pipeline for speed</span>
+                        </div>
+                    </div>
+                </div>
+
+                <h2 class="text-2xl font-bold text-gray-900 mb-4">Challenges and Limitations</h2>
+                <p class="text-gray-700 mb-4 leading-relaxed">
+                    While AI code generation has made remarkable progress, several technical challenges remain that developers and researchers continue to address.
+                </p>
+
+                <div class="bg-gray-50 p-6 rounded-lg mb-8">
+                    <h3 class="text-lg font-semibold text-gray-900 mb-4">Current Limitations</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="bg-white p-4 rounded border">
+                            <h4 class="font-semibold text-gray-900 mb-2">🎯 Context Length</h4>
+                            <p class="text-sm text-gray-700">Limited ability to maintain context across very long codebases or complex projects.</p>
+                        </div>
+                        <div class="bg-white p-4 rounded border">
+                            <h4 class="font-semibold text-gray-900 mb-2">🔍 Edge Cases</h4>
+                            <p class="text-sm text-gray-700">Difficulty handling unusual or novel programming scenarios not seen in training data.</p>
+                        </div>
+                        <div class="bg-white p-4 rounded border">
+                            <h4 class="font-semibold text-gray-900 mb-2">⚡ Real-time Updates</h4>
+                            <p class="text-sm text-gray-700">Challenges in incorporating the latest library updates and language features.</p>
+                        </div>
+                        <div class="bg-white p-4 rounded border">
+                            <h4 class="font-semibold text-gray-900 mb-2">🧪 Testing</h4>
+                            <p class="text-sm text-gray-700">Generating comprehensive test cases and handling complex testing scenarios.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <h2 class="text-2xl font-bold text-gray-900 mb-4">Future Technical Developments</h2>
+                <p class="text-gray-700 mb-4 leading-relaxed">
+                    The field of AI code generation is rapidly evolving, with several promising technical developments on the horizon that will further improve capabilities and accuracy.
+                </p>
+
+                <div class="bg-blue-50 p-6 rounded-lg mb-8">
+                    <h3 class="text-lg font-semibold text-blue-900 mb-4">Emerging Technologies</h3>
+                    <ul class="list-disc list-inside text-blue-800 space-y-2">
+                        <li><strong>Multimodal Models:</strong> Integration of code, documentation, and visual elements for better understanding</li>
+                        <li><strong>Code-Specific Architectures:</strong> Neural networks designed specifically for code generation tasks</li>
+                        <li><strong>Real-time Learning:</strong> Models that adapt and improve based on user feedback and corrections</li>
+                        <li><strong>Semantic Code Understanding:</strong> Better comprehension of code semantics and business logic</li>
+                        <li><strong>Cross-Language Translation:</strong> Seamless conversion between different programming languages</li>
+                        <li><strong>Automated Testing:</strong> AI-generated comprehensive test suites for generated code</li>
+                    </ul>
+                </div>
+
+                <h2 class="text-2xl font-bold text-gray-900 mb-4">Best Practices for AI Code Generation</h2>
+                <p class="text-gray-700 mb-4 leading-relaxed">
+                    To get the best results from AI code generators like Code4Py, understanding the underlying technology helps users provide better inputs and interpret outputs more effectively.
+                </p>
+
+                <div class="bg-green-50 p-6 rounded-lg mb-8">
+                    <h3 class="text-lg font-semibold text-green-900 mb-4">Optimizing AI Code Generation</h3>
+                    <div class="space-y-4">
+                        <div class="bg-white p-4 rounded border-l-4 border-green-500">
+                            <h4 class="font-semibold text-gray-900 mb-2">Clear Specifications</h4>
+                            <p class="text-gray-700 text-sm">Provide detailed, unambiguous descriptions of requirements and constraints to help the AI understand your intent.</p>
+                        </div>
+                        <div class="bg-white p-4 rounded border-l-4 border-green-500">
+                            <h4 class="font-semibold text-gray-900 mb-2">Context Provision</h4>
+                            <p class="text-gray-700 text-sm">Include relevant context about your project, existing code, and specific requirements to improve generation accuracy.</p>
+                        </div>
+                        <div class="bg-white p-4 rounded border-l-4 border-green-500">
+                            <h4 class="font-semibold text-gray-900 mb-2">Iterative Refinement</h4>
+                            <p class="text-gray-700 text-sm">Use feedback and refinement to improve generated code, helping the AI learn your specific preferences.</p>
+                        </div>
+                        <div class="bg-white p-4 rounded border-l-4 border-green-500">
+                            <h4 class="font-semibold text-gray-900 mb-2">Validation and Testing</h4>
+                            <p class="text-gray-700 text-sm">Always test generated code thoroughly and validate that it meets your requirements before deployment.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <h2 class="text-2xl font-bold text-gray-900 mb-4">Conclusion: The Technical Marvel of AI Code Generation</h2>
+                <p class="text-gray-700 mb-4 leading-relaxed">
+                    AI code generation represents a remarkable convergence of natural language processing, machine learning, and software engineering. The technical complexity behind tools like Code4Py involves sophisticated models, advanced algorithms, and careful engineering to transform human intent into executable Python code.
+                </p>
+
+                <p class="text-gray-700 mb-8 leading-relaxed">
+                    As the technology continues to evolve, we can expect even more sophisticated capabilities, better accuracy, and seamless integration with development workflows. Understanding the technical principles behind AI code generation not only helps users work more effectively with these tools but also provides insight into the future of software development.
+                </p>
+
+                <div class="bg-blue-50 p-6 rounded-lg mb-8">
+                    <h3 class="text-lg font-semibold text-blue-900 mb-2">Experience AI Code Generation</h3>
+                    <p class="text-blue-800 mb-4">Ready to see these technical principles in action? Try Code4Py and experience the power of AI-driven Python code generation.</p>
+                    <button onclick="window.location.href='index.html'" class="bg-gradient-to-r from-blue-500 to-blue-600 text-white px-6 py-3 rounded-lg font-medium hover:from-blue-600 hover:to-blue-700 transition-all duration-200">
+                        Try Code4Py
+                    </button>
+                </div>
+
+                <p class="text-gray-700 mb-8 leading-relaxed">
+                    The technical foundation of AI code generation is both complex and fascinating, representing years of research and development in artificial intelligence, natural language processing, and software engineering. As these technologies continue to advance, they promise to revolutionize how we approach software development, making programming more accessible and efficient for everyone.
+                </p>
+            </div>
+
+            <!-- Article Footer -->
+            <footer class="border-t pt-8 mt-12">
+                <div class="flex flex-col sm:flex-row justify-between items-center gap-4">
+                    <div class="flex items-center space-x-4">
+                        <button onclick="window.location.href='blog.html'" class="text-blue-600 hover:text-blue-800 font-medium">
+                            ← Back to Blog
+                        </button>
+                    </div>
+                    <div class="flex items-center space-x-4">
+                        <button onclick="window.location.href='index.html'" class="bg-gradient-to-r from-blue-500 to-blue-600 text-white px-6 py-2 rounded-lg font-medium hover:from-blue-600 hover:to-blue-700 transition-all duration-200">
+                            Try Code4Py
+                        </button>
+                    </div>
+                </div>
+            </footer>
+        </div>
+    </article>
+
+    <!-- Back to Top Button -->
+    <button id="backToTop" class="back-to-top" onclick="scrollToTop()">
+        ↑
+    </button>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-white py-8">
+        <div class="max-w-4xl mx-auto px-4 text-center">
+            <p class="text-gray-400">
+                © <span id="currentYear">2024</span> AI Python Code Generator. Free tool for developers worldwide.
+            </p>
+        </div>
+    </footer>
+
+    <script>
+        // Mobile menu toggle function
+        function toggleMobileMenu() {
+            const mobileMenu = document.getElementById('mobile-menu');
+            mobileMenu.classList.toggle('hidden');
+        }
+        
+        // Close mobile menu when clicking outside
+        document.addEventListener('click', function(event) {
+            const mobileMenu = document.getElementById('mobile-menu');
+            const mobileMenuButton = event.target.closest('[onclick="toggleMobileMenu()"]');
+            
+            // If mobile menu is open and click is not on menu button or inside menu
+            if (!mobileMenu.classList.contains('hidden') && 
+                !mobileMenuButton && 
+                !mobileMenu.contains(event.target)) {
+                mobileMenu.classList.add('hidden');
+            }
+        });
+        
+        // Show/hide back to top button
+        window.addEventListener('scroll', function() {
+            const backToTopBtn = document.getElementById('backToTop');
+            if (window.pageYOffset > 300) {
+                backToTopBtn.style.display = 'block';
+            } else {
+                backToTopBtn.style.display = 'none';
+            }
+        });
+
+        // Scroll to top function
+        function scrollToTop() {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        }
+
+        // Update current year dynamically
+        document.addEventListener('DOMContentLoaded', function() {
+            const currentYear = new Date().getFullYear();
+            const yearElement = document.getElementById('currentYear');
+            if (yearElement) {
+                yearElement.textContent = currentYear;
+            }
+        });
+    </script>
+</body>
+</html>
